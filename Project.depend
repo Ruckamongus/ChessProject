@@ -665,7 +665,7 @@
 	<Chess/HelperFunctions.hpp>
 	<Phox/Utilities/Conversions.hpp>
 
-1411631050 source:c:\users\cody\desktop\chess\chess\chess\board.cpp
+1411632073 source:c:\users\cody\desktop\chess\chess\chess\board.cpp
 	<Chess/Board.hpp>
 	<Phox/Internal/Exception.hpp>
 	<Phox/Internal/IODevices.hpp>
@@ -675,8 +675,9 @@
 	<Chess/NotationParser.hpp>
 	<iostream>
 
-1411629399 c:\users\cody\desktop\chess\chess\chess\board.hpp
+1411632085 c:\users\cody\desktop\chess\chess\chess\board.hpp
 	<Chess/John/JohnDefinitions.hpp>
+	<Chess/NotationParser.hpp>
 	<SFML/System/Vector2.hpp>
 	<SFML/Graphics/Font.hpp>
 	<SFML/Graphics/RenderTexture.hpp>

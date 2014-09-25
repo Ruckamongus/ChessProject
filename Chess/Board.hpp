@@ -1,6 +1,7 @@
 #ifndef __ChessBoardHPP__
 #define __ChessBoardHPP__ 1
 #include <Chess/John/JohnDefinitions.hpp>
+#include <Chess/NotationParser.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
@@ -19,8 +20,8 @@ namespace sf
 class Board
 {
     public:
-        Board();
-       ~Board();
+        Board()=default;
+       ~Board()=default;
         Board(const Board& other)=delete;
         Board(const Board&& other)=delete;
         Board& operator=(Board other)=delete;
@@ -50,12 +51,12 @@ class Board
         bool            m_Selected = 0;
         bool            m_EnforceTouchMove = 0;
         bool            m_VerboseLogging = 0;
-        std::size_t      m_BoardSquareSize = 64;//Pixels of each piece and square
+        std::size_t     m_BoardSquareSize = 64;//Pixels of each piece and square
         std::size_t     m_CurrentMove = 1;//Increments each move pair
 
 
         GUIManager*     m_GUIManager = nullptr;
-        NotationParser* m_Parser = nullptr;
+        NotationParser  m_Parser;
         Game            m_ParserCache = nullptr;
 
 

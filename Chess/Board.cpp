@@ -68,25 +68,6 @@ namespace
     }
 }
 
-Board::Board()
-{
-    m_Parser = new (std::nothrow) NotationParser;
-    if (m_Parser == nullptr)
-    {
-        Phox::ThrowException("Could not allocate the input parser.", 1);
-    }
-}
-
-Board::~Board()
-{
-    if (m_Parser != nullptr)
-    {
-        delete m_Parser;
-        m_Parser = nullptr;
-    }
-}
-
-
 void Board::linkGUIManager(GUIManager& GUI)
 {
     m_GUIManager = &GUI;
@@ -415,16 +396,16 @@ void Board::draw(sf::RenderWindow& Window)
 
 void Board::runParser(const std::string& String, const std::string& Time)
 {
-    if (m_Parser == nullptr || m_ParserCache == nullptr)
+    if (m_ParserCache == nullptr)
     {
         Phox::ThrowException("Parser memory corrupt. Please restart this application.", 0);
         return;
     }
 
     //sf::Time WaitTime = sf::milliseconds(static_cast<sf::Int32> (Phox::ToDouble(Time)));
-    m_Parser->setString(String);
-    m_Parser->setBoard(*m_ParserCache);
-    m_Parser->parse();
+    m_Parser.setString(String);
+    m_Parser.setBoard(*m_ParserCache);
+    m_Parser.parse();
 }
 
 void Board::reset()
