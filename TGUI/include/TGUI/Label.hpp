@@ -34,61 +34,82 @@
 namespace tgui
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    class TGUI_API Label : public ClickableWidget
+    /// @brief Label widget
+    ///
+    /// Signals:
+    ///     - DoubleClicked (double left clicked on top of the label)
+    ///         * Optional parameter sf::String: text of the label
+    ///         * Uses Callback member 'text'
+    ///
+    ///     - Inherited signals from ClickableWidget
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    class TGUI_API Label : public ClickableWidget, public WidgetBorders, public WidgetPadding
     {
-      public:
+    public:
 
-        typedef SharedWidgetPtr<Label> Ptr;
+        typedef std::shared_ptr<Label> Ptr; ///< Shared widget pointer
+        typedef std::shared_ptr<const Label> ConstPtr; ///< Shared constant widget pointer
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Default constructor
-        ///
+        // Default constructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Label();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Destructor
+        // Virtual destructor
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual ~Label() {}
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Create the label
+        ///
+        /// @param themeFileFilename  Filename of the theme file.
+        /// @param section            The section in the theme file to read.
+        ///
+        /// @throw Exception when the theme file could not be opened.
+        /// @throw Exception when the theme file did not contain the requested section with the needed information.
+        ///
+        /// When an empty string is passed as filename, the built-in white theme will be used.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ~Label();
+        static Label::Ptr create(const std::string& themeFileFilename = "", const std::string& section = "Label");
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Makes a copy of the widget by calling the copy constructor.
-        // This function calls new and if you use this function then you are responsible for calling delete.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual Label* clone();
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Loads the widget.
+        /// @brief Makes a copy of another label
         ///
-        /// \param configFileFilename  Filename of the config file.
+        /// @param label  The other label
         ///
-        /// The config file must contain a Label section with the needed information.
+        /// @return The new label
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool load(const std::string& configFileFilename);
+        static Label::Ptr copy(Label::ConstPtr label);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the filename of the config file that was used to load the widget.
+        /// @brief Set the position of the widget
         ///
-        /// \return Filename of loaded config file.
-        ///         Empty string when no config file was loaded yet.
+        /// This function completely overwrites the previous position.
+        /// See the move function to apply an offset based on the previous position instead.
+        /// The default position of a transformable widget is (0, 0).
+        ///
+        /// @param position  New position
+        ///
+        /// @see move, getPosition
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const std::string& getLoadedConfigFile() const;
+        virtual void setPosition(const Layout& position) override;
+        using Transformable::setPosition;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the area of the text that will be drawn.
+        /// @brief Changes the area of the text that will be drawn.
         ///
-        /// \param width   Width of the part to draw
-        /// \param height  Height of the part to draw
+        /// @param size  Size of the part to draw
         ///
         /// Only the part of the text that lies within the size will be drawn.
         ///
@@ -97,112 +118,111 @@ namespace tgui
         ///
         /// When this function is called, the label will no longer be auto-sizing.
         ///
-        /// \see setAutoSize
+        /// @see setAutoSize
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setSize(float width, float height);
+        virtual void setSize(const Layout& size) override;
+        using Transformable::setSize;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the position of the widget
+        /// @brief Changes the text.
         ///
-        /// This function completely overwrites the previous position.
-        /// See the move function to apply an offset based on the previous position instead.
-        /// The default position of a transformable widget is (0, 0).
-        ///
-        /// \param x X coordinate of the new position
-        /// \param y Y coordinate of the new position
-        ///
-        /// \see move, getPosition
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setPosition(float x, float y);
-        using Transformable::setPosition;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the text.
-        ///
-        /// \param text  The new text
+        /// @param text  The new text
         ///
         /// When the text is auto-sized (default), then the size of the label will be changed to fit the whole text.
         ///
-        /// \see setAutoSize
+        /// @see setAutoSize
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void setText(const sf::String& text);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the text.
+        /// @brief Returns the text.
         ///
-        /// \return Text that is currently used
+        /// @return Text that is currently used
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::String& getText() const;
+        const sf::String& getText() const
+        {
+            return m_string;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the font of the text.
+        /// @brief Changes the font of the text.
         ///
         /// When you don't call this function then the global font will be use.
         /// This global font can be changed with the setGlobalFont function from the parent.
         ///
-        /// \param font  The new font.
+        /// @param font  The new font.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setTextFont(const sf::Font& font);
+        void setTextFont(std::shared_ptr<sf::Font> font);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the font of the text.
+        /// @brief Returns the font of the text.
         ///
-        /// \return  Pointer to the font that is currently being used.
+        /// @return  Pointer to the font that is currently being used.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Font* getTextFont() const;
+        std::shared_ptr<sf::Font> getTextFont() const
+        {
+            return m_font;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the color of the text.
+        /// @brief Changes the color of the text.
         ///
-        /// \param color  New text color
+        /// @param color  New text color
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setTextColor(const sf::Color& color);
+        void setTextColor(const sf::Color& color)
+        {
+            m_text.setColor(color);
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the color of the text.
+        /// @brief Returns the color of the text.
         ///
-        /// \return The current text color
+        /// @return The current text color
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Color& getTextColor() const;
+        const sf::Color& getTextColor() const
+        {
+            return m_text.getColor();
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the character size of the text.
+        /// @brief Changes the character size of the text.
         ///
-        /// \param size  The new text size
+        /// @param size  The new text size
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void setTextSize(unsigned int size);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the character size of the text.
+        /// @brief Returns the character size of the text.
         ///
-        /// \return The current text size.
+        /// @return The current text size.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int getTextSize() const;
+        unsigned int getTextSize() const
+        {
+            return m_text.getCharacterSize();
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the background color of the label.
+        /// @brief Changes the background color of the label.
         ///
-        /// \param backgroundColor  New background color
+        /// @param backgroundColor  New background color
         ///
         /// The background color is transparent by default.
         ///
@@ -210,24 +230,44 @@ namespace tgui
         /// When a manual size is set, the background will fill this whole area.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setBackgroundColor(const sf::Color& backgroundColor);
+        void setBackgroundColor(const sf::Color& backgroundColor)
+        {
+            m_background.setFillColor(backgroundColor);
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the background color of the label.
+        /// @brief Returns the background color of the label.
         ///
         /// The background color is transparent by default.
         ///
-        /// \return The current background color
+        /// @return The current background color
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Color& getBackgroundColor() const;
+        const sf::Color& getBackgroundColor() const
+        {
+            return m_background.getFillColor();
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes whether the label is auto-sized or not.
+        /// @brief Changes the color of the borders that can optionally be drawn around the label
         ///
-        /// \param autoSize  Should the size of the label be changed when the text changes?
+        /// @param backgroundColor  New border color
+        ///
+        /// @see setBorders
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setBorderColor(const sf::Color& borderColor)
+        {
+            m_borderColor = borderColor;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes whether the label is auto-sized or not.
+        ///
+        /// @param autoSize  Should the size of the label be changed when the text changes?
         ///
         /// When the label is in auto-size mode, the width and height of the label will be changed to fit the text.
         /// Otherwise, only the part defined by the size will be visible.
@@ -239,75 +279,115 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns whether the label is auto-sized or not.
+        /// @brief Returns whether the label is auto-sized or not.
         ///
-        /// \return Is the size of the label changed when the text changes?
+        /// @return Is the size of the label changed when the text changes?
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool getAutoSize() const;
+        virtual bool getAutoSize() const
+        {
+            return m_autoSize;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // This function is a (slow) way to set properties on the widget, no matter what type it is.
-        // When the requested property doesn't exist in the widget then the functions will return false.
+        /// @brief Changes the maximum width that the text will have when auto-sizing.
+        ///
+        /// @param maximumWidth The new maximum text width
+        ///
+        /// This property is ignored when an exact size has been given.
+        /// Pass 0 to this function to disable the maximum.
+        ///
+        /// When the text is auto-sizing then the text will be split over several lines when its width would exceed th
+        ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool setProperty(std::string property, const std::string& value);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // This function is a (slow) way to get properties of the widget, no matter what type it is.
-        // When the requested property doesn't exist in the widget then the functions will return false.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool getProperty(std::string property, std::string& value) const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // Returns a list of all properties that can be used in setProperty and getProperty.
-        // The second value in the pair is the type of the property (e.g. int, uint, string, ...).
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::list< std::pair<std::string, std::string> > getPropertyList() const;
+        void setMaximumTextWidth(float maximumWidth);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
+        /// @brief Returns the maximum width that the text will have.
+        ///
+        /// @return
+        ///        - The width of the label minus the padding when a specific size was set.
+        ///        - The maximum text width when auto-sizing and a maximum was set.
+        ///        - 0 when auto-sizing but there is no maximum width.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        float getMaximumTextWidth();
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // This function is called when the widget is added to a container.
+        /// @brief Changes the size of the padding.
+        ///
+        /// @param padding  Size of the padding
+        ///
+        /// This is the distance between the side of the background and the text.
+        ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void initialize(Container *const container);
+        void setPadding(const Padding& padding) override;
+        using WidgetPadding::setPadding;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        // Tell the widget about its parent
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void initialize(Container *const container) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void leftMouseReleased(float x, float y) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    protected:
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Makes a copy of the widget
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual Widget::Ptr clone() override
+        {
+            return std::make_shared<Label>(*this);
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // When the elapsed time has changed then this function is called.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void update() override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Rearrange the text, making use of the given size of maximum text width.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void rearrangeText();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Draws the widget on the render target.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      public:
+    protected:
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// Defines specific triggers to Label.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        enum LabelCallbacks
-        {
-            AllLabelCallbacks   = ClickableWidgetCallbacksCount - 1, ///< All triggers defined in Label and its base classes
-            LabelCallbacksCount = ClickableWidgetCallbacksCount
-        };
+        sf::RectangleShape m_background;
 
+        sf::String m_string;
+        sf::Text   m_text;
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
+        sf::Color  m_borderColor = {0, 0, 0};
 
-        std::string m_LoadedConfigFile;
+        bool m_autoSize = true;
 
-        sf::RectangleShape m_Background;
+        float m_maximumTextWidth = 0;
 
-        sf::Text m_Text;
-
-        bool m_AutoSize;
+        // Will be set to true after the first click, but gets reset to false when the second click does not occur soon after
+        bool m_possibleDoubleClick = false;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     };

@@ -34,213 +34,194 @@
 namespace tgui
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+    /// @brief Picture widget
+    ///
+    /// Signals:
+    ///     - DoubleClicked (double left clicked on top of the picture)
+    ///         * Optional parameter sf::Vector2f: Position where you clicked
+    ///         * Uses Callback member 'mouse'
+    ///
+    ///     - Inherited signals from ClickableWidget
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     class TGUI_API Picture : public ClickableWidget
     {
-      public:
+    public:
 
-        typedef SharedWidgetPtr<Picture> Ptr;
+        typedef std::shared_ptr<Picture> Ptr; ///< Shared widget pointer
+        typedef std::shared_ptr<const Picture> ConstPtr; ///< Shared constant widget pointer
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Default constructor
-        ///
+        // Default constructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Picture();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Copy constructor
-        ///
-        /// \param copy  Instance to copy
-        ///
+        // Virtual destructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Picture(const Picture& copy);
+        virtual ~Picture() {}
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Destructor
+        /// @brief Creates the picture
+        ///
+        /// @param filename       The absolute or relative filename of the image that should be loaded
+        /// @param fullyClickable This affects what happens when clicking on a transparent pixel in the image.
+        ///                       Is the click caught by the picture, or does the event pass to the widgets behind it.
+        ///
+        /// @throw Exception when the image could not be loaded (probably not found)
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ~Picture();
+        static Picture::Ptr create(const std::string& filename, bool fullyClickable = true);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Overload of assignment operator
+        /// @brief Makes a copy of another picture
         ///
-        /// \param right  Instance to assign
+        /// @param picture  The other picture
         ///
-        /// \return Reference to itself
+        /// @return The new picture
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Picture& operator= (const Picture& right);
+        static Picture::Ptr copy(Picture::ConstPtr picture);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Makes a copy of the widget by calling the copy constructor.
-        // This function calls new and if you use this function then you are responsible for calling delete.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual Picture* clone();
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Load an image from a file.
+        /// @brief Returns the filename of the image that was used to load the widget.
         ///
-        /// \param filename  The absolute or relative filename of the image that should be loaded.
-        ///
-        /// \return
-        ///        - true on success
-        ///        - false when the filename was empty
-        ///        - false when the image couldn't be loaded (probably not found)
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool load(const std::string& filename);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Load from an existing sf::Texture
-        ///
-        /// \param texture  The texture to load the picture from
-        ///
-        /// \warning You are responsible for keeping the texture alive.
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void loadFromTexture(const sf::Texture& texture);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the filename of the image that was used to load the widget.
-        ///
-        /// \return Filename of loaded image.
+        /// @return Filename of loaded image.
         ///         Empty string when no image was loaded yet.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const std::string& getLoadedFilename() const;
+        const std::string& getLoadedFilename() const
+        {
+            return m_loadedFilename;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the position of the widget
+        /// @brief Set the position of the widget
         ///
         /// This function completely overwrites the previous position.
         /// See the move function to apply an offset based on the previous position instead.
         /// The default position of a transformable widget is (0, 0).
         ///
-        /// \param x X coordinate of the new position
-        /// \param y Y coordinate of the new position
+        /// @param position  New position
         ///
-        /// \see move, getPosition
+        /// @see move, getPosition
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setPosition(float x, float y);
+        virtual void setPosition(const Layout& position) override;
         using Transformable::setPosition;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the size of the widget.
+        /// @brief Changes the size of the picture.
         ///
-        /// \param width   The new width of the widget
-        /// \param height  The new height of the widget
+        /// @param size  The new size of the picture
+        ///
+        /// The image will be scaled to fit this size.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setSize(float width, float height);
+        virtual void setSize(const Layout& size) override;
+        using Transformable::setSize;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Enable or disable the smooth filter.
+        /// @brief Enable or disable the smooth filter.
         ///
         /// When the filter is activated, the texture appears smoother so that pixels are less noticeable.
         /// However if you want the texture to look exactly the same as its source file, you should leave it disabled.
         /// The smooth filter is disabled by default.
         ///
-        /// \param smooth True to enable smoothing, false to disable it
+        /// @param smooth True to enable smoothing, false to disable it
         ///
-        /// \see isSmooth
+        /// @see isSmooth
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setSmooth(bool smooth);
+        void setSmooth(bool smooth)
+        {
+            m_texture.setSmooth(smooth);
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Tell whether the smooth filter is enabled or not.
+        /// @brief Tell whether the smooth filter is enabled or not.
         ///
-        /// \return True if smoothing is enabled, false if it is disabled
+        /// @return True if smoothing is enabled, false if it is disabled
         ///
-        /// \see setSmooth
+        /// @see setSmooth
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool isSmooth() const;
+        bool isSmooth() const
+        {
+            return m_texture.isSmooth();
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the transparency of the widget.
+        /// @brief Changes the transparency of the widget.
         ///
-        /// \param transparency  The transparency of the widget.
+        /// @param transparency  The transparency of the widget.
         ///                      0 is completely transparent, while 255 (default) means fully opaque.
         ///
         /// Note that this will only change the transparency of the images. The parts of the widgets that use a color will not
         /// be changed. You must change them yourself by setting the alpha channel of the color.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setTransparency(unsigned char transparency);
+        virtual void setTransparency(unsigned char transparency) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool mouseOnWidget(float x, float y);
+        virtual bool mouseOnWidget(float x, float y) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // This function is a (slow) way to set properties on the widget, no matter what type it is.
-        // When the requested property doesn't exist in the widget then the functions will return false.
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool setProperty(std::string property, const std::string& value);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // This function is a (slow) way to get properties of the widget, no matter what type it is.
-        // When the requested property doesn't exist in the widget then the functions will return false.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool getProperty(std::string property, std::string& value) const;
+        virtual void leftMouseReleased(float x, float y) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // Returns a list of all properties that can be used in setProperty and getProperty.
-        // The second value in the pair is the type of the property (e.g. int, uint, string, ...).
+    protected:
+
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::list< std::pair<std::string, std::string> > getPropertyList() const;
+        // Makes a copy of the widget
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual Widget::Ptr clone() override
+        {
+            return std::make_shared<Picture>(*this);
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
+        // When the elapsed time has changed then this function is called.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void update() override;
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Draws the widget on the render target.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      public:
+    protected:
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// Defines specific triggers to Picture.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        enum PictureCallbacks
-        {
-            AllPictureCallbacks   = ClickableWidgetCallbacksCount - 1, ///< All triggers defined in Picture and its base classes
-            PictureCallbacksCount = ClickableWidgetCallbacksCount
-        };
+        std::string m_loadedFilename;
 
+        Texture m_texture;
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
+        // Set to false when clicks on transparent parts of the picture should go to the widgets behind the picture
+        bool m_fullyClickable = true;
 
-        std::string m_LoadedFilename;
-
-        Texture m_Texture;
+        // Will be set to true after the first click, but gets reset to false when the second click does not occur soon after
+        bool m_possibleDoubleClick = false;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

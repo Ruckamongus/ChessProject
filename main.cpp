@@ -18,10 +18,7 @@ int main(int argc, char* argv[])
         mouse.setReferenceWindow(Window);
         daGame = newGame();//John's board
 
-        if (!GUI.init(Window))
-        {
-            return -2;
-        }
+        GUI.init(Window);
 
         if (!GameBoard.loadResources())
         {
@@ -63,8 +60,6 @@ int main(int argc, char* argv[])
         {
             GameBoard.clicked(daGame, mouse.getPosition(Window));
         }
-
-        GUI.doCallbacks();
 
         std::size_t New = GUI.getNewGame();
         if (New)

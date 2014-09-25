@@ -665,7 +665,7 @@
 	<Chess/HelperFunctions.hpp>
 	<Phox/Utilities/Conversions.hpp>
 
-1411632073 source:c:\users\cody\desktop\chess\chess\chess\board.cpp
+1411638291 source:c:\users\cody\desktop\chess\chess\chess\board.cpp
 	<Chess/Board.hpp>
 	<Phox/Internal/Exception.hpp>
 	<Phox/Internal/IODevices.hpp>
@@ -1059,11 +1059,11 @@
 	<sstream>
 	<cstdlib>
 
-1411630257 c:\users\cody\desktop\chess\chess\chess\guimanager.hpp
+1411635873 c:\users\cody\desktop\chess\chess\chess\guimanager.hpp
 	<SFML/Graphics.hpp>
 	<TGUI/TGUI.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\tgui.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\tgui.hpp
 	<TGUI/Widget.hpp>
 	<TGUI/ClickableWidget.hpp>
 	<TGUI/Clipboard.hpp>
@@ -1076,17 +1076,15 @@
 	<TGUI/Slider.hpp>
 	<TGUI/Scrollbar.hpp>
 	<TGUI/ListBox.hpp>
-	<TGUI/LoadingBar.hpp>
+	<TGUI/ProgressBar.hpp>
 	<TGUI/ComboBox.hpp>
 	<TGUI/TextBox.hpp>
-	<TGUI/SpriteSheet.hpp>
-	<TGUI/AnimatedPicture.hpp>
 	<TGUI/SpinButton.hpp>
-	<TGUI/Slider2d.hpp>
 	<TGUI/Tab.hpp>
 	<TGUI/MenuBar.hpp>
 	<TGUI/ChatBox.hpp>
 	<TGUI/Knob.hpp>
+	<TGUI/Tooltip.hpp>
 	<TGUI/Canvas.hpp>
 	<TGUI/Container.hpp>
 	<TGUI/Panel.hpp>
@@ -1094,89 +1092,94 @@
 	<TGUI/MessageBox.hpp>
 	<TGUI/Grid.hpp>
 	<TGUI/Gui.hpp>
-	<TGUI/SharedWidgetPtr.inl>
+	<TGUI/extra/Slider2d.hpp>
+	<TGUI/extra/SpriteSheet.hpp>
+	<TGUI/extra/AnimatedPicture.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\widget.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\widget.hpp
 	<TGUI/Global.hpp>
-	<TGUI/ConfigFile.hpp>
-	<TGUI/Callback.hpp>
+	<TGUI/ThemeFileParser.hpp>
+	<TGUI/Signal.hpp>
 	<TGUI/Transformable.hpp>
-	<TGUI/SharedWidgetPtr.hpp>
+	<TGUI/Texture.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\global.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\global.hpp
+	<TGUI/Config.hpp>
+	<TGUI/Borders.hpp>
+	<TGUI/Exception.hpp>
+	<SFML/Graphics.hpp>
 	<iostream>
 	<string>
 	<sstream>
-	<SFML/Graphics.hpp>
+
+1411634273 c:\users\cody\desktop\chess\chess\tgui\include\tgui\config.hpp
+
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\borders.hpp
+
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\texturemanager.hpp
+	<TGUI/TextureData.hpp>
 	<TGUI/Config.hpp>
-	<TGUI/Borders.hpp>
-	<TGUI/TextureManager.hpp>
-
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\config.hpp
-
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\borders.hpp
-
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\texturemanager.hpp
 	<list>
+	<map>
 
 1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\configfile.hpp
 	<TGUI/Global.hpp>
 	<fstream>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\callback.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\callback.hpp
 	<map>
 	<list>
 	<functional>
 	<TGUI/Global.hpp>
-	<TGUI/SharedWidgetPtr.hpp>
 
 1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\sharedwidgetptr.hpp
 	<SFML/System/String.hpp>
 	<cstddef>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\transformable.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\transformable.hpp
 	<TGUI/Global.hpp>
+	<TGUI/Layout.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\clickablewidget.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\clickablewidget.hpp
 	<TGUI/Widget.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\clipboard.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\clipboard.hpp
 	<TGUI/Global.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\label.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\label.hpp
 	<TGUI/ClickableWidget.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\picture.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\picture.hpp
 	<TGUI/ClickableWidget.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\button.hpp
-	<TGUI/ClickableWidget.hpp>
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\button.hpp
+	<TGUI/Label.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\checkbox.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\checkbox.hpp
 	<TGUI/RadioButton.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\radiobutton.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\radiobutton.hpp
+	<TGUI/Label.hpp>
+
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\editbox.hpp
 	<TGUI/ClickableWidget.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\editbox.hpp
-	<TGUI/ClickableWidget.hpp>
-
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\slider.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\slider.hpp
 	<TGUI/Widget.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\scrollbar.hpp
-	<TGUI/Slider.hpp>
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\scrollbar.hpp
+	<TGUI/Widget.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\listbox.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\listbox.hpp
 	<TGUI/Widget.hpp>
 
 1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\loadingbar.hpp
 	<TGUI/ClickableWidget.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\combobox.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\combobox.hpp
 	<TGUI/ListBox.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\textbox.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\textbox.hpp
 	<TGUI/Widget.hpp>
 
 1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\spritesheet.hpp
@@ -1185,46 +1188,49 @@
 1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\animatedpicture.hpp
 	<TGUI/ClickableWidget.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\spinbutton.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\spinbutton.hpp
 	<TGUI/ClickableWidget.hpp>
 
 1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\slider2d.hpp
 	<TGUI/ClickableWidget.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\tab.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\tab.hpp
+	<TGUI/Label.hpp>
+
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\menubar.hpp
+	<TGUI/Label.hpp>
+
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\chatbox.hpp
+	<TGUI/Widget.hpp>
+	<TGUI/Panel.hpp>
+
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\knob.hpp
 	<TGUI/Widget.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\menubar.hpp
-	<TGUI/Widget.hpp>
-
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\chatbox.hpp
-	<TGUI/Widget.hpp>
-
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\knob.hpp
-	<TGUI/Widget.hpp>
-
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\canvas.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\canvas.hpp
 	<TGUI/ClickableWidget.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\container.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\container.hpp
 	<list>
 	<TGUI/Widget.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\panel.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\panel.hpp
 	<TGUI/Container.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\childwindow.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\childwindow.hpp
 	<TGUI/Container.hpp>
+	<TGUI/Button.hpp>
+	<TGUI/Label.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\messagebox.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\messagebox.hpp
 	<TGUI/Label.hpp>
 	<TGUI/Button.hpp>
 	<TGUI/ChildWindow.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\grid.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\grid.hpp
 	<TGUI/Container.hpp>
 
-1411623462 c:\users\cody\desktop\chess\chess\tgui\include\tgui\gui.hpp
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\gui.hpp
 	<queue>
 	<TGUI/Container.hpp>
 
@@ -1243,7 +1249,7 @@
 	<string>
 	<queue>
 
-1411630279 source:c:\users\cody\desktop\chess\chess\chess\guimanager.cpp
+1411637393 source:c:\users\cody\desktop\chess\chess\chess\guimanager.cpp
 	<Chess/GUIManager.hpp>
 	<Chess/Board.hpp>
 	<Phox/Internal/Exception.hpp>
@@ -1252,7 +1258,7 @@
 	<Chess/HelperFunctions.hpp>
 	<Phox/Utilities/Conversions.hpp>
 
-1411626958 source:c:\users\cody\desktop\chess\chess\chess\john\efficiencyclockcbinding.cpp
+1411638160 source:c:\users\cody\desktop\chess\chess\chess\john\efficiencyclockcbinding.cpp
 	<Chess\John\EfficiencyClockCBinding.hpp>
 	<Phox\Utilities\EfficiencyClock.hpp>
 
@@ -1292,7 +1298,7 @@
 	<ctime>
 	<string>
 
-1411629929 source:c:\users\cody\desktop\chess\chess\main.cpp
+1411637403 source:c:\users\cody\desktop\chess\chess\main.cpp
 	<Chess\Includes.hpp>
 	<Chess\GUIManager.hpp>
 	<Chess\John\JohnDefinitions.hpp>
@@ -1325,4 +1331,51 @@
 1411629438 source:c:\users\cody\desktop\chess\chess\phox\internal\iodevices.cpp
 	<Phox/Internal/IODevices.hpp>
 	<SFML/Graphics/RenderWindow.hpp>
+
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\exception.hpp
+	<string>
+	<stdexcept>
+
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\themefileparser.hpp
+	<TGUI/Texture.hpp>
+	<fstream>
+
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\texture.hpp
+	<TGUI/TextureData.hpp>
+	<TGUI/TextureManager.hpp>
+	<SFML/Graphics/Drawable.hpp>
+	<SFML/Graphics/Transformable.hpp>
+	<SFML/Graphics/Vertex.hpp>
+
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\texturedata.hpp
+	<SFML/Graphics/Image.hpp>
+	<SFML/Graphics/Texture.hpp>
+	<SFML/Graphics/Rect.hpp>
+
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\signal.hpp
+	<TGUI/Global.hpp>
+	<TGUI/Callback.hpp>
+	<map>
+	<memory>
+	<cassert>
+	<functional>
+
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\layout.hpp
+	<memory>
+	<list>
+
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\progressbar.hpp
+	<TGUI/Label.hpp>
+
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\tooltip.hpp
+	<TGUI/Label.hpp>
+
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\extra\slider2d.hpp
+	<TGUI/ClickableWidget.hpp>
+
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\extra\spritesheet.hpp
+	<TGUI/Picture.hpp>
+
+1411223265 c:\users\cody\desktop\chess\chess\tgui\include\tgui\extra\animatedpicture.hpp
+	<TGUI/ClickableWidget.hpp>
 

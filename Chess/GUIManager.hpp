@@ -9,9 +9,8 @@ class GUIManager
 {
     public:
         void addText(const std::string& Text);
-        void doCallbacks();
         void draw();
-        bool init(sf::RenderWindow& Window);
+        void init(sf::RenderWindow& Window);
         void linkBoard(Board& board);
         void reset();
         void update(sf::Event& event);
@@ -24,14 +23,14 @@ class GUIManager
 
     private:
         tgui::Gui           m_GUI;
-        tgui::TextBox::Ptr  m_OutputBox = tgui::TextBox::Ptr(m_GUI);
-        tgui::TextBox::Ptr  m_InputBox = tgui::TextBox::Ptr(m_GUI);
-        tgui::EditBox::Ptr  m_TimeBox = tgui::EditBox::Ptr(m_GUI);
-        tgui::Checkbox::Ptr m_EnforceTouchMove = tgui::Checkbox::Ptr(m_GUI);
-        tgui::Checkbox::Ptr m_VerboseLogging = tgui::Checkbox::Ptr(m_GUI);
-        tgui::Checkbox::Ptr m_960Board = tgui::Checkbox::Ptr(m_GUI);
-        tgui::Button::Ptr   m_RenewBoard = tgui::Button::Ptr(m_GUI);
-        tgui::Button::Ptr   m_RunInput = tgui::Button::Ptr(m_GUI);
+        tgui::TextBox::Ptr  m_OutputBox;
+        tgui::TextBox::Ptr  m_InputBox;
+        tgui::EditBox::Ptr  m_TimeBox;
+        tgui::Checkbox::Ptr m_EnforceTouchMove;
+        tgui::Checkbox::Ptr m_VerboseLogging;
+        tgui::Checkbox::Ptr m_960Board;
+        tgui::Button::Ptr   m_RenewBoard;
+        tgui::Button::Ptr   m_RunInput;
 
         std::size_t m_NewGame = 0;
 

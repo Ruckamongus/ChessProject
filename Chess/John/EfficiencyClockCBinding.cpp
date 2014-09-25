@@ -26,6 +26,6 @@ double clockGet(timeBase t)
             return Clock.get(Clock.Microseconds);
         case nano:
             return Clock.get(Clock.Nanoseconds);
-        default: return -1.d;
+        default: return -1;
     }
 }

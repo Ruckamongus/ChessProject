@@ -27,272 +27,241 @@
 #define TGUI_TAB_HPP
 
 
-#include <TGUI/Widget.hpp>
+#include <TGUI/Label.hpp>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace tgui
 {
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    class TabRenderer;
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Tab widget
+    ///
+    /// Signals:
+    ///     - TabChanged (Another tab has been selected)
+    ///         * Optional parameter sf::String: New name of the newly selected tab
+    ///         * Uses Callback member 'text'
+    ///
+    ///     - Inherited signals from Widget
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     class TGUI_API Tab : public Widget
     {
-      public:
+    public:
 
-        typedef SharedWidgetPtr<Tab> Ptr;
+        typedef std::shared_ptr<Tab> Ptr; ///< Shared widget pointer
+        typedef std::shared_ptr<const Tab> ConstPtr; ///< Shared constant widget pointer
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Default constructor
-        ///
+        // Default constructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Tab();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Copy constructor
-        ///
-        /// \param copy  Instance to copy
-        ///
+        // Virtual destructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Tab(const Tab& copy);
+        virtual ~Tab() {}
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Destructor
+        /// @brief Create the tab
+        ///
+        /// @param themeFileFilename  Filename of the theme file.
+        /// @param section            The section in the theme file to read.
+        ///
+        /// @throw Exception when the theme file could not be opened.
+        /// @throw Exception when the theme file did not contain the requested section with the needed information.
+        /// @throw Exception when one of the images, described in the theme file, could not be loaded.
+        ///
+        /// When an empty string is passed as filename, the built-in white theme will be used.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ~Tab();
+        static Tab::Ptr create(const std::string& themeFileFilename = "", const std::string& section = "Tab");
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Overload of assignment operator
+        /// @brief Makes a copy of another tab
         ///
-        /// \param right  Instance to assign
+        /// @param tab  The other tab
         ///
-        /// \return Reference to itself
+        /// @return The new tab
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Tab& operator= (const Tab& right);
+        static Tab::Ptr copy(Tab::ConstPtr tab);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Makes a copy of the widget by calling the copy constructor.
-        // This function calls new and if you use this function then you are responsible for calling delete.
+        /// @brief Returns the renderer, which gives access to functions that determine how the widget is displayed
+        ///
+        /// @return Reference to the renderer
+        ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual Tab* clone();
+        std::shared_ptr<TabRenderer> getRenderer() const
+        {
+            return std::static_pointer_cast<TabRenderer>(m_renderer);
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Loads the widget.
+        /// @brief Set the position of the widget
         ///
-        /// \param configFileFilename  Filename of the config file.
+        /// This function completely overwrites the previous position.
+        /// See the move function to apply an offset based on the previous position instead.
+        /// The default position of a transformable widget is (0, 0).
         ///
-        /// The config file must contain a Tab section with the needed information.
+        /// @param position  New position
+        ///
+        /// @see move, getPosition
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool load(const std::string& configFileFilename);
+        virtual void setPosition(const Layout& position) override;
+        using Transformable::setPosition;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the filename of the config file that was used to load the widget.
+        /// @brief This function currently does nothing.
         ///
-        /// \return Filename of loaded config file.
-        ///         Empty string when no config file was loaded yet.
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const std::string& getLoadedConfigFile() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief This function currently does nothing.
-        ///
-        /// \param width   Currently ignored
-        /// \param height  Currently ignored
+        /// @param size  Currently ignored
         ///
         /// It is not yet possible to change the size directly.
         ///
-        /// \see setTabHeight
-        /// \see setDistanceToSide
-        /// \see setMaximumTabWidth
+        /// @see setTabHeight
+        /// @see setDistanceToSide
+        /// @see setMaximumTabWidth
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setSize(float width, float height);
+        virtual void setSize(const Layout& size) override;
+        using Transformable::setSize;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the size of the tabs.
+        /// @brief Returns the size of the tabs.
         ///
-        /// \return Size of the tabs
+        /// @return Size of the tabs
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual sf::Vector2f getSize() const;
+        virtual sf::Vector2f getSize() const override
+        {
+            return {m_width, m_tabHeight};
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Adds a new tab.
+        /// @brief Adds a new tab.
         ///
-        /// \param name    The name of the tab (this is the text that will be drawn on top of the tab).
-        /// \param select  Do you want the new tab to be selected immediately?
+        /// @param name    The name of the tab (this is the text that will be drawn on top of the tab).
+        /// @param select  Do you want the new tab to be selected immediately?
         ///
-        /// \return  The index of the tab in the list.
+        /// @return  The index of the tab in the list.
         ///
-        /// \warning The index returned by this function may no longer be correct when a tab is removed.
+        /// @warning The index returned by this function may no longer be correct when a tab is removed.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         unsigned int add(const sf::String& name, bool select = true);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Selects the tab with a given name.
+        /// @brief Selects the tab with a given name.
         ///
-        /// \param name  The name of the tab to select.
+        /// @param name  The name of the tab to select.
         ///
         /// When the name doen't match any tab then nothing will be changed.
         /// If there are multiple tabs with the same name then the first one will be selected.
         ///
-        /// \see select(int)
+        /// @see select(int)
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void select(const sf::String& name);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Selects the tab with a given index.
+        /// @brief Selects the tab with a given index.
         ///
-        /// \param index  The index of the tab to select.
+        /// @param index  The index of the tab to select.
         ///
         /// When the index is too high then nothing will happen.
         ///
-        /// \see select(sf::String)
+        /// @see select(sf::String)
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void select(unsigned int index);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Deselects the selected tab.
+        /// @brief Deselects the selected tab.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void deselect();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Removes a tab with a given name.
+        /// @brief Removes a tab with a given name.
         ///
-        /// \param name  The name of the tab to remove.
+        /// @param name  The name of the tab to remove.
         ///
         /// When multiple tabs have the same name, only the first will be removed.
         ///
-        /// \see remove(unsigned int)
+        /// @see remove(unsigned int)
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void remove(const sf::String& name);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Removes a tab with a given index.
+        /// @brief Removes a tab with a given index.
         ///
-        /// \param index  The index of the tab to remove.
+        /// @param index  The index of the tab to remove.
         ///
         /// When the index is too high then nothing will happen.
         ///
-        /// \see remove(sf::String)
+        /// @see remove(sf::String)
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void remove(unsigned int index);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Removes all tabs.
+        /// @brief Removes all tabs.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void removeAll();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Get the name of the currently selected tab.
+        /// @brief Get the name of the currently selected tab.
         ///
-        /// \return The name of the tab.
+        /// @return The name of the tab.
         ///         When no tab is selected then this function returns an empty string.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        sf::String getSelected() const;
+        sf::String getSelected() const
+        {
+            return (m_selectedTab >= 0) ? m_tabNames[m_selectedTab].getText() : "";
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Get the index of the currently selected tab.
+        /// @brief Get the index of the currently selected tab.
         ///
-        /// \return The index of the tab.
+        /// @return The index of the tab.
         ///         When no tab is selected then this function returns -1.
         ///
-        /// \warning The index returned by this function may no longer be correct when a tab is removed.
+        /// @warning The index returned by this function may no longer be correct when a tab is removed.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        int getSelectedIndex() const;
+        int getSelectedIndex() const
+        {
+            return m_selectedTab;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the font of the tabs.
+        /// @brief Changes the character size of the text.
         ///
-        /// When you don't call this function then the global font will be use.
-        /// This global font can be changed with the setGlobalFont function from the parent.
-        ///
-        /// \param font  The new font.
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setTextFont(const sf::Font& font);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the font of the tabs.
-        ///
-        /// \return  Pointer to the font that is currently being used.
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Font* getTextFont() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the text color that will be used inside the tabs.
-        ///
-        /// \param color  The new text color.
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setTextColor(const sf::Color& color);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Get the text color that is currently being used inside the tabs.
-        ///
-        /// \return The text color that is currently being used.
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Color& getTextColor() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the text color that will be used for the selected tab.
-        ///
-        /// \param color  The new text color.
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setSelectedTextColor(const sf::Color& color);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Get the text color that is currently being used for the selected tab.
-        ///
-        /// \return The text color that is currently being used.
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Color& getSelectedTextColor() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the character size of the text.
-        ///
-        /// \param size  The new size of the text.
+        /// @param size  The new size of the text.
         ///              If the size is 0 (default) then the text will be scaled to fit in the tab.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -300,185 +269,335 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the character size of the text.
+        /// @brief Returns the character size of the text.
         ///
-        /// \return The text size.
+        /// @return The text size.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         unsigned int getTextSize() const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the height of the tabs.
+        /// @brief Changes the height of the tabs.
         ///
-        /// \param height  Height of the tabs
+        /// @param height  Height of the tabs
         ///
         /// By default, it is the height of the tab image that is loaded with the load function.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setTabHeight(unsigned int height);
+        void setTabHeight(float height);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the height of the tabs.
+        /// @brief Returns the height of the tabs.
         ///
-        /// \return Tab height
+        /// @return Tab height
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int getTabHeight() const;
+        float getTabHeight() const
+        {
+            return m_tabHeight;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the maximum tab width of the tabs.
+        /// @brief Changes the maximum tab width of the tabs.
         ///
-        /// \param maximumWidth  Maximum width of a single tab
+        /// @param maximumWidth  Maximum width of a single tab
         ///
         /// If the text on the tab is longer than this width then it will be cropped to fit inside the tab.
         /// By default, the maximum width is 0 which means that there is no limitation.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setMaximumTabWidth(unsigned int maximumWidth);
+        void setMaximumTabWidth(float maximumWidth);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the maximum tab width of the tabs.
+        /// @brief Returns the maximum tab width of the tabs.
         ///
-        /// \return Maximum tab width
+        /// @return Maximum tab width
         ///
         /// If the text on the tab is longer than this width then it will be cropped to fit inside the tab.
         /// By default, the maximum width is 0 which means that there is no limitation.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int getMaximumTabWidth() const;
+        float getMaximumTabWidth() const
+        {
+            return m_maximumTabWidth;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the distance between the text and the side of the tab.
+        /// @brief Changes the transparency of the widget.
         ///
-        /// \param distanceToSide  distance between the text and the side of the tab
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setDistanceToSide(unsigned int distanceToSide);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the distance between the text and the side of the tab.
-        ///
-        /// \return distance between the text and the side of the tab
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int getDistanceToSide() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the transparency of the widget.
-        ///
-        /// \param transparency  The transparency of the widget.
+        /// @param transparency  The transparency of the widget.
         ///                      0 is completely transparent, while 255 (default) means fully opaque.
         ///
         /// Note that this will only change the transparency of the images. The parts of the widgets that use a color will not
         /// be changed. You must change them yourself by setting the alpha channel of the color.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setTransparency(unsigned char transparency);
+        virtual void setTransparency(unsigned char transparency) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool mouseOnWidget(float x, float y);
+        virtual bool mouseOnWidget(float x, float y) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void leftMousePressed(float x, float y);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // This function is a (slow) way to set properties on the widget, no matter what type it is.
-        // When the requested property doesn't exist in the widget then the functions will return false.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool setProperty(std::string property, const std::string& value);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // This function is a (slow) way to get properties of the widget, no matter what type it is.
-        // When the requested property doesn't exist in the widget then the functions will return false.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool getProperty(std::string property, std::string& value) const;
+        virtual void leftMousePressed(float x, float y) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // Returns a list of all properties that can be used in setProperty and getProperty.
-        // The second value in the pair is the type of the property (e.g. int, uint, string, ...).
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::list< std::pair<std::string, std::string> > getPropertyList() const;
+    protected:
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
+        // Recalculates the size of each tab image.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void recalculateTabsWidth();
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // This function is called when the widget is added to a container.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void initialize(Container *const container);
+        virtual void initialize(Container *const container) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Makes a copy of the widget
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual Widget::Ptr clone() override
+        {
+            return std::make_shared<Tab>(*this);
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Draws the widget on the render target.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      public:
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// Defines specific triggers to Tab.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        enum TabCallbacks
-        {
-            TabChanged = WidgetCallbacksCount * 1,          ///< Current Tab changed
-            AllTabCallbacks = WidgetCallbacksCount * 2 - 1, ///< All triggers defined in Tab and its base classes
-            TabCallbacksCount = WidgetCallbacksCount * 2
-        };
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
-
-        std::string   m_LoadedConfigFile;
-
-        bool          m_SplitImage;
-        bool          m_SeparateSelectedImage;
-
-        unsigned int  m_TabHeight;
-        unsigned int  m_TextSize;
-
-        sf::Color     m_TextColor;
-        sf::Color     m_SelectedTextColor;
-
-        unsigned int  m_MaximumTabWidth;
+    protected:
 
         // The distance between the side of the tab and the text that is drawn on top of the tab.
-        unsigned int m_DistanceToSide;
+        unsigned int       m_distanceToSide = 5;
 
-        int  m_SelectedTab;
+        unsigned int       m_textSize = 0;
+        float              m_maximumTabWidth = 0;
+        int                m_selectedTab = -1;
 
-        std::vector<sf::String> m_TabNames;
-        std::vector<float>      m_NameWidth;
+        float              m_width = 0;
+        float              m_tabHeight = 0;
+        std::vector<float> m_tabWidth;
 
-        Texture  m_TextureNormal_L;
-        Texture  m_TextureNormal_M;
-        Texture  m_TextureNormal_R;
-        Texture  m_TextureSelected_L;
-        Texture  m_TextureSelected_M;
-        Texture  m_TextureSelected_R;
+        std::vector<Label> m_tabNames;
 
-        sf::Text      m_Text;
+        friend class TabRenderer;
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    };
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class TabRenderer : public WidgetRenderer, public WidgetBorders
+    {
+    public:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Constructor
+        ///
+        /// @param tab  The tab that is connected to the renderer
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        TabRenderer(Tab* tab) : m_tab{tab} {}
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Dynamically change a property of the renderer, without even knowing the type of the widget.
+        ///
+        /// This function should only be used when you don't know the type of the widget.
+        /// Otherwise you can make a direct function call to make the wanted change.
+        ///
+        /// @param property  The property that you would like to change
+        /// @param value     The new value that you like to assign to the property
+        /// @param rootPath  Path that should be placed in front of any resource filename
+        ///
+        /// @throw Exception when the property doesn't exist for this widget.
+        /// @throw Exception when the value is invalid for this property.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void setProperty(std::string property, const std::string& value, const std::string& rootPath = getResourcePath()) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the font of the tabs.
+        ///
+        /// When you don't call this function then the global font will be use.
+        /// This global font can be changed with the setGlobalFont function from the parent.
+        ///
+        /// @param font  The new font.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTextFont(std::shared_ptr<sf::Font> font);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the text color that will be used inside the tabs.
+        ///
+        /// @param color  The new text color.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTextColor(const sf::Color& color)
+        {
+            m_textColor = color;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the text color that will be used for the selected tab.
+        ///
+        /// @param color  The new text color.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setSelectedTextColor(const sf::Color& color)
+        {
+            m_selectedTextColor = color;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the distance between the text and the side of the tab.
+        ///
+        /// @param distanceToSide  distance between the text and the side of the tab
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setDistanceToSide(unsigned int distanceToSide);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Change the image that is displayed when the tab is not selected
+        ///
+        /// When this image and the selected image are set, the background color properties will be ignored.
+        ///
+        /// Pass an empty string to unset the image, in this case the background color properties will be used again.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setNormalImage(const std::string& filename,
+                            const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                            const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                            bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Change the image that is displayed when the tab is selected
+        ///
+        /// When this image and the normal image are set, the background color properties will be ignored.
+        ///
+        /// Pass an empty string to unset the image, in this case the background color properties will be used again.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setSelectedImage(const std::string& filename,
+                              const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                              const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                              bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the background color of the tabs
+        ///
+        /// @param color  The new background color.
+        ///
+        /// Note that this color is ignored when a normal and selected image were set.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setBackgroundColor(const sf::Color& color)
+        {
+            m_backgroundColor = color;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the background color of the selected tab.
+        ///
+        /// @param color  The new background color.
+        ///
+        /// Note that this color is ignored when a normal and selected image were set.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setSelectedBackgroundColor(const sf::Color& color)
+        {
+            m_selectedBackgroundColor = color;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the color of the borders
+        ///
+        /// @param color  The new border color.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setBorderColor(const sf::Color& color)
+        {
+            m_borderColor = color;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Draws the widget on the render target.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Makes a copy of the renderer
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual std::shared_ptr<WidgetRenderer> clone(Widget* widget) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        TabRenderer(const TabRenderer&) = default;
+        TabRenderer& operator=(const TabRenderer&) = delete;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    protected:
+
+        Tab* m_tab;
+
+        Texture            m_textureNormal;
+        Texture            m_textureSelected;
+        std::list<Texture> m_texturesNormal;
+        std::list<Texture> m_texturesSelected;
+
+        sf::Color m_textColor         = {  0,   0,   0};
+        sf::Color m_selectedTextColor = {255, 255, 255};
+
+        sf::Color m_backgroundColor         = {255, 255, 255};
+        sf::Color m_selectedBackgroundColor = {  0, 110, 255};
+
+        sf::Color m_borderColor = {0, 0, 0};
+
+        friend class Tab;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     };

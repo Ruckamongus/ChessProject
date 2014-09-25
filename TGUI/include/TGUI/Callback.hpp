@@ -31,7 +31,6 @@
 #include <functional>
 
 #include <TGUI/Global.hpp>
-#include <TGUI/SharedWidgetPtr.hpp>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -44,19 +43,17 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     struct TGUI_API Callback
     {
-        Callback() : widget(nullptr) {};
-
         // The callback id that was passed to the widget. It is used to identify from what widget the callback came from.
-        unsigned int id;
+        unsigned int id = 0;
 
-        // How did the callbak occur?
-        unsigned int trigger;
+        // How did the callback occur?
+        std::string trigger;
 
         // Pointer to the widget
-        Widget* widget;
+        Widget* widget = nullptr;
 
         // The type of the widget
-        WidgetTypes widgetType;
+        WidgetType widgetType = WidgetType::Unknown;
 
         // When the mouse has something to do with the callback then this data will be filled
         sf::Vector2i mouse;
@@ -64,160 +61,17 @@ namespace tgui
         // This text is only used by some widgets, but it can be set together with some other member
         sf::String text;
 
+        // Used to identify an item
+        sf::String itemId;
+
         // Only one of these things can be filled at a given time
-        bool         checked;
-        int          value;
+        bool         checked = false;
+        int          value = 0;
+        unsigned int index = 0;
         sf::Vector2f value2d;
         sf::Vector2f position;
         sf::Vector2f size;
-        unsigned int index;
     };
-
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Used internally by all widgets to handle callbacks.
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    class TGUI_API CallbackManager
-    {
-      public:
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Bind a function to one or more specific callback trigger(s).
-        ///
-        /// \param func     Free function without parameters.
-        ///                 This can actually also take more advanced stuff like a functor or lambda function.
-        /// \param trigger  In which situation(s) do you want the callback function to be called?
-        ///
-        /// Usage example:
-        /// \code
-        /// void function() {}
-        /// widget->bindCallback(function, tgui::Widget::Focus);
-        /// \endcode
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void bindCallback(std::function<void()> func, unsigned int trigger);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Bind a function to one or more specific callback trigger(s).
-        ///
-        /// \param func      Member function without parameters.
-        /// \param classPtr  Pointer to the widget of the class.
-        /// \param trigger   In which situation(s) do you want the callback function to be called?
-        ///
-        /// Usage example:
-        /// \code
-        /// class myClass {
-        ///     void function() {};
-        /// } myObj;
-        /// widget->bindCallback(&myClass::function, &myObj, tgui::Widget::Focus);
-        /// \endcode
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        template <typename T>
-        void bindCallback(void (T::*func)(), T* const classPtr, unsigned int trigger)
-        {
-            mapCallback(std::bind(func, classPtr), trigger);
-        }
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Bind a function to one or more specific callback trigger(s).
-        ///
-        /// \param func     Free function with a constant reference to a Callback widget as parameter.
-        /// \param trigger  In which situation(s) do you want the callback function to be called?
-        ///
-        /// Usage example:
-        /// \code
-        /// void function(const Callback& callback) {}
-        /// widget->bindCallbackEx(function, tgui::Widget::Focus);
-        /// \endcode
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void bindCallbackEx(std::function<void(const Callback&)> func, unsigned int trigger);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Bind a function to one or more specific callback trigger(s).
-        ///
-        /// \param func      Member function with a constant reference to a Callback widget as parameter.
-        /// \param classPtr  Pointer to the widget of the class.
-        /// \param trigger   In which situation(s) do you want the callback function to be called?
-        ///
-        /// Usage example:
-        /// \code
-        /// class myClass {
-        ///     void function(const Callback& callback) {};
-        /// } myObj;
-        /// widget->bindCallbackEx(&myClass::function, &myObj, tgui::Widget::Focus);
-        /// \endcode
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        template <typename T>
-        void bindCallbackEx(void (T::*func)(const Callback&), T* const classPtr, unsigned int trigger)
-        {
-            mapCallback(std::bind(func, classPtr, std::ref(m_Callback)), trigger);
-        }
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Bind one or more specific callback trigger(s) to the parent widget.
-        ///
-        /// \param trigger  In which situation(s) do you want the widget to alert its parent about a callback?
-        ///
-        /// The widget will tell its parent about the callback and you will receive the callback through the parent widget.
-        /// If the callback reaches the window, then you will later have to poll the callbacks from this window.
-        ///
-        /// Usage example:
-        /// \code
-        /// widget->bindCallback(tgui::Widget::Focus);
-        /// \endcode
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void bindCallback(unsigned int trigger);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Unbind all callback function bound to the given trigger.
-        ///
-        /// \param trigger  In which situation(s) do you no longer want to retreive callback?
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void unbindCallback(unsigned int trigger);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Unbind all callback functions bound to any callback.
-        ///
-        /// After calling this function, the widget will no longer send any callback.
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void unbindAllCallback();
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    protected:
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Map the callback function to the needed trigger(s).
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void mapCallback(const std::function<void()>& function, unsigned int trigger);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    protected:
-
-        std::map<unsigned int, std::list<std::function<void()>>> m_CallbackFunctions;
-
-        Callback m_Callback;
-
-
-        template <class T>
-        friend class SharedWidgetPtr;
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    };
-
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }

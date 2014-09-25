@@ -39,17 +39,15 @@
 #include <TGUI/Slider.hpp>
 #include <TGUI/Scrollbar.hpp>
 #include <TGUI/ListBox.hpp>
-#include <TGUI/LoadingBar.hpp>
+#include <TGUI/ProgressBar.hpp>
 #include <TGUI/ComboBox.hpp>
 #include <TGUI/TextBox.hpp>
-#include <TGUI/SpriteSheet.hpp>
-#include <TGUI/AnimatedPicture.hpp>
 #include <TGUI/SpinButton.hpp>
-#include <TGUI/Slider2d.hpp>
 #include <TGUI/Tab.hpp>
 #include <TGUI/MenuBar.hpp>
 #include <TGUI/ChatBox.hpp>
 #include <TGUI/Knob.hpp>
+#include <TGUI/Tooltip.hpp>
 
 #include <TGUI/Canvas.hpp>
 #include <TGUI/Container.hpp>
@@ -59,7 +57,9 @@
 #include <TGUI/Grid.hpp>
 #include <TGUI/Gui.hpp>
 
-#include <TGUI/SharedWidgetPtr.inl>
+#include <TGUI/extra/Slider2d.hpp>
+#include <TGUI/extra/SpriteSheet.hpp>
+#include <TGUI/extra/AnimatedPicture.hpp>
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

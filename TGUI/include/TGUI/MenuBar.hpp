@@ -27,251 +27,176 @@
 #define TGUI_MENU_BAR_HPP
 
 
-#include <TGUI/Widget.hpp>
+#include <TGUI/Label.hpp>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace tgui
 {
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    class MenuBarRenderer;
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Menu bar widget
+    ///
+    /// Signals:
+    ///     - MenuItemClicked
+    ///         * Optional parameter sf::String: name of the item on which you clicked
+    ///         * Optional parameter std::vector<sf::String>: Which menu was open, followed by which item you clicked on
+    ///         * Uses Callback member 'text' (menu item name) and 'index' (index of the open menu)
+    ///
+    ///     - Inherited signals from Widget
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     class TGUI_API MenuBar : public Widget
     {
-      public:
+    public:
 
-        typedef SharedWidgetPtr<MenuBar> Ptr;
+        typedef std::shared_ptr<MenuBar> Ptr; ///< Shared widget pointer
+        typedef std::shared_ptr<const MenuBar> ConstPtr; ///< Shared constant widget pointer
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Default constructor
-        ///
+        // Default constructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         MenuBar();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Makes a copy of the widget by calling the copy constructor.
-        // This function calls new and if you use this function then you are responsible for calling delete.
+        // Virtual destructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual MenuBar* clone();
+        virtual ~MenuBar() {};
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Loads the widget.
+        /// @brief Create the menu bar
         ///
-        /// \param configFileFilename  Filename of the config file.
+        /// @param themeFileFilename  Filename of the theme file.
+        /// @param section            The section in the theme file to read.
         ///
-        /// The config file must contain a MenuBar section with the needed information.
+        /// @throw Exception when the theme file could not be opened.
+        /// @throw Exception when the theme file did not contain the requested section with the needed information.
+        /// @throw Exception when one of the images, described in the theme file, could not be loaded.
+        ///
+        /// When an empty string is passed as filename, the built-in white theme will be used.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool load(const std::string& configFileFilename);
+        static MenuBar::Ptr create(const std::string& themeFileFilename = "", const std::string& section = "MenuBar");
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the filename of the config file that was used to load the widget.
+        /// @brief Makes a copy of another menu bar
         ///
-        /// \return Filename of loaded config file.
-        ///         Empty string when no config file was loaded yet.
+        /// @param menuBar  The other menu bar
+        ///
+        /// @return The new menu bar
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const std::string& getLoadedConfigFile() const;
+        static MenuBar::Ptr copy(MenuBar::ConstPtr menuBar);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the size of the menu bar.
+        /// @brief Returns the renderer, which gives access to functions that determine how the widget is displayed
         ///
-        /// \param width  The width of the menu bar.
-        /// \param height  The height of the menu bar.
-        ///
-        /// By default the height is 20 pixels.
+        /// @return Reference to the renderer
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setSize(float width, float height);
+        std::shared_ptr<MenuBarRenderer> getRenderer() const
+        {
+            return std::static_pointer_cast<MenuBarRenderer>(m_renderer);
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the size of the menu bar.
+        /// @brief Set the position of the widget
         ///
-        /// \return Size of the menu bar
+        /// This function completely overwrites the previous position.
+        /// See the move function to apply an offset based on the previous position instead.
+        /// The default position of a transformable widget is (0, 0).
         ///
-        /// By default, the menu bar has the same width as the window.
-        /// The height used by default is the height of the background image(s).
+        /// @param position  New position
+        ///
+        /// @see move, getPosition
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual sf::Vector2f getSize() const;
+        virtual void setPosition(const Layout& position) override;
+        using Transformable::setPosition;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Adds a new menu.
+        /// @brief Changes the size of the menu bar.
         ///
-        /// \param text  The text written on the menu
+        /// @param size  The new size of the menu bar.
+        ///
+        /// By default, the menu bar has the same width as the window and the height is 20 pixels.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void setSize(const Layout& size) override;
+        using Transformable::setSize;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Adds a new menu.
+        ///
+        /// @param text  The text written on the menu
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void addMenu(const sf::String& text);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Adds a new menu item.
+        /// @brief Adds a new menu item.
         ///
-        /// \param menu  The name of the menu to which the menu item will be added
-        /// \param text  The text written on this menu item
+        /// @param menu  The name of the menu to which the menu item will be added
+        /// @param text  The text written on this menu item
         ///
-        /// \return True when the item was added, false when \a menu was not found.
+        /// @return True when the item was added, false when menu was not found.
         ///
-        /// \code
+        /// @code
         /// menuBar->addMenu("File");
         /// menuBar->addMenuItem("File", "Load");
         /// menuBar->addMenuItem("File", "Save");
-        /// \endcode
+        /// @endcode
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool addMenuItem(const sf::String& menu, const sf::String& text);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Removes a menu.
+        /// @brief Removes a menu.
         ///
         /// Any menu items that belong to this menu will be removed as well.
         ///
-        /// \param menu  The name of the menu to remove
+        /// @param menu  The name of the menu to remove
         ///
-        /// \return True when the menu was removed, false when \a menu was not found.
+        /// @return True when the menu was removed, false when menu was not found.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool removeMenu(const sf::String& menu);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Removes all menus.
+        /// @brief Removes all menus.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void removeAllMenus();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Removes a menu item.
+        /// @brief Removes a menu item.
         ///
-        /// \param menu      The name of the menu in which the menu item is located
-        /// \param menuItem  The name of the menu item to remove
+        /// @param menu      The name of the menu in which the menu item is located
+        /// @param menuItem  The name of the menu item to remove
         ///
-        /// \return True when the item was removed, false when \a menu or \a menuItem was not found.
+        /// @return True when the item was removed, false when menu or menuItem was not found.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool removeMenuItem(const sf::String& menu, const sf::String& menuItem);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the colors used in the menu bar.
+        /// @brief Changes the character size of the text.
         ///
-        /// \param backgroundColor          The color of the background of the menu bar
-        /// \param textColor                The color of the text
-        /// \param selectedBackgroundColor  The color of the background of the selected item
-        /// \param selectedTextColor        The color of the text when it is selected
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void changeColors(const sf::Color& backgroundColor         = sf::Color::White,
-                          const sf::Color& textColor               = sf::Color::Black,
-                          const sf::Color& selectedBackgroundColor = sf::Color(50, 100, 200),
-                          const sf::Color& selectedTextColor       = sf::Color::White);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the background color that will be used inside the menu bar.
-        ///
-        /// \param backgroundColor  The color of the background of the menu bar
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setBackgroundColor(const sf::Color& backgroundColor);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the text color that will be used inside the menu bar.
-        ///
-        /// \param textColor  The color of the text
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setTextColor(const sf::Color& textColor);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the background color of the selected text that will be used inside the menu bar.
-        ///
-        /// \param selectedBackgroundColor  The color of the background of the selected item
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setSelectedBackgroundColor(const sf::Color& selectedBackgroundColor);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the text color of the selected text that will be used inside the menu bar.
-        ///
-        /// \param selectedTextColor  The color of the text when it is selected
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setSelectedTextColor(const sf::Color& selectedTextColor);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Get the background color that is currently being used inside the menu bar.
-        ///
-        /// \return The color of the background of the menu bar
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Color& getBackgroundColor() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Get the text color that is currently being used inside the menu bar.
-        ///
-        /// \return The color of the text
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Color& getTextColor() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Get the background color of the selected text that is currently being used inside the menu bar.
-        ///
-        /// \return The color of the background of the selected item
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Color& getSelectedBackgroundColor() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Get the text color of the selected text that is currently being used inside the menu bar.
-        ///
-        /// \return The color of the text when it is selected
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Color& getSelectedTextColor() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the font used in the menu bar.
-        ///
-        /// When you don't call this function then the global font will be use.
-        /// This global font can be changed with the setGlobalFont function from the parent.
-        ///
-        /// \param font  The new font.
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setTextFont(const sf::Font& font);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the font that is used in the menu bar.
-        ///
-        /// \return  Pointer to the font that is currently being used.
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Font* getTextFont() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the character size of the text.
-        ///
-        /// \param size  The new size of the text.
+        /// @param size  The new size of the text.
         ///              If the size is 0 (default) then the text will be scaled to fit in the menu bar.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -279,163 +204,322 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the character size of the text.
+        /// @brief Returns the character size of the text.
         ///
-        /// \return The text size.
+        /// @return The text size.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int getTextSize() const;
+        unsigned int getTextSize() const
+        {
+            return m_textSize;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the distance between the text and the side of the menu item.
+        /// @brief Changes the minimum width of the submenus.
         ///
-        /// \param distanceToSide  distance between the text and the side of the menu item
+        /// When a submenu is displayed, the width will be either this or the width of the longest text in the submenu.
+        /// The default minimum width is 125 pixels.
+        ///
+        /// @param minimumWidth  minimum width of the submenus
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setMinimumSubMenuWidth(float minimumWidth)
+        {
+            m_minimumSubMenuWidth = minimumWidth;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns the distance between the text and the side of the menu item.
+        ///
+        /// @return minimum width of the submenus
+        ///
+        /// @see setMinimumSubMenuWidth
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        float getMinimumSubMenuWidth() const
+        {
+            return m_minimumSubMenuWidth;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual bool mouseOnWidget(float x, float y) override;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void leftMousePressed(float x, float y) override;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void leftMouseReleased(float x, float y) override;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void mouseMoved(float x, float y) override;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void mouseNoLongerDown() override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // This function is called when the mouse leaves the widget. If requested, a callback will be send.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void mouseLeftWidget() override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Closes any menu that might be open
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void closeVisibleMenu();
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    protected:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // This function is called when the widget is added to a container.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void initialize(Container *const container) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Makes a copy of the widget
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual Widget::Ptr clone() override
+        {
+            return std::make_shared<MenuBar>(*this);
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Draws the widget on the render target.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    protected:
+
+        struct Menu
+        {
+            Label text;
+            std::vector<Label> menuItems;
+            int selectedMenuItem = -1;
+        };
+
+        std::vector<Menu> m_menus;
+
+        int m_visibleMenu = -1;
+
+        unsigned int m_textSize = 0;
+
+        float m_minimumSubMenuWidth = 125;
+
+        friend class MenuBarRenderer;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    };
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class MenuBarRenderer : public WidgetRenderer
+    {
+    public:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Constructor
+        ///
+        /// @param menuBar  The menu bar that is connected to the renderer
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        MenuBarRenderer(MenuBar* menuBar) : m_menuBar{menuBar} {}
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Dynamically change a property of the renderer, without even knowing the type of the widget.
+        ///
+        /// This function should only be used when you don't know the type of the widget.
+        /// Otherwise you can make a direct function call to make the wanted change.
+        ///
+        /// @param property  The property that you would like to change
+        /// @param value     The new value that you like to assign to the property
+        /// @param rootPath  Path that should be placed in front of any resource filename
+        ///
+        /// @throw Exception when the property doesn't exist for this widget.
+        /// @throw Exception when the value is invalid for this property.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void setProperty(std::string property, const std::string& value, const std::string& rootPath = getResourcePath()) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the background color that will be used inside the menu bar.
+        ///
+        /// @param backgroundColor  The color of the background of the menu bar
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setBackgroundColor(const sf::Color& backgroundColor);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the text color that will be used inside the menu bar.
+        ///
+        /// @param textColor  The color of the text
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTextColor(const sf::Color& textColor);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the background color of the selected text that will be used inside the menu bar.
+        ///
+        /// @param selectedBackgroundColor  The color of the background of the selected item
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setSelectedBackgroundColor(const sf::Color& selectedBackgroundColor);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the text color of the selected text that will be used inside the menu bar.
+        ///
+        /// @param selectedTextColor  The color of the text when it is selected
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setSelectedTextColor(const sf::Color& selectedTextColor);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the font used in the menu bar.
+        ///
+        /// When you don't call this function then the global font will be use.
+        /// This global font can be changed with the setGlobalFont function from the parent.
+        ///
+        /// @param font  The new font.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTextFont(std::shared_ptr<sf::Font> font);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the distance between the text and the side of the menu item.
+        ///
+        /// @param distanceToSide  distance between the text and the side of the menu item
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void setDistanceToSide(unsigned int distanceToSide);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the distance between the text and the side of the menu item.
+        /// @brief Changes the color of the borders that are optionally drawn around the menu items.
         ///
-        /// \return distance between the text and the side of the menu item
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int getDistanceToSide() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the minimum width of the submenus.
-        ///
-        /// When a submenu is displayed, the width will be either this or the width of the longest text in the submenu.
-        /// The default minimum width is 125 pixels.
-        ///
-        /// \param minimumWidth  minimum width of the submenus
+        /// @param color  New border color
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setMinimumSubMenuWidth(unsigned int minimumWidth);
+        void setBorderColor(const sf::Color& color);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the distance between the text and the side of the menu item.
+        /// @brief Change the image that is used to fill the entire menu bar
         ///
-        /// \return minimum width of the submenus
+        /// Pass an empty string to unset the image.
         ///
-        /// \see setMinimumSubMenuWidth
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int getMinimumSubMenuWidth() const;
+        void setBackgroundImage(const std::string& filename,
+                                const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                bool repeated = false);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @brief Change the image that is used as background for every menu item
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool mouseOnWidget(float x, float y);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void leftMousePressed(float x, float y);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void leftMouseReleased(float x, float y);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void mouseMoved(float x, float y);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void mouseNoLongerDown();
+        void setItemBackgroundImage(const std::string& filename,
+                                    const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                    const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                    bool repeated = false);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // This function is a (slow) way to set properties on the widget, no matter what type it is.
-        // When the requested property doesn't exist in the widget then the functions will return false.
+        /// @brief Change the image that is used as background of the selected menu item
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool setProperty(std::string property, const std::string& value);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // This function is a (slow) way to get properties of the widget, no matter what type it is.
-        // When the requested property doesn't exist in the widget then the functions will return false.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool getProperty(std::string property, std::string& value) const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // Returns a list of all properties that can be used in setProperty and getProperty.
-        // The second value in the pair is the type of the property (e.g. int, uint, string, ...).
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::list< std::pair<std::string, std::string> > getPropertyList() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // This function is called when the widget is added to a container.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void initialize(Container *const container);
+        void setSelectedItemBackgroundImage(const std::string& filename,
+                                            const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                            const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                            bool repeated = false);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Draws the widget on the render target.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      public:
+    private:
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// Defines specific triggers to MenuBar.
+        // Makes a copy of the renderer
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        enum MenuBarCallbacks
-        {
-            MenuItemClicked = WidgetCallbacksCount * 1,         ///< A menu item was clicked
-            AllMenuBarCallbacks = WidgetCallbacksCount * 2 - 1, ///< All triggers defined in MenuBar and its base classes
-            MenuBarCallbacksCount = WidgetCallbacksCount * 2
-        };
+        virtual std::shared_ptr<WidgetRenderer> clone(Widget* widget) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
 
-        struct Menu
-        {
-            sf::Text text;
-            std::vector<sf::Text> menuItems;
-            int selectedMenuItem;
-        };
+        MenuBarRenderer(const MenuBarRenderer&) = default;
+        MenuBarRenderer& operator=(const MenuBarRenderer&) = delete;
 
-        std::string m_LoadedConfigFile;
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    protected:
 
-        std::vector<Menu> m_Menus;
+        MenuBar*  m_menuBar;
 
-        int m_VisibleMenu;
+        float     m_distanceToSide = 4;
 
-        const sf::Font* m_TextFont;
+        sf::Color m_textColor               = {  0,   0,   0};
+        sf::Color m_selectedTextColor       = {255, 255, 255};
 
-        sf::Vector2f m_Size;
+        sf::Color m_backgroundColor         = {255, 255, 255};
+        sf::Color m_selectedBackgroundColor = {  0, 110, 255};
 
-        unsigned int m_TextSize;
+        Texture   m_backgroundTexture;
+        Texture   m_itemBackgroundTexture;
+        Texture   m_selectedItemBackgroundTexture;
 
-        unsigned int m_DistanceToSide;
-
-        unsigned int m_MinimumSubMenuWidth;
-
-        sf::Color m_BackgroundColor;
-        sf::Color m_TextColor;
-        sf::Color m_SelectedBackgroundColor;
-        sf::Color m_SelectedTextColor;
+        friend class MenuBar;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     };

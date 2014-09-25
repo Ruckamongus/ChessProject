@@ -33,116 +33,142 @@
 
 namespace tgui
 {
+    class ComboBoxRenderer;
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    class TGUI_API ComboBox : public Widget, public WidgetBorders
+    /// @brief Combo box widget
+    ///
+    /// Signals:
+    ///     - ItemSelected (a new item was selected)
+    ///         * Optional parameter sf::String: Name of the item (the text that is visible)
+    ///         * Optional parameters sf::String and sf::String: Name and id of the item
+    ///         * Uses Callback member 'text' and 'itemId'
+    ///
+    ///     - Inherited signals from Widget
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    class TGUI_API ComboBox : public Widget
     {
-      public:
+    public:
 
-        typedef SharedWidgetPtr<ComboBox> Ptr;
+        typedef std::shared_ptr<ComboBox> Ptr; ///< Shared widget pointer
+        typedef std::shared_ptr<const ComboBox> ConstPtr; ///< Shared constant widget pointer
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Default constructor
-        ///
+        // Default constructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ComboBox();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Copy constructor
+        /// @brief Copy constructor
         ///
-        /// \param copy  Instance to copy
+        /// @param copy  Instance to copy
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ComboBox(const ComboBox& copy);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Destructor
-        ///
+        // Virtual destructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ~ComboBox();
+        virtual ~ComboBox() {}
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Overload of assignment operator
+        /// @brief Overload of assignment operator
         ///
-        /// \param right  Instance to assign
+        /// @param right  Instance to assign
         ///
-        /// \return Reference to itself
+        /// @return Reference to itself
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ComboBox& operator= (const ComboBox& right);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // Makes a copy of the widget by calling the copy constructor.
-        // This function calls new and if you use this function then you are responsible for calling delete.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ComboBox* clone();
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Loads the widget.
+        /// @brief Create the combo box
         ///
-        /// \param configFileFilename  Filename of the config file.
+        /// @param themeFileFilename  Filename of the theme file.
+        /// @param section            The section in the theme file to read.
         ///
-        /// The config file must contain a ComboBox section with the needed information.
+        /// @throw Exception when the theme file could not be opened.
+        /// @throw Exception when the theme file did not contain the requested section with the needed information.
+        /// @throw Exception when one of the images, described in the theme file, could not be loaded.
+        ///
+        /// When an empty string is passed as filename, the built-in white theme will be used.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool load(const std::string& configFileFilename);
+        static ComboBox::Ptr create(const std::string& themeFileFilename = "", const std::string& section = "ComboBox");
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the filename of the config file that was used to load the widget.
+        /// @brief Makes a copy of another combo box
         ///
-        /// \return Filename of loaded config file.
-        ///         Empty string when no config file was loaded yet.
+        /// @param comboBox  The other combo box
+        ///
+        /// @return The new combo box
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const std::string& getLoadedConfigFile() const;
+        static ComboBox::Ptr copy(ComboBox::ConstPtr comboBox);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the size of the combo box.
+        /// @brief Returns the renderer, which gives access to functions that determine how the widget is displayed
+        ///
+        /// @return Reference to the renderer
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        std::shared_ptr<ComboBoxRenderer> getRenderer() const
+        {
+            return std::static_pointer_cast<ComboBoxRenderer>(m_renderer);
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the position of the widget
+        ///
+        /// This function completely overwrites the previous position.
+        /// See the move function to apply an offset based on the previous position instead.
+        /// The default position of a transformable widget is (0, 0).
+        ///
+        /// @param position  New position
+        ///
+        /// @see move, getPosition
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void setPosition(const Layout& position) override;
+        using Transformable::setPosition;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the size of the combo box.
         ///
         /// This size does not include the borders.
         ///
-        /// \param width   The new width of the combo box
-        /// \param height  The new height of the combo box
+        /// @param size   The new size of the combo box
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setSize(float width, float height);
+        void setSize(const Layout& size) override;
+        using Transformable::setSize;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the size of the combo box.
-        ///
-        /// The size returned by this function does not include the borders.
-        ///
-        /// \return The size of the combo box
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual sf::Vector2f getSize() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the full size of the combo box.
+        /// @brief Returns the full size of the combo box.
         ///
         /// The size returned by this function includes the borders.
         ///
-        /// \return The full size of the combo box
+        /// @return The full size of the combo box
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual sf::Vector2f getFullSize() const;
+        virtual sf::Vector2f getFullSize() const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the number of items that are displayed in the list.
+        /// @brief Changes the number of items that are displayed in the list.
         ///
-        /// \param nrOfItemsInListToDisplay  The maximum number of items to display when the list of items is shown.
+        /// @param nrOfItemsInListToDisplay  The maximum number of items to display when the list of items is shown.
         ///
         /// When there is no scrollbar then this is the maximum number of items.
         /// If there is one, then it will only become visible when there are more items than this number.
@@ -154,9 +180,9 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the number of items that are displayed in the list.
+        /// @brief Returns the number of items that are displayed in the list.
         ///
-        /// \return The maximum number of items to display when the list of items is shown.
+        /// @return The maximum number of items to display when the list of items is shown.
         ///
         /// When there is no scrollbar then this is the maximum number of items.
         /// If there is one, then it will only become visible when there are more items than this number.
@@ -164,205 +190,75 @@ namespace tgui
         /// When set to zero then all items are shown (then there will never be a scrollbar).
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int getItemsToDisplay() const;
+        unsigned int getItemsToDisplay() const
+        {
+            return m_nrOfItemsToDisplay;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the colors that are used in the combo box.
+        /// @brief Adds an item to the list, so that it can be selected later.
         ///
-        /// \param backgroundColor          The color of the background of the combo box
-        /// \param textColor                The color of the text
-        /// \param selectedBackgroundColor  The color of the background of the selected item in the list
-        /// \param selectedTextColor        The color of the text when it is selected in the list
-        /// \param borderColor              The color of the borders
+        /// @param itemName  The name of the item you want to add (this is the text that will be displayed inside the combo box)
+        /// @param id        Optional unique id given to this item for the purpose to later identifying this item.
         ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void changeColors(const sf::Color& backgroundColor         = sf::Color::White,
-                          const sf::Color& textColor               = sf::Color::Black,
-                          const sf::Color& selectedBackgroundColor = sf::Color(50, 100, 200),
-                          const sf::Color& selectedTextColor       = sf::Color::White,
-                          const sf::Color& borderColor             = sf::Color::Black);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the background color that will be used inside the combo box.
+        /// @return
+        ///         - true when the item when it was successfully added
+        ///         - false when the combo box wasn't loaded correctly
+        ///         - false when the list is full (you have set a maximum item limit and you are trying to add more items)
+        ///         - false when there is no scrollbar and you try to have more items than the number of items to display
         ///
-        /// \param backgroundColor  The color of the background of the combo box
+        /// @see setMaximumItems
+        /// @see setItemsToDisplay
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setBackgroundColor(const sf::Color& backgroundColor);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the text color that will be used inside the combo box.
-        ///
-        /// \param textColor  The color of the text
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setTextColor(const sf::Color& textColor);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the background color of the selected text that will be used inside the combo box.
-        ///
-        /// \param selectedBackgroundColor  The color of the background of the selected item in the list
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setSelectedBackgroundColor(const sf::Color& selectedBackgroundColor);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the text color of the selected text that will be used inside the combo box.
-        ///
-        /// \param selectedTextColor  The color of the text when it is selected in the list
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setSelectedTextColor(const sf::Color& selectedTextColor);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the border color text that will be used inside the combo box.
-        ///
-        /// \param borderColor  The color of the borders
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setBorderColor(const sf::Color& borderColor);
+        bool addItem(const sf::String& itemName, const sf::String& id = "");
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Get the background color that is currently being used inside the combo box.
-        ///
-        /// \return The color of the background of the combo box
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Color& getBackgroundColor() const;
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Get the text color that is currently being used inside the combo box.
-        ///
-        /// \return The color of the text
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Color& getTextColor() const;
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Get the background color of the selected text that is currently being used inside the combo box.
-        ///
-        /// \return  The color of the background of the selected item in the list
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Color& getSelectedBackgroundColor() const;
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Get the text color of the selected text that is currently being used inside the combo box.
-        ///
-        /// \return The color of the text when it is selected in the list
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Color& getSelectedTextColor() const;
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Get the border color that is currently being used inside the combo box.
-        ///
-        /// \return The color of the borders
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Color& getBorderColor() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the text font.
-        ///
-        /// When you don't call this function then the global font will be use.
-        /// This global font can be changed with the setGlobalFont function from the parent.
-        ///
-        /// \param font  The new font.
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setTextFont(const sf::Font& font);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the text font.
-        ///
-        /// \return  Pointer to the font that is currently being used.
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Font* getTextFont() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the size of the borders.
-        ///
-        /// \param leftBorder    The width of the left border
-        /// \param topBorder     The height of the top border
-        /// \param rightBorder   The width of the right border
-        /// \param bottomBorder  The height of the bottom border
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setBorders(unsigned int leftBorder   = 0,
-                                unsigned int topBorder    = 0,
-                                unsigned int rightBorder  = 0,
-                                unsigned int bottomBorder = 0);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Adds an item to the list, so that it can be selected later.
-        ///
-        /// \param itemName  The name of the item you want to add (this is the text that will be displayed inside the combo box)
-        /// \param id        Optional id given to this item for the purpose to later identifying this item.
-        ///
-        /// \return
-        ///         -  The index of the item when it was successfully added.
-        ///         -  -1 when the combo box wasn't loaded correctly
-        ///         -  -1 when the list is full (you have set a maximum item limit and you are trying to add more items)
-        ///         -  -1 when there is no scrollbar and you try to have more items than the number of items to display
-        ///
-        /// \warning The index returned by this function may no longer correct when an item is removed.
-        ///
-        /// \see setMaximumItems
-        /// \see setItemsToDisplay
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        int addItem(const sf::String& itemName, int id = 0);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Selects an item from the list.
+        /// @brief Selects an item from the list.
         ///
         /// When adding items to the combo box with the addItem function, none of them will be selected.
         /// If you don't want the combo box to stay empty until the user selects something, but you want a default item instead,
         /// then you can use this function to select an item.
-        /// The first item that matches the name will be selected.
         ///
-        /// \param itemName  The item you want to select
+        /// @param itemName  The item you want to select
         ///
-        /// \return
+        /// In case the names are not unique, the first item with that name will be selected.
+        ///
+        /// @return
         ///         - true on success
         ///         - false when none of the items matches the name
         ///
-        /// \see setSelectedItem(unsigned int)
+        /// @see setSelectedItemById
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool setSelectedItem(const sf::String& itemName);
 
+
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Selects an item from the list.
+        /// @brief Selects an item from the list.
         ///
         /// When adding items to the combo box with the addItem function, none of them will be selected.
         /// If you don't want the combo box to stay empty until the user selects something, but you want a default item instead,
         /// then you can use this function to select an item.
-        /// If the index is -1 then the \a deselectItem function will be called.
         ///
-        /// \param index  The index of the item
+        /// @param id  Unique id passed to addItem
         ///
-        /// \return
+        /// In case the id would not be unique, the first item with that id will be selected.
+        ///
+        /// @return
         ///         - true on success
-        ///         - false when the index was too high
+        ///         - false when none of the items has the given id
         ///
-        /// \see setSelectedItem(sf::String)
+        /// @see setSelectedItem
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool setSelectedItem(int index);
+        bool setSelectedItemById(const sf::String& id);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Deselects the selected item.
+        /// @brief Deselects the selected item.
         ///
         /// The combo box will be empty after this function is called.
         ///
@@ -371,176 +267,127 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Removes an item from the list with a given index.
+        /// @brief Removes the item from the list with the given name.
         ///
-        /// \param index  The index of the item to remove
+        /// @param itemName  The item to remove
         ///
-        /// \return
+        /// In case the names are not unique, only the first item with that name will be removed.
+        ///
+        /// @return
         ///        - true when the item was removed
-        ///        - false when the index was too high
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool removeItem(unsigned int index);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Removes the first item from the list with a given name.
-        ///
-        /// \param itemName  The item to remove
-        ///
-        /// \return
-        ///        - true when the item was removed
-        ///        - false when the name didn't match any item
+        ///        - false when the name did not match any item
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool removeItem(const sf::String& itemName);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Removes all items that were added with the given id.
+        /// @brief Removes the item that were added with the given id.
         ///
-        /// \param id  Id that was given to the addItem function.
+        /// @param id  Id that was given to the addItem function.
         ///
-        /// \return Amount of items that were removed.
+        /// In case the id is not unique, only the first item with that id will be removed.
+        ///
+        /// @return
+        ///        - true when the item was removed
+        ///        - false when there was no item with the given id
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int removeItemsById(int id);
+        bool removeItemById(const sf::String& id);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Removes all items from the list.
+        /// @brief Removes all items from the list.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void removeAllItems();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the item name of the item with the given index.
+        /// @brief Returns the item name of the item with the given id.
         ///
-        /// \param index  The index of the item
+        /// @param id  The id of the item that was given to it when it was added
         ///
-        /// \return The requested item.
-        ///         The string will be empty when the index was too high.
+        /// In case the id is not unique, the first item with that id will be returned.
         ///
-        /// \see getItemIndex
+        /// @return The requested item, or an empty string when no item matches the id
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        sf::String getItem(unsigned int index) const;
+        sf::String getItemById(const sf::String& id) const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the index of the first item with the given name.
+        /// @brief Returns the currently selected item.
         ///
-        /// \param itemName  The name of the item
-        ///
-        /// \return The index of the item that matches the name.
-        ///         If none of the items matches then the returned index will be -1.
-        ///
-        /// \warning This index may become wrong when an item is removed from the list.
-        ///
-        /// \see getItem
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        int getItemIndex(const sf::String& itemName) const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the list that contains all the items.
-        ///
-        /// \return The vector of strings
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        std::vector<sf::String>& getItems() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the currently selected item.
-        ///
-        /// \return The selected item.
+        /// @return The selected item.
         ///         When no item was selected then this function will return an empty string.
         ///
-        /// \see getSelectedItemIndex
-        ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        sf::String getSelectedItem() const;
+        sf::String getSelectedItem() const
+        {
+            return m_listBox->getSelectedItem();
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Get the index of the selected item.
+        /// @brief Get the id of the selected item.
         ///
-        /// \return The index of the selected item.
-        ///         When no item was selected then this function returns -1.
-        ///
-        /// \warning This index may become wrong when an item is removed from the list.
-        ///
-        /// \see getSelectedItem
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        int getSelectedItemIndex() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Get the id of the selected item.
-        ///
-        /// \return The id of the selected item, which was the optional id passed to the addItem function.
+        /// @return The id of the selected item, which was the optional id passed to the addItem function.
         ///         When no item was selected then this function returns 0.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        int getSelectedItemId() const;
+        sf::String getSelectedItemId() const
+        {
+            return m_listBox->getSelectedItemId();
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the value of the item at the given index
+        /// @brief Changes an item with name originalValue to newValue.
         ///
-        /// \param index    The index of the value that should be changed
-        /// \param newValue The new name for that item
+        /// @param originalValue The name of the item which you want to change
+        /// @param newValue      The new name for that item
         ///
-        /// \return True when the name was changed, false when the id was too high
+        /// In case the names are not unique, only the first item with that name will be changed.
+        ///
+        /// @return
+        ///        - true when the item was changed
+        ///        - false when none of the items had the given name
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool changeItem(unsigned int index, const sf::String& newValue);
+        bool changeItem(const sf::String& originalValue, const sf::String& newValue);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes all items with originalValue to newValue.
+        /// @brief Changes the name of an item with the given id to newValue.
         ///
-        /// \param originalValue The name of the items which will change
-        /// \param newValue      The new name for these items
+        /// @param id       The unique id of the item which you want to change
+        /// @param newValue The new name for that item
         ///
-        /// \return The amount of items that were changed
+        /// In case the id is not unique, only the first item with that id will be changed.
+        ///
+        /// @return
+        ///        - true when the item was changed
+        ///        - false when none of the items had the given id
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int changeItems(const sf::String& originalValue, const sf::String& newValue);
+        bool changeItemById(const sf::String& id, const sf::String& newValue);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes all items with the given id to newValue.
+        /// @brief Returns the amount of items in the list box
         ///
-        /// \param id       The id of the items which will change
-        /// \param newValue The new name for these items
-        ///
-        /// \return The amount of items that were changed
+        /// @return Number of items inside the list box
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int changeItemsById(int id, const sf::String& newValue);
+        unsigned int getItemCount()
+        {
+            return m_listBox->getItemCount();
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the scrollbar that is displayed next to the list.
-        ///
-        /// \param scrollbarConfigFileFilename  Filename of the config file.
-        ///                                     The config file must contain a Scrollbar section with the needed information.
-        ///
-        /// \return
-        ///        - true when the scrollbar was successfully loaded
-        ///        - false when the loading of the scrollbar failed
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool setScrollbar(const std::string& scrollbarConfigFileFilename);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Removes the scrollbar.
+        /// @brief Removes the scrollbar.
         ///
         /// When there are too many items to fit in the list then the items will be removed.
         ///
@@ -549,9 +396,9 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the maximum items that the combo box can contain.
+        /// @brief Changes the maximum items that the combo box can contain.
         ///
-        /// \param maximumItems  The maximum items inside the combo box.
+        /// @param maximumItems  The maximum items inside the combo box.
         ///                      When the maximum is set to 0 then the limit will be disabled.
         ///
         /// If no scrollbar was loaded then there is always a limitation because there will be a limited space for the items.
@@ -561,9 +408,9 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the maximum items that the combo box can contain.
+        /// @brief Returns the maximum items that the combo box can contain.
         ///
-        /// \return The maximum items inside the list.
+        /// @return The maximum items inside the list.
         ///         If the function returns 0 then there is no limit.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -571,145 +418,436 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the transparency of the widget.
+        /// @brief Changes the transparency of the widget.
         ///
-        /// \param transparency  The transparency of the widget.
+        /// @param transparency  The transparency of the widget.
         ///                      0 is completely transparent, while 255 (default) means fully opaque.
         ///
         /// Note that this will only change the transparency of the images. The parts of the widgets that use a color will not
         /// be changed. You must change them yourself by setting the alpha channel of the color.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setTransparency(unsigned char transparency);
+        virtual void setTransparency(unsigned char transparency) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool mouseOnWidget(float x, float y);
+        virtual bool mouseOnWidget(float x, float y) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void leftMousePressed(float x, float y);
+        virtual void leftMousePressed(float x, float y) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void leftMouseReleased(float x, float y);
+        virtual void leftMouseReleased(float x, float y) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void mouseWheelMoved(int delta, int x, int y);
+        virtual void mouseWheelMoved(int delta, int x, int y) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void mouseNoLongerDown();
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // This function is a (slow) way to set properties on the widget, no matter what type it is.
-        // When the requested property doesn't exist in the widget then the functions will return false.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool setProperty(std::string property, const std::string& value);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // This function is a (slow) way to get properties of the widget, no matter what type it is.
-        // When the requested property doesn't exist in the widget then the functions will return false.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool getProperty(std::string property, std::string& value) const;
+        virtual void mouseNoLongerDown() override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // Returns a list of all properties that can be used in setProperty and getProperty.
-        // The second value in the pair is the type of the property (e.g. int, uint, string, ...).
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::list< std::pair<std::string, std::string> > getPropertyList() const;
-
+    protected:
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
         // This function is called when the widget is added to a container.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void initialize(Container *const container);
+        virtual void initialize(Container *const container) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        // Makes a copy of the widget
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual Widget::Ptr clone() override
+        {
+            return std::make_shared<ComboBox>(*this);
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Shows the list of items.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void showListBox();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
         // Hides the list of items.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void hideListBox();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        // Initialize the internal list box
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void initListBox();
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Called by the internal ListBox when a different item is selected.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void newItemSelectedCallbackFunction();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
         // Called by the internal ListBox when it gets unfocused.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void listBoxUnfocusedCallbackFunction();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
         // Draws the widget on the render target.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      public:
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// Defines specific triggers to ComboBox.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        enum ComboBoxCallbacks
-        {
-            ItemSelected = WidgetCallbacksCount * 1,             ///< A new item was selected
-            AllComboBoxCallbacks = WidgetCallbacksCount * 2 - 1, ///< All triggers defined in ComboBox and its base classes
-            ComboBoxCallbacksCount = WidgetCallbacksCount * 2
-        };
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
-
-        std::string m_LoadedConfigFile;
-
-        bool m_SeparateHoverImage;
+    protected:
 
         // The number of items to display. If there is a scrollbar then you can scroll to see the other.
         // If there is no scrollbar then this will be the maximum amount of items.
-        unsigned int m_NrOfItemsToDisplay;
+        unsigned int m_nrOfItemsToDisplay = 0;
 
         // Internally a list box is used to store all items
-        ListBox::Ptr m_ListBox;
+        ListBox::Ptr m_listBox = ListBox::create();
 
-        // The textures for the arrow image
-        Texture m_TextureArrowUpNormal;
-        Texture m_TextureArrowUpHover;
-        Texture m_TextureArrowDownNormal;
-        Texture m_TextureArrowDownHover;
+        Label m_text;
+
+        friend class ComboBoxRenderer;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    };
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class ComboBoxRenderer : public WidgetRenderer, public WidgetBorders, public WidgetPadding
+    {
+    public:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Constructor
+        ///
+        /// @param comboBox  The combo box that is connected to the renderer
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ComboBoxRenderer(ComboBox* comboBox) : m_comboBox{comboBox} {}
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Dynamically change a property of the renderer, without even knowing the type of the widget.
+        ///
+        /// This function should only be used when you don't know the type of the widget.
+        /// Otherwise you can make a direct function call to make the wanted change.
+        ///
+        /// @param property  The property that you would like to change
+        /// @param value     The new value that you like to assign to the property
+        /// @param rootPath  Path that should be placed in front of any resource filename
+        ///
+        /// @throw Exception when the property doesn't exist for this widget.
+        /// @throw Exception when the value is invalid for this property.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void setProperty(std::string property, const std::string& value, const std::string& rootPath = getResourcePath()) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the background image
+        ///
+        /// When this image is set, the background color property will be ignored.
+        ///
+        /// Pass an empty string to unset the image, in this case the background color property will be used again.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setBackgroundImage(const std::string& filename,
+                                const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the arrow up image
+        ///
+        /// When this image and the down image are set, the arrow color properties will be ignored.
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowUpNormalImage(const std::string& filename,
+                                   const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                   const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                   bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the arrow down image
+        ///
+        /// When this image and the up image are set, the arrow color properties will be ignored.
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowDownNormalImage(const std::string& filename,
+                                     const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                     const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                     bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the arrow up image for when the mouse is on top of the combo box
+        ///
+        /// This image is ignored when the up and down normal images are not set.
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowUpHoverImage(const std::string& filename,
+                                  const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                  const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                  bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the arrow down image for when the mouse is on top of the combo box
+        ///
+        /// This image is ignored when the up and down normal images are not set.
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowDownHoverImage(const std::string& filename,
+                                    const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                    const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                    bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the background color that will be used inside the combo box.
+        ///
+        /// @param backgroundColor  The color of the background of the combo box
+        ///
+        /// This color will be ignored when a background image was set.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setBackgroundColor(const sf::Color& backgroundColor);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the background color of the arrow that will be used inside the combo box.
+        ///
+        /// @param color  The color of the arrow background of the combo box
+        ///
+        /// This will overwrite the color in both normal and hover states.
+        ///
+        /// This color will be ignored when a up and down image were loaded for the normal state.
+        ///
+        /// @see setArrowBackgroundColorNormal
+        /// @see setArrowBackgroundColorHover
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowBackgroundColor(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the background color of the arrow when the mouse is not on top of the combo box
+        ///
+        /// @param color  The color of the arrow background in normal state
+        ///
+        /// This color will be ignored when a up and down image were loaded for the normal state.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowBackgroundColorNormal(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the background color of the arrow when the mouse is standing on top of the combo box
+        ///
+        /// @param color  The color of the arrow background in hover state
+        ///
+        /// This color will be ignored when a up and down image were loaded for the normal state.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowBackgroundColorHover(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the color of the arrow that will be used inside the combo box.
+        ///
+        /// @param color  The color of the arrow of the combo box
+        ///
+        /// This will overwrite the color in both normal and hover states.
+        ///
+        /// This color will be ignored when a up and down image were loaded for the normal state.
+        ///
+        /// @see setArrowColorNormal
+        /// @see setArrowColorHover
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowColor(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the color of the arrow when the mouse is not on top of the combo box
+        ///
+        /// @param color  The color of the arrow in normal state
+        ///
+        /// This color will be ignored when a up and down image were loaded for the normal state.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowColorNormal(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the color of the arrow when the mouse is standing on top of the combo box
+        ///
+        /// @param color  The color of the arrow in hover state
+        ///
+        /// This color will be ignored when a up and down image were loaded for the normal state.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowColorHover(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the text color that will be used inside the combo box.
+        ///
+        /// @param textColor  The color of the text
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTextColor(const sf::Color& textColor);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the border color text that will be used inside the combo box.
+        ///
+        /// @param borderColor  The color of the borders
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setBorderColor(const sf::Color& borderColor);
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the font of the items.
+        ///
+        /// When you don't call this function then the global font will be use.
+        /// This global font can be changed with the setGlobalFont function from the parent.
+        ///
+        /// @param font  The new font.
+        ///
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTextFont(std::shared_ptr<sf::Font> font);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the size of the borders.
+        ///
+        /// @param borders  The size of the borders
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void setBorders(const Borders& borders) override;
+        using WidgetBorders::setBorders;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the padding of the list box.
+        ///
+        /// This padding will be scaled together with the background image.
+        /// If there is no background image, or when 9-slice scaling is used, the padding will be exactly what you pass here.
+        ///
+        /// @param padding  The padding width and height
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void setPadding(const Padding& padding) override;
+        using WidgetPadding::setPadding;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns the renderer of the list box
+        ///
+        /// @return The list box used to display all the items
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        std::shared_ptr<ListBoxRenderer> getListBox() const;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Draws the widget on the render target.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Returns the padding, which is possibly scaled with the background image.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Padding getScaledPadding() const;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Makes a copy of the renderer
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual std::shared_ptr<WidgetRenderer> clone(Widget* widget) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ComboBoxRenderer(const ComboBoxRenderer&) = default;
+        ComboBoxRenderer& operator=(const ComboBoxRenderer&) = delete;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    protected:
+
+        ComboBox* m_comboBox;
+
+        Texture   m_backgroundTexture;
+
+        Texture   m_textureArrowUpNormal;
+        Texture   m_textureArrowUpHover;
+        Texture   m_textureArrowDownNormal;
+        Texture   m_textureArrowDownHover;
+
+        sf::Color m_arrowBackgroundColorNormal = {245, 245, 245};
+        sf::Color m_arrowBackgroundColorHover  = {255, 255, 255};
+        sf::Color m_arrowColorNormal           = { 60,  60,  60};
+        sf::Color m_arrowColorHover            = {  0,   0,   0};
+
+        friend class ComboBox;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     };

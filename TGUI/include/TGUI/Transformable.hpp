@@ -27,6 +27,7 @@
 
 
 #include <TGUI/Global.hpp>
+#include <TGUI/Layout.hpp>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,176 +35,261 @@ namespace tgui
 {
     class TGUI_API Transformable
     {
-      public:
+    public:
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Default constructor
-        ///
+        // Default constructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Transformable();
+        Transformable() = default;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Copy constructor
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Transformable(const Transformable& copy);
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Copy assignment operator
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Transformable& operator=(const Transformable& right);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Destructor
-        ///
+        /// @brief Virtual destructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ~Transformable();
+        virtual ~Transformable() {}
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the position of the widget
+        /// @brief set the position of the widget
         ///
         /// This function completely overwrites the previous position.
         /// See the move function to apply an offset based on the previous position instead.
         /// The default position of a transformable widget is (0, 0).
         ///
-        /// \param x X coordinate of the new position
-        /// \param y Y coordinate of the new position
+        /// @param position New position
         ///
-        /// \see move, getPosition
+        /// @see move, getPosition
+        ///
+        /// Usage examples:
+        /// @code
+        /// // Place the widget on an exact position
+        /// widget->setPosition({40, 30});
+        ///
+        /// // Place the widget 50 pixels below another widget
+        /// widget->setPosition(otherWidget->getPosition() + sf::Vector2f{0, otherWidget->getSize().y + 50});
+        ///
+        /// // Place the widget 50 pixels below another widget and automatically move it when the other widget moves
+        /// widget->setPosition({tgui::bindLeft(otherWidget), tgui::bindBottom(otherWidget) + 50});
+        /// @endcode
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setPosition(float x, float y);
+        virtual void setPosition(const Layout& position);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief set the position of the widget
+        /// @brief set the position of the widget
         ///
         /// This function completely overwrites the previous position.
         /// See the move function to apply an offset based on the previous position instead.
         /// The default position of a transformable widget is (0, 0).
         ///
-        /// \param position New position
+        /// @param x  New x coordinate
+        /// @param y  New y coordinate
         ///
-        /// \see move, getPosition
+        /// @see move, getPosition
+        ///
+        /// Usage examples:
+        /// @code
+        /// // Place the widget on an exact position
+        /// widget->setPosition(40, 30);
+        ///
+        /// // Place the widget 50 pixels below another widget
+        /// widget->setPosition(otherWidget->getPosition().x, otherWidget->getPosition().y + otherWidget->getSize().y + 50);
+        ///
+        /// // Place the widget 50 pixels below another widget and automatically move it when the other widget moves
+        /// widget->setPosition(tgui::bindLeft(otherWidget), tgui::bindBottom(otherWidget) + 50);
+        /// @endcode
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setPosition(const sf::Vector2f& position);
+        void setPosition(const Layout1d& x, const Layout1d& y)
+        {
+            setPosition({x, y});
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief get the position of the widget
+        /// @brief get the position of the widget
         ///
-        /// \return Current position
+        /// @return Current position
         ///
-        /// \see setPosition
+        /// @see setPosition
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Vector2f& getPosition() const;
+        sf::Vector2f getPosition() const
+        {
+            return m_position.getValue();
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Move the widget by a given offset
+        /// @brief Move the widget by a given offset
         ///
         /// This function adds to the current position of the widget, unlike setPosition which overwrites it.
         /// Thus, it is equivalent to the following code:
-        /// \code
-        /// sf::Vector2f pos = widget.getPosition();
-        /// widget.setPosition(pos.x + offsetX, pos.y + offsetY);
-        /// \endcode
-        ///
-        /// \param offsetX X offset
-        /// \param offsetY Y offset
-        ///
-        /// \see setPosition
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void move(float offsetX, float offsetY);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Move the widget by a given offset
-        ///
-        /// This function adds to the current position of the widget, unlike setPosition which overwrites it.
-        /// Thus, it is equivalent to the following code:
-        /// \code
+        /// @code
         /// widget.setPosition(widget.getPosition() + offset);
-        /// \endcode
+        /// @endcode
         ///
-        /// \param offset Offset
+        /// @param offset Offset
         ///
-        /// \see setPosition
+        /// @see setPosition
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void move(const sf::Vector2f& offset);
+        void move(const Layout& offset);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the size of the widget.
+        /// @brief Move the widget by a given offset
         ///
-        /// \param width   Width of the widget
-        /// \param height  Height of the widget
+        /// This function adds to the current position of the widget, unlike setPosition which overwrites it.
+        /// Thus, it is equivalent to the following code:
+        /// @code
+        /// widget.setPosition(widget.getPosition().x + x, widget.getPosition().y + y);
+        /// @endcode
+        ///
+        /// @param x  Horizontal offset
+        /// @param x  Vertical offset
+        ///
+        /// @see setPosition
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setSize(float width, float height) = 0;
+        void move(const Layout1d& x, const Layout1d& y);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the size of the widget.
+        /// @brief Changes the size of the widget.
         ///
-        /// \return Size of the widget
+        /// @param size  Size of the widget
+        ///
+        /// Usage examples:
+        /// @code
+        /// // Give the widget an exact size
+        /// widget->setSize({40, 30});
+        ///
+        /// // Make the widget 50 pixels higher than some other widget
+        /// widget->setSize(otherWidget->getSize() + sf::Vector2f{0, 50});
+        ///
+        /// // Make the widget 50 pixels higher than some other widget and automatically resize it when the other widget resizes
+        /// widget->setSize(tgui::bindSize(otherWidget) + sf::Vector2f{0, 50});
+        /// @endcode
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual sf::Vector2f getSize() const = 0;
+        virtual void setSize(const Layout& size);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the entire size that the widget is using.
+        /// @brief Changes the size of the widget.
+        ///
+        /// @param width   Width of the widget
+        /// @param height  Height of the widget
+        ///
+        /// Usage examples:
+        /// @code
+        /// // Give the widget an exact size
+        /// widget->setSize(40, 30);
+        ///
+        /// // Make the widget 50 pixels higher than some other widget
+        /// widget->setSize(otherWidget->getSize().x, otherWidget->getSize().y + 50);
+        ///
+        /// // Make the widget 50 pixels higher than some other widget and automatically resize it when the other widget resizes
+        /// widget->setSize(tgui::bindWidth(otherWidget), tgui::bindHeight(otherWidget) + 50);
+        /// @endcode
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setSize(const Layout1d& width, const Layout1d& height)
+        {
+            setSize({width, height});
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns the size of the widget.
+        ///
+        /// @return Size of the widget
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual sf::Vector2f getSize() const
+        {
+            return m_size.getValue();
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns the entire size that the widget is using.
         ///
         /// This function will return a value equal or greater than what getSize returns.
         /// If the widget would e.g. have borders around it then this function will return the size, including these borders.
         ///
-        /// \return Full size of the widget
+        /// @return Full size of the widget
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual sf::Vector2f getFullSize() const;
+        virtual sf::Vector2f getFullSize() const
+        {
+            return getSize();
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Scale the widget
+        /// @brief Scale the widget
         ///
-        /// \param factorX  Horizontal scale factor
-        /// \param factorY  Vertical scale factor
+        /// @param factors  Scale factors
         ///
         /// This function multiplies the current size of the widget with the given scale factors.
         /// Thus, it is equivalent to the following code:
-        /// \code
-        /// widget.setSize(getSize().x * factorX, getSize().y * factorY);
-        /// \endcode
-        ///
+        /// @code
+        /// widget.setSize({getSize().x * factors.x, getSize().y * factors.y});
+        /// @endcode
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void scale(float factorX, float factorY);
+        void scale(const Layout& factors);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Scale the widget
+        /// @brief Scale the widget
         ///
-        /// \param factors  Scale factors
+        /// @param x  horizontal scale factor
+        /// @param y  vertical scale factor
         ///
         /// This function multiplies the current size of the widget with the given scale factors.
         /// Thus, it is equivalent to the following code:
-        /// \code
+        /// @code
         /// widget.setSize(getSize().x * factors.x, getSize().y * factors.y);
-        /// \endcode
+        /// @endcode
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void scale(const sf::Vector2f& factors);
+        void scale(const Layout1d& x, const Layout1d& y);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Returns the transform.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Transform& getTransform() const;
-
+    protected:
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      private:
+        // Updates the position
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void updatePosition(bool forceUpdate = true);
 
-        sf::Vector2f m_Position;
 
-        mutable bool          m_TransformNeedUpdate;
-        mutable sf::Transform m_Transform;
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Updates the size
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void updateSize(bool forceUpdate = true);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    protected:
+
+        Layout m_position;
+        Layout m_size;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     };

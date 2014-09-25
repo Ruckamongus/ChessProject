@@ -28,21 +28,35 @@
 
 
 #include <TGUI/Container.hpp>
+#include <TGUI/Button.hpp>
+#include <TGUI/Label.hpp>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace tgui
 {
-    class Button;
+    class ChildWindowRenderer;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// \brief Movable Panel with title bar.
+    /// @brief Child window widget
+    ///
+    /// Signals:
+    ///     - MousePressed (left mouse button went down on top of the child window and the window was in front of other widgets)
+    ///         * Optional parameter sf::Vector2f: Position of the mouse relative to the position of the child window
+    ///         * Uses Callback member 'mouse'
+    ///
+    ///     - Closed (Child window was closed)
+    ///         * Optional parameter ChildWindow::Ptr: shared pointer to the closed child window
+    ///
+    ///     - Inherited signals from Container
+    ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    class TGUI_API ChildWindow : public Container, public WidgetBorders
+    class TGUI_API ChildWindow : public Container
     {
-      public:
+    public:
 
-        typedef SharedWidgetPtr<ChildWindow> Ptr;
+        typedef std::shared_ptr<ChildWindow> Ptr; ///< Shared widget pointer
+        typedef std::shared_ptr<const ChildWindow> ConstPtr; ///< Shared constant widget pointer
 
 
         /// Title alignments, possible options for the setTitleAlignment function
@@ -60,286 +74,180 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Default constructor
-        ///
+        // Default constructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ChildWindow();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Copy constructor
-        ///
-        /// \param copy  Instance to copy
-        ///
+        // Virtual destructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        ChildWindow(const ChildWindow& copy);
+        virtual ~ChildWindow() {}
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Destructor
+        /// @brief Creates the child window
+        ///
+        /// @param themeFileFilename  Filename of the theme file.
+        /// @param section            The section in the theme file to read.
+        ///
+        /// @throw Exception when the theme file could not be opened.
+        /// @throw Exception when the theme file did not contain the requested section with the needed information.
+        /// @throw Exception when one of the images, described in the theme file, could not be loaded.
+        ///
+        /// When an empty string is passed as filename, the built-in white theme will be used.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ~ChildWindow();
+        static ChildWindow::Ptr create(const std::string& themeFileFilename = "", const std::string& section = "ChildWindow");
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Overload of assignment operator
+        /// @brief Makes a copy of another child window
         ///
-        /// \param right  Instance to assign
+        /// @param childWindow  The other child window
         ///
-        /// \return Reference to itself
+        /// @return The new child window
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        ChildWindow& operator= (const ChildWindow& right);
+        static ChildWindow::Ptr copy(ChildWindow::ConstPtr childWindow);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // Makes a copy of the widget by calling the copy constructor.
-        // This function calls new and if you use this function then you are responsible for calling delete.
+        /// @brief Returns the renderer, which gives access to functions that determine how the widget is displayed
+        ///
+        /// @return Reference to the renderer
+        ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ChildWindow* clone();
+        std::shared_ptr<ChildWindowRenderer> getRenderer() const
+        {
+            return std::static_pointer_cast<ChildWindowRenderer>(m_renderer);
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Loads the widget.
+        /// @brief Set the position of the widget
         ///
-        /// \param configFileFilename  Filename of the config file.
+        /// This function completely overwrites the previous position.
+        /// See the move function to apply an offset based on the previous position instead.
+        /// The default position of a transformable widget is (0, 0).
         ///
-        /// The config file must contain a ChildWindow section with the needed information.
+        /// @param x X coordinate of the new position
+        /// @param y Y coordinate of the new position
+        ///
+        /// @see move, getPosition
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool load(const std::string& configFileFilename);
+        void setPosition(const Layout& position) override;
+        using Transformable::setPosition;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the filename of the config file that was used to load the widget.
+        /// @brief Changes the size of the child window.
         ///
-        /// \return Filename of loaded config file.
-        ///         Empty string when no config file was loaded yet.
+        /// @param size   Sets the new size of the child window
+        /// @param height  Sets the new height of the child window
+        ///
+        /// This is the size of the child window, without the title bar nor the borders.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const std::string& getLoadedConfigFile() const;
+        void setSize(const Layout& size) override;
+        using Transformable::setSize;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the size of the child window.
+        /// @brief Returns the size of the full child window.
         ///
-        /// \param width   Sets the new width of the child window
-        /// \param height  Sets the new height of the child window
-        ///
-        /// The width and height are the size of the child window, without the title bar nor the borders.
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setSize(float width, float height);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the size of the drawable area of the child window.
-        ///
-        /// \return Size of the child window
-        ///
-        /// The size returned by this function is the size of the child window, without the title bar nor the borders.
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual sf::Vector2f getSize() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the size of the full child window.
-        ///
-        /// \return Size of the child window
+        /// @return Size of the child window
         ///
         /// The size returned by this function is the size of the child window, including the title bar and the borders.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual sf::Vector2f getFullSize() const;
+        virtual sf::Vector2f getFullSize() const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the background texture of the child window.
+        /// @brief Changes the global font.
         ///
-        /// \param texture  Pointer to the texture that should be used as background of the child window
+        /// This font will be used by all widgets that are created after calling this function.
         ///
-        /// \warning You should make sure that the texture stays alive.
+        /// @param filename  Path of the font file to load
         ///
-        /// If the texture has a different size than the child window then it will be scaled to fill the whole window.
-        /// Pass nullptr to this function to remove the background texture.
+        /// @throw Exception when loading fails
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setBackgroundTexture(sf::Texture *const texture = nullptr);
+        virtual void setGlobalFont(const std::string& filename) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the background texture of the child window.
+        /// @brief Changes the global font.
         ///
-        /// \return Pointer to the texture that is being used as background of the child window.
-        ///         This pointer is nullptr when no background texture was set.
+        /// This font will be used by all widgets that are created after calling this function.
+        ///
+        /// @param font  Font to use
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        sf::Texture* getBackgroundTexture();
+        virtual void setGlobalFont(std::shared_ptr<sf::Font> font) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Change the height of the title bar.
+        /// @brief Changes the transparency of the widget.
         ///
-        /// \param height  New height of the title bar
-        ///
-        /// The default height is the height of the title bar image that is loaded with the load function.
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setTitleBarHeight(unsigned int height);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the height of the title bar.
-        ///
-        /// \return Height of the title bar
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int getTitleBarHeight() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the background color of the child window.
-        ///
-        /// \param backgroundColor  New background color
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setBackgroundColor(const sf::Color& backgroundColor);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the background color of the child window.
-        ///
-        /// \return The current background color
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Color& getBackgroundColor() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the transparency of the widget.
-        ///
-        /// \param transparency  The transparency of the widget.
+        /// @param transparency  The transparency of the widget.
         ///                      0 is completely transparent, while 255 (default) means fully opaque.
         ///
         /// Note that this will only change the transparency of the images. The parts of the widgets that use a color will not
         /// be changed. You must change them yourself by setting the alpha channel of the color.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setTransparency(unsigned char transparency);
+        virtual void setTransparency(unsigned char transparency) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the title that is displayed in the title bar of the child window.
+        /// @brief Changes the title that is displayed in the title bar of the child window.
         ///
-        /// \param title  New title for the child window
+        /// @param title  New title for the child window
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void setTitle(const sf::String& title);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the title that is displayed in the title bar of the child window.
+        /// @brief Returns the title that is displayed in the title bar of the child window.
         ///
-        /// \return Title of the child window
+        /// @return Title of the child window
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::String& getTitle() const;
+        const sf::String& getTitle() const
+        {
+            return m_titleText.getText();
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the color of the title that is displayed in the title bar of the child window.
+        /// @brief Changes the title alignment.
         ///
-        /// \param color  New title color for the child window
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setTitleColor(const sf::Color& color);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the color of the title that is displayed in the title bar of the child window.
-        ///
-        /// \return Title color of the child window
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Color& getTitleColor() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the border color.
-        ///
-        /// \param borderColor  The color of the borders
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setBorderColor(const sf::Color& borderColor);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the borde color.
-        ///
-        /// \return The color of the borders
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const sf::Color& getBorderColor() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the size of the borders.
-        ///
-        /// \param leftBorder    The width of the left border
-        /// \param topBorder     The height of the top border
-        /// \param rightBorder   The width of the right border
-        /// \param bottomBorder  The height of the bottom border
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setBorders(unsigned int leftBorder   = 0,
-                                unsigned int topBorder    = 0,
-                                unsigned int rightBorder  = 0,
-                                unsigned int bottomBorder = 0);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the distance between the title and the side of the title bar.
-        ///
-        /// \param distanceToSide  distance between the title and the side of the title bar
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setDistanceToSide(unsigned int distanceToSide);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the distance between the title and the side of the title bar.
-        ///
-        /// \return distance between the title and the side of the title bar
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int getDistanceToSide() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the title alignment.
-        ///
-        /// \param alignment  How should the title be aligned in the title bar?
+        /// @param alignment  How should the title be aligned in the title bar?
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void setTitleAlignment(TitleAlignment alignment);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the title alignment.
+        /// @brief Returns the title alignment.
         ///
-        /// \return How the title is aligned in the title bar
+        /// @return How the title is aligned in the title bar
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        TitleAlignment getTitleAlignment() const;
+        TitleAlignment getTitleAlignment() const
+        {
+            return m_titleAlignment;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the icon in the top left corner of the child window.
+        /// @brief Changes the icon in the top left corner of the child window.
         ///
-        /// \param filename  Filename of the icon image
+        /// @param filename  Filename of the icon image
         ///
         /// There is no icon by default.
         ///
@@ -348,18 +256,18 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Removes the icon in the top left corner of the child window.
+        /// @brief Removes the icon in the top left corner of the child window.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void removeIcon();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Destroys the window.
+        /// @brief Destroys the window.
         ///
         /// When no callback is requested when closing the window, this function will be called automatically.
         ///
-        /// When you requested a callback then you get the opportunity to cancel the closure of the window.
+        /// When you requested a callback then you get the opportunity to cancel the closing of the window.
         /// If you want to keep it open then don't do anything, if you want to close it then just call this function.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -367,9 +275,9 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the child window to be kept inside its parent.
+        /// @brief Set the child window to be kept inside its parent.
         ///
-        /// \param enabled  When it's set to true, the child window will always be kept automatically inside its parent.
+        /// @param enabled  When it's set to true, the child window will always be kept automatically inside its parent.
         ///                 It will be fully kept on left, right and top.
         ///                 At the bottom of the parent only the title bar will be kept inside.
         ///                 It's set to false by default.
@@ -379,9 +287,9 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Tells whether the child window is kept inside its parent.
+        /// @brief Tells whether the child window is kept inside its parent.
         ///
-        /// \return  When it's set to true, the child window will always be kept automatically inside its parent.
+        /// @return  When it's set to true, the child window will always be kept automatically inside its parent.
         ///          It will be fully kept on left, right and top.
         ///          At the bottom of the parent only the title bar will be kept inside.
         ///          It's set to false by default.
@@ -391,149 +299,260 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the distance between the position of the container and a widget that would be drawn inside
+        /// @brief Returns the distance between the position of the container and a widget that would be drawn inside
         ///        this container on relative position (0,0).
         ///
-        /// \return Offset of the widgets in the container
+        /// @return Offset of the widgets in the container
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual sf::Vector2f getWidgetsOffset() const;
+        virtual sf::Vector2f getWidgetsOffset() const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the position of the widget
-        ///
-        /// This function completely overwrites the previous position.
-        /// See the move function to apply an offset based on the previous position instead.
-        /// The default position of a transformable widget is (0, 0).
-        ///
-        /// \param x X coordinate of the new position
-        /// \param y Y coordinate of the new position
-        ///
-        /// \see move, getPosition
-        ///
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setPosition(float x, float y);
-        using Transformable::setPosition;
+        virtual bool mouseOnWidget(float x, float y) override;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void leftMousePressed(float x, float y) override;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void leftMouseReleased(float x, float y) override;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void mouseMoved(float x, float y) override;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void mouseWheelMoved(int delta, int x, int y) override;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void mouseNoLongerDown() override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool mouseOnWidget(float x, float y);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void leftMousePressed(float x, float y);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void leftMouseReleased(float x, float y);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void mouseMoved(float x, float y);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void mouseWheelMoved(int delta, int x, int y);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void mouseNoLongerDown();
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // This function is a (slow) way to set properties on the widget, no matter what type it is.
-        // When the requested property doesn't exist in the widget then the functions will return false.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool setProperty(std::string property, const std::string& value);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // This function is a (slow) way to get properties of the widget, no matter what type it is.
-        // When the requested property doesn't exist in the widget then the functions will return false.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool getProperty(std::string property, std::string& value) const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // Returns a list of all properties that can be used in setProperty and getProperty.
-        // The second value in the pair is the type of the property (e.g. int, uint, string, ...).
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::list< std::pair<std::string, std::string> > getPropertyList() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         // This function is called when the widget is added to a container.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void initialize(Container *const container);
+        virtual void initialize(Container *const container) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+    protected:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Creates the child window
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void createChildWindow(const std::string& themeFileFilename, const std::string& section);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Makes a copy of the widget
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual Widget::Ptr clone() override
+        {
+            return std::make_shared<ChildWindow>(*this);
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
         // Draws the widget on the render target.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      public:
+    protected:
+
+        Texture        m_iconTexture;
+
+        Label          m_titleText;
+        sf::Vector2f   m_draggingPosition;
+        TitleAlignment m_titleAlignment = TitleAlignmentCentered;
+
+        Button m_closeButton;
+
+        bool m_mouseDownOnTitleBar = false;
+        bool m_keepInParent = false;
+
+        friend class ChildWindowRenderer;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// Defines specific triggers to ChildWindow.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        enum ChildWindowCallbacks
-        {
-            LeftMousePressed = WidgetCallbacksCount * 1,             ///< The left mouse button was pressed (child window was thus brough to front)
-            Closed = WidgetCallbacksCount * 2,                       ///< Child window was closed
-            Moved = WidgetCallbacksCount * 4,                        ///< Child window was moved
-//            Resized = WidgetCallbacksCount * 8,
-            AllChildWindowCallbacks = WidgetCallbacksCount * 16 - 1, ///< All triggers defined in ChildWindow and its base classes
-            ChildWindowCallbacksCount = WidgetCallbacksCount * 16
-        };
+    };
 
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class ChildWindowRenderer : public WidgetRenderer, public WidgetBorders
+    {
+    public:
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
+        /// @brief Constructor
+        ///
+        /// @param childWindow  The child window that is connected to the renderer
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ChildWindowRenderer(ChildWindow* childWindow) : m_childWindow{childWindow} {}
 
-        std::string    m_LoadedConfigFile;
 
-        sf::Vector2f   m_Size;
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Dynamically change a property of the renderer, without even knowing the type of the widget.
+        ///
+        /// This function should only be used when you don't know the type of the widget.
+        /// Otherwise you can make a direct function call to make the wanted change.
+        ///
+        /// @param property  The property that you would like to change
+        /// @param value     The new value that you like to assign to the property
+        /// @param rootPath  Path that should be placed in front of any resource filename
+        ///
+        /// @throw Exception when the property doesn't exist for this widget.
+        /// @throw Exception when the value is invalid for this property.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void setProperty(std::string property, const std::string& value, const std::string& rootPath = getResourcePath()) override;
 
-        sf::Color      m_BackgroundColor;
-        sf::Texture*   m_BackgroundTexture;
-        sf::Sprite     m_BackgroundSprite;
 
-        Texture        m_IconTexture;
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Change the image of the title bar
+        ///
+        /// When this image is set, the title bar color property will be ignored.
+        ///
+        /// Pass an empty string to unset the image, in this case the title bar color property will be used again.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTitleBarImage(const std::string& filename,
+                              const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                              const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                              bool repeated = false);
 
-        sf::Text       m_TitleText;
-        unsigned int   m_TitleBarHeight;
-        bool           m_SplitImage;
-        sf::Vector2f   m_DraggingPosition;
-        unsigned int   m_DistanceToSide;
-        TitleAlignment m_TitleAlignment;
-        sf::Color      m_BorderColor;
-        bool           m_MouseDownOnTitleBar;
 
-        Texture   m_TextureTitleBar_L;
-        Texture   m_TextureTitleBar_M;
-        Texture   m_TextureTitleBar_R;
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the title bar
+        ///
+        /// @param color  New title bar color
+        ///
+        /// Note that this color is ignored when you set an image as title bar.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTitleBarColor(const sf::Color& color);
 
-        Button*  m_CloseButton;
 
-        bool m_KeepInParent;
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Change the height of the title bar.
+        ///
+        /// @param height  New height of the title bar
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTitleBarHeight(float height);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the title that is displayed in the title bar of the child window.
+        ///
+        /// @param color  New title color for the child window
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTitleColor(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Set the border color.
+        ///
+        /// @param borderColor  The color of the borders
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setBorderColor(const sf::Color& borderColor);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the size of the borders.
+        ///
+        /// @param borders  The size of the borders
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void setBorders(const Borders& borders) override;
+        using WidgetBorders::setBorders;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the distance between the title and the side of the title bar.
+        ///
+        /// @param distanceToSide  distance between the title and the side of the title bar
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setDistanceToSide(unsigned int distanceToSide);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the background color of the child window.
+        ///
+        /// @param backgroundColor  New background color
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setBackgroundColor(const sf::Color& backgroundColor);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns the renderer of the close button
+        ///
+        /// @return The close button renderer
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        std::shared_ptr<ButtonRenderer> getCloseButton() const;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Draws the widget on the render target.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    protected:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Makes a copy of the renderer
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual std::shared_ptr<WidgetRenderer> clone(Widget* widget) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ChildWindowRenderer(const ChildWindowRenderer&) = default;
+        ChildWindowRenderer& operator=(const ChildWindowRenderer&) = delete;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    protected:
+
+        ChildWindow* m_childWindow;
+
+        float        m_titleBarHeight = 20;
+        float        m_distanceToSide = 3;
+
+        Texture      m_textureTitleBar;
+
+        sf::Color    m_titleBarColor   = {255, 255, 255};
+
+        sf::Color    m_backgroundColor = {230, 230, 230};
+        sf::Color    m_borderColor     = {0, 0, 0};
+
+        friend class ChildWindow;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     };

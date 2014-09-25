@@ -27,106 +27,114 @@
 #define TGUI_SCROLLBAR_HPP
 
 
-#include <TGUI/Slider.hpp>
+#include <TGUI/Widget.hpp>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace tgui
 {
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    class ScrollbarRenderer;
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Scrollbar widget
+    ///
+    /// Signals:
+    ///     - ValueChanged (The value of the scrollbar has changed)
+    ///         * Optional parameter int: New value
+    ///         * Uses Callback member 'value'
+    ///
+    ///     - Inherited signals from Widget
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     class TGUI_API Scrollbar : public Widget
     {
-      public:
+    public:
 
-        typedef SharedWidgetPtr<Scrollbar> Ptr;
+        typedef std::shared_ptr<Scrollbar> Ptr; ///< Shared widget pointer
+        typedef std::shared_ptr<const Scrollbar> ConstPtr; ///< Shared constant widget pointer
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Default constructor
-        ///
+        // Default constructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Scrollbar();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Copy constructor
-        ///
-        /// \param copy  Instance to copy
-        ///
+        // Virtual destructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Scrollbar(const Scrollbar& copy);
+        virtual ~Scrollbar() {}
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Destructor
+        /// @brief Create the scrollbar
+        ///
+        /// @param themeFileFilename  Filename of the theme file.
+        /// @param section             The section in the theme file to read.
+        ///
+        /// @throw Exception when the theme file could not be opened.
+        /// @throw Exception when the theme file did not contain the requested section with the needed information.
+        /// @throw Exception when one of the images, described in the theme file, could not be loaded.
+        ///
+        /// When an empty string is passed as filename, the built-in white theme will be used.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ~Scrollbar();
+        static Scrollbar::Ptr create(const std::string& themeFileFilename = "", const std::string& section = "Scrollbar");
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Overload of assignment operator
+        /// @brief Makes a copy of another scrollbar
         ///
-        /// \param right  Instance to assign
+        /// @param scrollbar  The other scrollbar
         ///
-        /// \return Reference to itself
+        /// @return The new scrollbar
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Scrollbar& operator= (const Scrollbar& right);
+        static Scrollbar::Ptr copy(Scrollbar::ConstPtr scrollbar);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Makes a copy of the widget by calling the copy constructor.
-        // This function calls new and if you use this function then you are responsible for calling delete.
+        /// @brief Returns the renderer, which gives access to functions that determine how the widget is displayed
+        ///
+        /// @return Reference to the renderer
+        ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual Scrollbar* clone();
+        std::shared_ptr<ScrollbarRenderer> getRenderer() const
+        {
+            return std::static_pointer_cast<ScrollbarRenderer>(m_renderer);
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Loads the widget.
+        /// @brief Set the position of the widget
         ///
-        /// \param configFileFilename  Filename of the config file.
+        /// This function completely overwrites the previous position.
+        /// See the move function to apply an offset based on the previous position instead.
+        /// The default position of a transformable widget is (0, 0).
         ///
-        /// The config file must contain a Scrollbar section with the needed information.
+        /// @param position  New position
+        ///
+        /// @see move, getPosition
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool load(const std::string& configFileFilename);
+        virtual void setPosition(const Layout& position) override;
+        using Transformable::setPosition;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the filename of the config file that was used to load the widget.
+        /// @brief Changes the size of the scrollbar.
         ///
-        /// \return Filename of loaded config file.
-        ///         Empty string when no config file was loaded yet.
+        /// @param size  The new size of the scrollbar
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const std::string& getLoadedConfigFile() const;
+        void setSize(const Layout& size) override;
+        using Transformable::setSize;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the size of the scrollbar.
+        /// @brief Sets a maximum value.
         ///
-        /// \param width   The new width of the scrollbar
-        /// \param height  The new height of the scrollbar
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setSize(float width, float height);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the size of the scrollbar.
-        ///
-        /// \return Size of the scrollbar
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual sf::Vector2f getSize() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Sets a maximum value.
-        ///
-        /// \param maximum  The new maximum value
+        /// @param maximum  The new maximum value
         ///
         /// When the value is bigger than (maximum - low value), the value is set to maximum - low value.
         /// The default maximum value is 10.
@@ -136,9 +144,9 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the current value.
+        /// @brief Changes the current value.
         ///
-        /// \param value  The new value
+        /// @param value  The new value
         ///
         /// The value has to be smaller than maximum - low value.
         ///
@@ -147,9 +155,9 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the 'low value'.
+        /// @brief Changes the 'low value'.
         ///
-        /// \param lowValue  The new low value.
+        /// @param lowValue  The new low value.
         ///                  In e.g. a list box, this value is the amount of items that fit inside the list box.
         ///
         /// Until the maximum is bigger than this value, no scrollbar will be drawn.
@@ -161,248 +169,201 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes whether the scrollbar lies vertical or horizontal.
+        /// @brief Returns the maximum value.
         ///
-        /// \param verticallScroll  Does the scrollbar lie vertically?
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setVerticalScroll(bool verticallScroll);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the maximum value.
-        ///
-        /// \return The current maximum value
+        /// @return The current maximum value
         ///
         /// The default maximum value is 10.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int getMaximum() const;
+        unsigned int getMaximum() const
+        {
+            return m_maximum;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the current value.
+        /// @brief Returns the current value.
         ///
-        /// \return The current value
+        /// @return The current value
         ///
         /// The default value is 0.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int getValue() const;
+        unsigned int getValue() const
+        {
+            return m_value;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the low value.
+        /// @brief Returns the low value.
         ///
-        /// \see setLowValue
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int getLowValue() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns whether the scrollbar lies vertical or horizontal.
-        ///
-        /// \return Does the scrollbar lie vertically?
+        /// @see setLowValue
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool getVerticalScroll() const;
+        unsigned int getLowValue() const
+        {
+            return m_lowValue;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes how much the value changes when pressing one of the arrows of the scrollbar
+        /// @brief Changes how much the value changes when pressing one of the arrows of the scrollbar
         ///
-        /// \param scrollAmount  How far should the scrollbar scroll when an arrow is clicked?
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setArrowScrollAmount(unsigned int scrollAmount);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns how much the value changes when pressing one of the arrows of the scrollbar
-        ///
-        /// \return How far should the scrollbar scroll when an arrow is clicked?
+        /// @param scrollAmount  How far should the scrollbar scroll when an arrow is clicked?
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int getArrowScrollAmount();
+        void setArrowScrollAmount(unsigned int scrollAmount)
+        {
+            m_scrollAmount = scrollAmount;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes whether the scrollbar should hide automatically or not.
+        /// @brief Returns how much the value changes when pressing one of the arrows of the scrollbar
+        ///
+        /// @return How far should the scrollbar scroll when an arrow is clicked?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        unsigned int getArrowScrollAmount()
+        {
+            return m_scrollAmount;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes whether the scrollbar should hide automatically or not.
         ///
         /// When true (default), the scrollbar will not be drawn when the maximum is smaller than the low value.
         ///
-        /// \param autoHide  Should the scrollbar be invisible when you can't scroll?
+        /// @param autoHide  Should the scrollbar be invisible when you can't scroll?
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setAutoHide(bool autoHide);
+        void setAutoHide(bool autoHide)
+        {
+            m_autoHide = autoHide;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns whether the scrollbar is hiding automatically or not.
+        /// @brief Returns whether the scrollbar is hiding automatically or not.
         ///
         /// When true (default), the scrollbar will not be drawn when the maximum is smaller than the low value.
         /// So when you can't scroll, the scrollbar won't be drawn.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool getAutoHide() const;
+        bool getAutoHide() const
+        {
+            return m_autoHide;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the transparency of the widget.
+        /// @brief Changes the transparency of the widget.
         ///
-        /// \param transparency  The transparency of the widget.
+        /// @param transparency  The transparency of the widget.
         ///                      0 is completely transparent, while 255 (default) means fully opaque.
         ///
         /// Note that this will only change the transparency of the images. The parts of the widgets that use a color will not
         /// be changed. You must change them yourself by setting the alpha channel of the color.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setTransparency(unsigned char transparency);
+        virtual void setTransparency(unsigned char transparency) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool mouseOnWidget(float x, float y);
+        virtual bool mouseOnWidget(float x, float y) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void leftMousePressed(float x, float y);
+        virtual void leftMousePressed(float x, float y) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void leftMouseReleased(float x, float y);
+        virtual void leftMouseReleased(float x, float y) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void mouseMoved(float x, float y);
+        virtual void mouseMoved(float x, float y) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void mouseWheelMoved(int delta, int x, int y);
+        virtual void mouseWheelMoved(int delta, int x, int y) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void widgetFocused();
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // This function is a (slow) way to set properties on the widget, no matter what type it is.
-        // When the requested property doesn't exist in the widget then the functions will return false.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool setProperty(std::string property, const std::string& value);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // This function is a (slow) way to get properties of the widget, no matter what type it is.
-        // When the requested property doesn't exist in the widget then the functions will return false.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool getProperty(std::string property, std::string& value) const;
+        virtual void widgetFocused() override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // Returns a list of all properties that can be used in setProperty and getProperty.
-        // The second value in the pair is the type of the property (e.g. int, uint, string, ...).
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::list< std::pair<std::string, std::string> > getPropertyList() const;
-
+    protected:
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      private:
-
+        // Makes a copy of the widget
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Returns the position and size of the thumb
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        sf::FloatRect getThumbRect();
+        virtual Widget::Ptr clone() override
+        {
+            return std::make_shared<Scrollbar>(*this);
+        }
 
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Draws the widget on the render target.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      public:
+    protected:
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// Defines specific triggers to Scrollbar.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        enum ScrollbarCallbacks
+        enum class Part
         {
-            ValueChanged = WidgetCallbacksCount * 1,              ///< Value changed (thumb moved)
-            AllScrollbarCallbacks = WidgetCallbacksCount * 2 - 1, ///< All triggers defined in Scrollbar and its base classes
-            ScrollbarCallbacksCount = WidgetCallbacksCount * 2
+            Track,
+            Thumb,
+            ArrowUp,
+            ArrowDown
         };
 
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
-
-        std::string m_LoadedConfigFile;
+        // Keep track on which part of the scrollbar the mouse is standing
+        Part m_mouseHoverOverPart = Part::Thumb;
 
         // When the mouse went down, did it go down on top of the thumb? If so, where?
-        bool m_MouseDownOnThumb;
-        sf::Vector2f m_MouseDownOnThumbPos;
+        bool m_mouseDownOnThumb = false;
+        sf::Vector2f m_mouseDownOnThumbPos;
 
-        unsigned int m_Maximum;
-        unsigned int m_Value;
+        unsigned int m_maximum = 10;
+        unsigned int m_value = 0;
 
         // Maximum should be above this value before the scrollbar is needed
-        unsigned int m_LowValue;
+        unsigned int m_lowValue = 6;
 
         // Is the scrollbar draw vertically?
-        bool m_VerticalScroll;
+        bool m_verticalScroll = true;
 
         // Does the image lie vertically?
-        bool m_VerticalImage;
+        bool m_verticalImage = true;
 
         // How far should the value change when pressing one of the arrows?
-        unsigned int m_ScrollAmount;
+        unsigned int m_scrollAmount = 1;
 
         // When no scrollbar is needed, should the scrollbar be drawn or stay hidden?
-        bool m_AutoHide;
+        bool m_autoHide = true;
 
         // Did the mouse went down on one of the arrows?
-        bool m_MouseDownOnArrow;
+        bool m_mouseDownOnArrow = false;
 
-        // If this is true then the L, M and R images will be used.
-        // If it is false then the scrollbar is just one big image that will be stored in the M image.
-        bool m_SplitImage;
-
-        // Is there a separate hover image, or is it a semi-transparent image that is drawn on top of the others?
-        bool m_SeparateHoverImage;
-
-        // The size of the scrollbar and its thumb
-        sf::Vector2f m_Size;
-        sf::Vector2f m_ThumbSize;
-
-        Texture m_TextureTrackNormal_L;
-        Texture m_TextureTrackHover_L;
-        Texture m_TextureTrackNormal_M;
-        Texture m_TextureTrackHover_M;
-        Texture m_TextureTrackNormal_R;
-        Texture m_TextureTrackHover_R;
-
-        Texture m_TextureThumbNormal;
-        Texture m_TextureThumbHover;
-
-        Texture m_TextureArrowUpNormal;
-        Texture m_TextureArrowUpHover;
-
-        Texture m_TextureArrowDownNormal;
-        Texture m_TextureArrowDownHover;
+        sf::FloatRect m_track;
+        sf::FloatRect m_thumb;
+        sf::FloatRect m_arrowUp;
+        sf::FloatRect m_arrowDown;
 
         // ListBox, ComboBox and TextBox can access the scrollbar directly
         friend class ListBox;
@@ -410,8 +371,395 @@ namespace tgui
         friend class TextBox;
         friend class ChatBox;
 
+        friend class ScrollbarRenderer;
+
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    };
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class ScrollbarRenderer : public WidgetRenderer
+    {
+    public:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Constructor
+        ///
+        /// @param scrollbar  The scrollbar that is connected to the renderer
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ScrollbarRenderer(Scrollbar* scrollbar) : m_scrollbar{scrollbar} {}
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Dynamically change a property of the renderer, without even knowing the type of the widget.
+        ///
+        /// This function should only be used when you don't know the type of the widget.
+        /// Otherwise you can make a direct function call to make the wanted change.
+        ///
+        /// @param property  The property that you would like to change
+        /// @param value     The new value that you like to assign to the property
+        /// @param rootPath  Path that should be placed in front of any resource filename
+        ///
+        /// @throw Exception when the property does not exist for this widget.
+        /// @throw Exception when the value is invalid for this property.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void setProperty(std::string property, const std::string& value, const std::string& rootPath = getResourcePath()) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Change the image of the track that is displayed when the mouse is not on top of the scrollbar
+        ///
+        /// When all normal are set, then the alternative color properties will be ignored.
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTrackNormalImage(const std::string& filename,
+                                 const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                 const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                 bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Change the image of the track that is displayed when the mouse is standing on top of the scrollbar
+        ///
+        /// This image is ignored when no normal track image has been set.
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTrackHoverImage(const std::string& filename,
+                                const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Change the image of the thumb that is displayed when the mouse is not on top of the scrollbar
+        ///
+        /// When all normal are set, then the alternative color properties will be ignored.
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setThumbNormalImage(const std::string& filename,
+                                 const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                 const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                 bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Change the image of the thumb that is displayed when the mouse is standing on top of the scrollbar
+        ///
+        /// This image is ignored when no normal thumb image has been set.
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setThumbHoverImage(const std::string& filename,
+                                const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Change the image that is used as the up arrow.
+        ///
+        /// When all normal are set, then the alternative color properties will be ignored.
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowUpNormalImage(const std::string& filename,
+                                   const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                   const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                   bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Change the image that is used as the up arrow when the mouse is on top of this arrow.
+        ///
+        /// When hover image is ignored if the normal image has not been set.
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowUpHoverImage(const std::string& filename,
+                                   const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                   const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                   bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Change the image that is used as the down arrow.
+        ///
+        /// When all normal are set, then the alternative color properties will be ignored.
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowDownNormalImage(const std::string& filename,
+                                     const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                     const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                     bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Change the image that is used as the down arrow when the mouse is on top of this arrow.
+        ///
+        /// When hover image is ignored if the normal image has not been set.
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowDownHoverImage(const std::string& filename,
+                                     const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                     const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                     bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the track.
+        ///
+        /// @param color  New track color
+        ///
+        /// This color will overwrite the color for both the normal and hover state.
+        ///
+        /// Note that this color is ignored when a track and thumb image have been set.
+        ///
+        /// @see setTrackColorNormal
+        /// @see setTrackColorHover
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTrackColor(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the track in the normal state (mouse not on the track).
+        ///
+        /// @param color  New track color
+        ///
+        /// Note that this color is ignored when a track and thumb image have been set.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTrackColorNormal(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the track in hover state (mouse on top of the track).
+        ///
+        /// @param color  New track color
+        ///
+        /// Note that this color is ignored when a track and thumb image have been set.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTrackColorHover(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the thumb.
+        ///
+        /// @param color  New thumb color
+        ///
+        /// This color will overwrite the color for both the normal and hover state.
+        ///
+        /// Note that this color is ignored when a track and thumb image have been set.
+        ///
+        /// @see setTrackColorNormal
+        /// @see setTrackColorHover
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setThumbColor(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the thumb in the normal state (mouse not on the thumb).
+        ///
+        /// @param color  New thumb color
+        ///
+        /// Note that this color is ignored when a track and thumb image have been set.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setThumbColorNormal(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the thumb in hover state (mouse on top of the thumb).
+        ///
+        /// @param color  New thumb color
+        ///
+        /// Note that this color is ignored when a track and thumb image have been set.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setThumbColorHover(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the background color of the arrows.
+        ///
+        /// @param color  New arrow background color
+        ///
+        /// This color will overwrite the color for both normal and hover states.
+        ///
+        /// Note that this color is ignored when all normal images have been set.
+        ///
+        /// @see setArrowBackgroundColorNormal
+        /// @see setArrowBackgroundColorHover
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowBackgroundColor(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the background color of the arrows in the normal state (mouse not on arrow).
+        ///
+        /// @param color  New background color
+        ///
+        /// Note that this color is ignored when all normal images have been set.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowBackgroundColorNormal(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the background color of the arrows in the hover state (mouse standing on top of the arrow).
+        ///
+        /// @param color  New arrow background color
+        ///
+        /// Note that this color is ignored when all normal images have been set.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowBackgroundColorHover(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the arrows.
+        ///
+        /// @param color  New arrow color
+        ///
+        /// This color will overwrite the color for both normal and hover states.
+        ///
+        /// Note that this color is ignored when all normal images have been set.
+        ///
+        /// @see setArrowColorNormal
+        /// @see setArrowColorHover
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowColor(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the arrows in the normal state (mouse not on arrow).
+        ///
+        /// @param color  New arrow color
+        ///
+        /// Note that this color is ignored when all normal images have been set.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowColorNormal(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the arrows in the hover state (mouse standing on top of the arrow).
+        ///
+        /// @param color  New arrow color
+        ///
+        /// Note that this color is ignored when all normal images have been set.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setArrowColorHover(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Draws the widget on the render target.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Makes a copy of the renderer
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual std::shared_ptr<WidgetRenderer> clone(Widget* widget) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ScrollbarRenderer(const ScrollbarRenderer&) = default;
+        ScrollbarRenderer& operator=(const ScrollbarRenderer&) = delete;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    protected:
+
+        Scrollbar* m_scrollbar;
+
+        Texture    m_textureTrackNormal;
+        Texture    m_textureTrackHover;
+        Texture    m_textureThumbNormal;
+        Texture    m_textureThumbHover;
+        Texture    m_textureArrowUpNormal;
+        Texture    m_textureArrowUpHover;
+        Texture    m_textureArrowDownNormal;
+        Texture    m_textureArrowDownHover;
+
+        sf::Color  m_trackColorNormal           = {255, 255, 255};
+        sf::Color  m_trackColorHover            = {255, 255, 255};
+        sf::Color  m_thumbColorNormal           = {220, 220, 220};
+        sf::Color  m_thumbColorHover            = {210, 210, 210};
+        sf::Color  m_arrowBackgroundColorNormal = {245, 245, 245};
+        sf::Color  m_arrowBackgroundColorHover  = {255, 255, 255};
+        sf::Color  m_arrowColorNormal           = { 60,  60,  60};
+        sf::Color  m_arrowColorHover            = {  0,   0,   0};
+
+        friend class Scrollbar;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

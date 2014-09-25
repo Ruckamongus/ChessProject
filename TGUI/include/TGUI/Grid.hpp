@@ -37,171 +37,169 @@ namespace tgui
 
     class TGUI_API Grid : public Container
     {
-      public:
+    public:
 
-        typedef SharedWidgetPtr<Grid> Ptr;
+        typedef std::shared_ptr<Grid> Ptr; ///< Shared widget pointer
+        typedef std::shared_ptr<const Grid> ConstPtr; ///< Shared constant widget pointer
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief The layout of the widget.
+        /// @brief The alignment of the widget in its cell.
         ///
         /// Where in the cell is the widget located?
         /// The widget is centered by default.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        struct Layout
+        enum class Alignment
         {
-            /// \brief The layout of the widget.
-            enum Layouts
-            {
-                UpperLeft,   ///< Draw the widget in the upper left corner of the cell
-                Up,          ///< Draw the widget at the upper side of the cell (horizontally centered)
-                UpperRight,  ///< Draw the widget in the upper right corner of the cell
-                Right,       ///< Draw the widget at the right side of the cell (vertically centered)
-                BottomRight, ///< Draw the widget in the bottom right corner of the cell
-                Bottom,      ///< Draw the widget at the bottom of the cell (horizontally centered)
-                BottomLeft,  ///< Draw the widget in the bottom left corner of the cell
-                Left,        ///< Draw the widget at the left side of the cell (vertically centered)
-                Center       ///< Center the widget in the cell
-            };
+            UpperLeft,   ///< Draw the widget in the upper left corner of the cell
+            Up,          ///< Draw the widget at the upper side of the cell (horizontally centered)
+            UpperRight,  ///< Draw the widget in the upper right corner of the cell
+            Right,       ///< Draw the widget at the right side of the cell (vertically centered)
+            BottomRight, ///< Draw the widget in the bottom right corner of the cell
+            Bottom,      ///< Draw the widget at the bottom of the cell (horizontally centered)
+            BottomLeft,  ///< Draw the widget in the bottom left corner of the cell
+            Left,        ///< Draw the widget at the left side of the cell (vertically centered)
+            Center       ///< Center the widget in the cell
         };
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Default constructor
-        ///
+        // Default constructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Grid();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Copy constructor
+        /// @brief Copy constructor
         ///
-        /// \param copy  Instance to copy
+        /// @param copy  Instance to copy
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Grid(const Grid& copy);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Destructor
-        ///
+        // Virtual destructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ~Grid();
+        virtual ~Grid() {}
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Overload of assignment operator
+        /// @brief Overload of assignment operator
         ///
-        /// \param right  Instance to assign
+        /// @param right  Instance to assign
         ///
-        /// \return Reference to itself
+        /// @return Reference to itself
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Grid& operator= (const Grid& right);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Makes a copy of the widget by calling the copy constructor.
-        // This function calls new and if you use this function then you are responsible for calling delete.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual Grid* clone();
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the size of the grid.
+        /// @brief Create the grid
         ///
-        /// \param width   Width of the grid
-        /// \param height  Height of the grid
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        static Grid::Ptr create()
+        {
+            return std::make_shared<Grid>();
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Makes a copy of another grid
+        ///
+        /// @param grid  The other grid
+        ///
+        /// @return The new grid
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        static Grid::Ptr copy(Grid::ConstPtr grid);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the size of the grid.
+        ///
+        /// @param size   New size of the grid
         ///
         /// Widgets in the grid will be repositionned to fill in the best way the available space of the grid.
         /// If the size is too small to have all Widgets correctly placed, the size will be ignored and the grid auto-sized until
         /// some Widgets are removed of the grid and the size was become valid again.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setSize(float width, float height);
+        virtual void setSize(const Layout& size) override;
+        using Transformable::setSize;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the size of the grid.
+        /// @brief Returns the size of the grid.
         ///
-        /// \return Size of the grid
+        /// @return Size of the grid
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual sf::Vector2f getSize() const;
+        virtual sf::Vector2f getSize() const override
+        {
+            return m_realSize;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Removes a single widget that was added to the container.
+        /// @brief Removes a single widget that was added to the container.
         ///
-        /// \param widget  Pointer to the widget to remove
+        /// @param widget  Pointer to the widget to remove
         ///
-        /// \see remove(sf::String)
+        /// @see remove(sf::String)
         ///
         /// Usage example:
-        /// \code
+        /// @code
         /// tgui::Picture::Ptr pic(grid, "picName");
         /// tgui::Picture::Ptr pic2(grid, "picName2");
         /// grid.remove(pic);
         /// grid.remove(grid.get("picName2"));
-        /// \endcode
+        /// @endcode
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void remove(const Widget::Ptr& widget);
+        virtual void remove(const Widget::Ptr& widget) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Removes a single widget that was added to the container.
-        ///
-        /// \param widget  Pointer to the widget to remove
-        ///
-        /// This function is provided for internal use.
-        /// The other remove function will probably be easier to use, but in the end they do exactly the same.
-        ///
-        /// \see remove(Widget::Ptr)
+        /// @brief Removes all widgets that were added to the container.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void remove(Widget* widget);
+        virtual void removeAllWidgets() override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Removes all widgets that were added to the container.
+        /// @brief Add a widget to the grid.
         ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void removeAllWidgets();
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Add a widget to the grid.
-        ///
-        /// \param widget  Pointer to a fully created widget that will be added to the grid
-        /// \param row     The row in which the widget should be placed
-        /// \param column  The column in which the widget should be placed
-        /// \param borders  Distance from the grid square to the widget (left, top, right, bottom)
-        /// \param layout   Where the widget is located in the square
+        /// @param widget    Pointer to a fully created widget that will be added to the grid
+        /// @param row       The row in which the widget should be placed
+        /// @param column    The column in which the widget should be placed
+        /// @param borders   Distance from the grid square to the widget (left, top, right, bottom)
+        /// @param alignment Where the widget is located in the square
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void addWidget(const Widget::Ptr& widget,
                        unsigned int       row,
                        unsigned int       column,
                        const Borders&     borders = Borders(0, 0, 0, 0),
-                       Layout::Layouts    layout  = Layout::Center);
+                       Alignment          alignment  = Alignment::Center);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the widget in a specific square of the grid.
+        /// @brief Returns the widget in a specific square of the grid.
         ///
-        /// \param row     The row that the widget is in
-        /// \param column  The column that the widget is in
+        /// @param row     The row that the widget is in
+        /// @param column  The column that the widget is in
         ///
-        /// \return The widget inside the given square, or nullptr when the square doesn't contain a widget
+        /// @return The widget inside the given square, or nullptr when the square doesn't contain a widget
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Widget::Ptr getWidget(unsigned int row, unsigned int column);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Updates the position and size of the widget.
+        /// @brief Updates the position and size of the widget.
         ///
         /// Once a widget has been added to the grid, you will have to call this function every time you change the size of the widget.
         ///
@@ -210,33 +208,33 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes borders of a given widget.
+        /// @brief Changes borders of a given widget.
         ///
-        /// \param widget  The widget to which borders should be added
-        /// \param borders The new borders around the widget
+        /// @param widget  The widget to which borders should be added
+        /// @param borders The new borders around the widget
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void changeWidgetBorders(const Widget::Ptr& widget, const Borders& borders = Borders(0, 0, 0, 0));
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the layout of a given widget.
+        /// @brief Changes the alignment of a given widget in its cell.
         ///
-        /// \param widget  The widget for which the layout should be changed
-        /// \param layout  The new layout
+        /// @param widget    The widget for which the alignment should be changed
+        /// @param alignment The new alignment
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void changeWidgetLayout(const Widget::Ptr& widget, Layout::Layouts layout = Layout::Center);
+        void changeWidgetAlignment(const Widget::Ptr& widget, Alignment aignment = Alignment::Center);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool mouseOnWidget(float x, float y);
+        virtual bool mouseOnWidget(float x, float y) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
+    protected:
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -252,37 +250,31 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Makes a copy of the widget
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual Widget::Ptr clone() override
+        {
+            return std::make_shared<Grid>(*this);
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Draws the widget on the render target.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      public:
+    protected:
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// Defines specific triggers to Grid.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        enum GridCallbacks
-        {
-            AllGridCallbacks = WidgetCallbacksCount - 1, ///< All Callbacks defined in Grid and its base classes
-            GridCallbacksCount = WidgetCallbacksCount
-        };
+        std::vector<std::vector<Widget::Ptr>> m_gridWidgets;
+        std::vector<std::vector<Borders>>     m_objBorders;
+        std::vector<std::vector<Alignment>>   m_objAlignment;
 
+        std::vector<float> m_rowHeight;
+        std::vector<float> m_columnWidth;
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
-
-        std::vector< std::vector<Widget::Ptr> >     m_GridWidgets;
-        std::vector< std::vector<Borders> >         m_ObjBorders;
-        std::vector< std::vector<Layout::Layouts> > m_ObjLayout;
-
-        std::vector<unsigned int> m_RowHeight;
-        std::vector<unsigned int> m_ColumnWidth;
-
-        sf::Vector2f m_Size; // Real (optimal) size of the grid
-        sf::Vector2f m_IntendedSize; // Intended size that the grid should have if it is possible
-
+        sf::Vector2f m_realSize; // Actual size of the grid, while m_size contains the intended size
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     };

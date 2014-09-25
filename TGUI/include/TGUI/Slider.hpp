@@ -33,330 +33,504 @@
 
 namespace tgui
 {
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    class SliderRenderer;
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Slider widget
+    ///
+    /// Signals:
+    ///     - ValueChanged (The value of the slider has changed)
+    ///         * Optional parameter int: New value
+    ///         * Uses Callback member 'value'
+    ///
+    ///     - Inherited signals from Widget
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     class TGUI_API Slider : public Widget
     {
-      public:
+    public:
 
-        typedef SharedWidgetPtr<Slider> Ptr;
+        typedef std::shared_ptr<Slider> Ptr; ///< Shared widget pointer
+        typedef std::shared_ptr<const Slider> ConstPtr; ///< Shared constant widget pointer
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Default constructor
-        ///
+        // Default constructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Slider();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Copy constructor
-        ///
-        /// \param copy  Instance to copy
-        ///
+        // Virtual destructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Slider(const Slider& copy);
+        virtual ~Slider() {}
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Destructor
+        /// @brief Create the slider
         ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ~Slider();
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Overload of assignment operator
+        /// @param themeFileFilename  Filename of the theme file.
+        /// @param section             The section in the theme file to read.
         ///
-        /// \param right  Instance to assign
+        /// @throw Exception when the theme file could not be opened.
+        /// @throw Exception when the theme file did not contain the requested section with the needed information.
+        /// @throw Exception when one of the images, described in the theme file, could not be loaded.
         ///
-        /// \return Reference to itself
+        /// When an empty string is passed as filename, the built-in white theme will be used.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Slider& operator= (const Slider& right);
+        static Slider::Ptr create(const std::string& themeFileFilename = "", const std::string& section = "Slider");
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Makes a copy of the widget by calling the copy constructor.
-        // This function calls new and if you use this function then you are responsible for calling delete.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual Slider* clone();
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Loads the widget.
+        /// @brief Makes a copy of another slider
         ///
-        /// \param configFileFilename  Filename of the config file.
+        /// @param slider  The other slider
         ///
-        /// The config file must contain a Slider section with the needed information.
+        /// @return The new slider
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool load(const std::string& configFileFilename);
+        static Slider::Ptr copy(Slider::ConstPtr slider);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the filename of the config file that was used to load the widget.
+        /// @brief Returns the renderer, which gives access to functions that determine how the widget is displayed
         ///
-        /// \return Filename of loaded config file.
-        ///         Empty string when no config file was loaded yet.
+        /// @return Reference to the renderer
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const std::string& getLoadedConfigFile() const;
+        std::shared_ptr<SliderRenderer> getRenderer() const
+        {
+            return std::static_pointer_cast<SliderRenderer>(m_renderer);
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Set the position of the widget
+        /// @brief Set the position of the widget
         ///
         /// This function completely overwrites the previous position.
         /// See the move function to apply an offset based on the previous position instead.
         /// The default position of a transformable widget is (0, 0).
         ///
-        /// \param x X coordinate of the new position
-        /// \param y Y coordinate of the new position
+        /// @param position  New position
         ///
-        /// \see move, getPosition
+        /// @see move, getPosition
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setPosition(float x, float y);
+        virtual void setPosition(const Layout& position) override;
         using Transformable::setPosition;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the size of the slider.
+        /// @brief Changes the size of the slider.
         ///
-        /// \param width   The new width of the slider
-        /// \param height  The new height of the slider
+        /// @param size  The new size of the slider
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setSize(float width, float height);
+        void setSize(const Layout& size) override;
+        using Transformable::setSize;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the size of the slider.
+        /// @brief Sets a minimum value.
         ///
-        /// \return Size of the slider
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual sf::Vector2f getSize() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Sets a minimum value.
-        ///
-        /// \param minimum  The new minimum value
+        /// @param minimum  The new minimum value
         ///
         /// When the value is too small then it will be changed to this minimum.
         /// When the maximum value is lower than the new minimum then it will be changed to this new minimum value.
         /// The default minimum value is 0.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setMinimum(unsigned int minimum);
+        virtual void setMinimum(int minimum);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Sets a maximum value.
+        /// @brief Sets a maximum value.
         ///
-        /// \param maximum  The new maximum value
+        /// @param maximum  The new maximum value
         ///
         /// When the value is too big then it will be changed to this maximum.
         /// When the minimum value is higher than the new maximum then it will be changed to this new maximum value.
         /// The default maximum value is 10.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setMaximum(unsigned int maximum);
+        virtual void setMaximum(int maximum);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the current value.
+        /// @brief Changes the current value.
         ///
-        /// \param value  The new value
+        /// @param value  The new value
         ///
         /// The value can't be smaller than the minimum or bigger than the maximum.
         /// The default value is 0.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setValue(unsigned int value);
+        virtual void setValue(int value);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes whether the slider lies vertical or horizontal.
+        /// @brief Returns the minimum value.
         ///
-        /// \param verticallScroll  Does the slider lie vertically?
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setVerticalScroll(bool verticallScroll);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the minimum value.
-        ///
-        /// \return The current minimum value
+        /// @return The current minimum value
         ///
         /// The default minimum value is 0.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int getMinimum() const;
+        int getMinimum() const
+        {
+            return m_minimum;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the maximum value.
+        /// @brief Returns the maximum value.
         ///
-        /// \return The current maximum value
+        /// @return The current maximum value
         ///
         /// The default maximum value is 100.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int getMaximum() const;
+        int getMaximum() const
+        {
+            return m_maximum;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns the current value.
+        /// @brief Returns the current value.
         ///
-        /// \return The current value
+        /// @return The current value
         ///
         /// The default value is 0.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int getValue() const;
+        int getValue() const
+        {
+            return m_value;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Returns whether the slider lies vertical or horizontal.
+        /// @brief Changes the transparency of the widget.
         ///
-        /// \return Does the slider lie vertically?
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool getVerticalScroll() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \brief Changes the transparency of the widget.
-        ///
-        /// \param transparency  The transparency of the widget.
+        /// @param transparency  The transparency of the widget.
         ///                      0 is completely transparent, while 255 (default) means fully opaque.
         ///
         /// Note that this will only change the transparency of the images. The parts of the widgets that use a color will not
         /// be changed. You must change them yourself by setting the alpha channel of the color.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setTransparency(unsigned char transparency);
+        virtual void setTransparency(unsigned char transparency) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool mouseOnWidget(float x, float y);
+        virtual bool mouseOnWidget(float x, float y) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void leftMousePressed(float x, float y);
+        virtual void leftMousePressed(float x, float y) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void leftMouseReleased(float x, float y);
+        virtual void leftMouseReleased(float x, float y) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void mouseMoved(float x, float y);
+        virtual void mouseMoved(float x, float y) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void mouseWheelMoved(int delta, int x, int y);
+        virtual void mouseWheelMoved(int delta, int x, int y) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
+        /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void widgetFocused();
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // This function is a (slow) way to set properties on the widget, no matter what type it is.
-        // When the requested property doesn't exist in the widget then the functions will return false.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool setProperty(std::string property, const std::string& value);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // This function is a (slow) way to get properties of the widget, no matter what type it is.
-        // When the requested property doesn't exist in the widget then the functions will return false.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool getProperty(std::string property, std::string& value) const;
+        virtual void widgetFocused() override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \internal
-        // Returns a list of all properties that can be used in setProperty and getProperty.
-        // The second value in the pair is the type of the property (e.g. int, uint, string, ...).
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::list< std::pair<std::string, std::string> > getPropertyList() const;
-
+    protected:
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
+        // Makes a copy of the widget
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual Widget::Ptr clone() override
+        {
+            return std::make_shared<Slider>(*this);
+        }
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Draws the widget on the render target.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      public:
+    protected:
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// Defines specific triggers to Slider.
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        enum SliderCallbacks
-        {
-            ValueChanged = WidgetCallbacksCount * 1,           ///< Value changed (Slider moved)
-            AllSliderCallbacks = WidgetCallbacksCount * 2 - 1, ///< All triggers defined in Slider and its base classes
-            SliderCallbacksCount = WidgetCallbacksCount * 2
-        };
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      protected:
-
-        std::string m_LoadedConfigFile;
+        sf::FloatRect m_thumb;
 
         // When the mouse went down, did it go down on top of the thumb? If so, where?
-        bool m_MouseDownOnThumb;
-        sf::Vector2f m_MouseDownOnThumbPos;
+        bool m_mouseDownOnThumb = false;
+        sf::Vector2f m_mouseDownOnThumbPos;
 
-        unsigned int m_Minimum;
-        unsigned int m_Maximum;
-        unsigned int m_Value;
+        int m_minimum = 0;
+        int m_maximum = 10;
+        int m_value = 0;
 
-        // Is the slider draw vertically?
-        bool m_VerticalScroll;
+        // Is the slider drawn vertically?
+        bool m_verticalScroll = false;
 
         // Does the image lie vertically?
-        bool m_VerticalImage;
+        bool m_verticalImage = false;
 
-        // If this is true then the L, M and R images will be used.
-        // If it is false then the slider is just one big image that will be stored in the M image.
-        bool m_SplitImage;
 
-        // Is there a separate hover image, or is it a semi-transparent image that is drawn on top of the others?
-        bool m_SeparateHoverImage;
+        friend class SliderRenderer;
+    };
 
-        // The size of the slider and its thumb
-        sf::Vector2f m_Size;
-        sf::Vector2f m_ThumbSize;
 
-        Texture m_TextureTrackNormal_L;
-        Texture m_TextureTrackHover_L;
-        Texture m_TextureTrackNormal_M;
-        Texture m_TextureTrackHover_M;
-        Texture m_TextureTrackNormal_R;
-        Texture m_TextureTrackHover_R;
-        Texture m_TextureThumbNormal;
-        Texture m_TextureThumbHover;
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class SliderRenderer : public WidgetRenderer, public WidgetBorders
+    {
+    public:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Constructor
+        ///
+        /// @param slider  The slider that is connected to the renderer
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        SliderRenderer(Slider* slider) : m_slider{slider} {}
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Dynamically change a property of the renderer, without even knowing the type of the widget.
+        ///
+        /// This function should only be used when you don't know the type of the widget.
+        /// Otherwise you can make a direct function call to make the wanted change.
+        ///
+        /// @param property  The property that you would like to change
+        /// @param value     The new value that you like to assign to the property
+        /// @param rootPath  Path that should be placed in front of any resource filename
+        ///
+        /// @throw Exception when the property doesn't exist for this widget.
+        /// @throw Exception when the value is invalid for this property.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void setProperty(std::string property, const std::string& value, const std::string& rootPath = getResourcePath()) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Change the image of the track that is displayed when the mouse is not on top of the slider
+        ///
+        /// When this image and the thumb image are set, then the track and thumb color property will be ignored.
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTrackNormalImage(const std::string& filename,
+                                 const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                 const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                 bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Change the image of the track that is displayed when the mouse is standing on top of the slider
+        ///
+        /// This image is ignored when no normal track image has been set.
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTrackHoverImage(const std::string& filename,
+                                const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Change the image of the thumb that is displayed when the mouse is not on top of the slider
+        ///
+        /// When this image and the track image are set, then the track and thumb color property will be ignored.
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setThumbNormalImage(const std::string& filename,
+                                 const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                 const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                 bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Change the image of the thumb that is displayed when the mouse is standing on top of the slider
+        ///
+        /// This image is ignored when no normal thumb image has been set.
+        ///
+        /// Pass an empty string to unset the image.
+        ///
+        /// @param filename   Filename of the image to load.
+        /// @param partRect   Load only part of the image. Don't pass this parameter if you want to load the full image.
+        /// @param middlePart Choose the middle part of the image for 9-slice scaling (relative to the part defined by partRect)
+        /// @param repeated   Should the image be repeated or stretched when the size is bigger than the image?
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setThumbHoverImage(const std::string& filename,
+                                const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
+                                const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0),
+                                bool repeated = false);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the track.
+        ///
+        /// @param color  New track color
+        ///
+        /// This color will overwrite the color for both the normal and hover state.
+        ///
+        /// Note that this color is ignored when a track and thumb image have been set.
+        ///
+        /// @see setTrackColorNormal
+        /// @see setTrackColorHover
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTrackColor(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the track in the normal state (mouse not on slider).
+        ///
+        /// @param color  New track color
+        ///
+        /// Note that this color is ignored when a track and thumb image have been set.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTrackColorNormal(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the track in hover state (mouse on slider).
+        ///
+        /// @param color  New track color
+        ///
+        /// Note that this color is ignored when a track and thumb image have been set.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTrackColorHover(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the thumb.
+        ///
+        /// @param color  New thumb color
+        ///
+        /// This color will overwrite the color for both the normal and hover state.
+        ///
+        /// Note that this color is ignored when a track and thumb image have been set.
+        ///
+        /// @see setTrackColorNormal
+        /// @see setTrackColorHover
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setThumbColor(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the thumb in the normal state (mouse not on slider).
+        ///
+        /// @param color  New thumb color
+        ///
+        /// Note that this color is ignored when a track and thumb image have been set.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setThumbColorNormal(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the thumb in hover state (mouse on slider).
+        ///
+        /// @param color  New thumb color
+        ///
+        /// Note that this color is ignored when a track and thumb image have been set.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setThumbColorHover(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the color of the borders.
+        ///
+        /// @param color  New border color
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setBorderColor(const sf::Color& color);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Draws the widget on the render target.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Makes a copy of the renderer
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual std::shared_ptr<WidgetRenderer> clone(Widget* widget) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        SliderRenderer(const SliderRenderer&) = default;
+        SliderRenderer& operator=(const SliderRenderer&) = delete;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    protected:
+
+        Slider*   m_slider;
+
+        Texture   m_textureTrackNormal;
+        Texture   m_textureTrackHover;
+        Texture   m_textureThumbNormal;
+        Texture   m_textureThumbHover;
+
+        sf::Color m_trackColorNormal = {245, 245, 245};
+        sf::Color m_trackColorHover  = {255, 255, 255};
+
+        sf::Color m_thumbColorNormal = {245, 245, 245};
+        sf::Color m_thumbColorHover  = {255, 255, 255};
+
+        sf::Color m_borderColor      = {  0,   0,   0};
+
+        friend class Slider;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
