@@ -3,100 +3,157 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <memory>
+
+namespace sf
+{
+    class RenderWindow;
+}
 
 namespace Phox
 {
-    void clearIODevices();
+    class Keyboard;
 
-    class cMouse
+    class Mouse
     {
         public:
-            #ifdef PHOX_ENABLE_INLINES
-                inline bool pressed(sf::Mouse::Button Button) {return m_catchPress[Button];}
-                inline bool released(sf::Mouse::Button Button) const {return m_catchRelease[Button];}
-                inline bool down(sf::Mouse::Button Button) const {return  sf::Mouse::isButtonPressed(Button);}
-                inline bool up  (sf::Mouse::Button Button) const {return !sf::Mouse::isButtonPressed(Button);}
-                inline void setPosition(const int X, const int Y) const {sf::Mouse::setPosition(sf::Vector2i(X, Y));}
-                inline void setPosition(const int X, const int Y, const sf::Window& Target) const {sf::Mouse::setPosition(sf::Vector2i(X, Y), Target);}
-                inline int x_rel_to(const sf::Window& Target) const {return sf::Mouse::getPosition(Target).x;}
-                inline int y_rel_to(const sf::Window& Target) const {return sf::Mouse::getPosition(Target).y;}
-                inline sf::Vector2i getPosition() const {return sf::Mouse::getPosition();}
-                inline sf::Vector2f getPositionFloat() const {return sf::Vector2f(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y);}
-                inline sf::Vector2i getPosition(const sf::Window& Target) const {return sf::Mouse::getPosition(Target);}
-                inline sf::Vector2f getPositionFloat(const sf::Window& Target) const {return sf::Vector2f(sf::Mouse::getPosition(Target).x, sf::Mouse::getPosition(Target).y);}
-            #else
-                bool pressed(sf::Mouse::Button Button) {return m_catchPress[Button];}
-                bool released(sf::Mouse::Button Button) const {return m_catchRelease[Button];}
-                bool down(sf::Mouse::Button Button) const {return  sf::Mouse::isButtonPressed(Button);}
-                bool up  (sf::Mouse::Button Button) const {return !sf::Mouse::isButtonPressed(Button);}
-                void setPosition(const int X, const int Y) const {sf::Mouse::setPosition(sf::Vector2i(X, Y));}
-                void setPosition(const int X, const int Y, const sf::Window& Target) const {sf::Mouse::setPosition(sf::Vector2i(X, Y), Target);}
-                int x_rel_to(const sf::Window& Target) const {return sf::Mouse::getPosition(Target).x;}
-                int y_rel_to(const sf::Window& Target) const {return sf::Mouse::getPosition(Target).y;}
-                sf::Vector2i getPosition() const {return sf::Mouse::getPosition();}
-                sf::Vector2f getPositionFloat() const {return sf::Vector2f(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y);}
-                sf::Vector2i getPosition(const sf::Window& Target) const {return sf::Mouse::getPosition(Target);}
-                sf::Vector2f getPositionFloat(const sf::Window& Target) const {return sf::Vector2f(sf::Mouse::getPosition(Target).x, sf::Mouse::getPosition(Target).y);}
-            #endif
+            Mouse() = default;
+           ~Mouse() = default;
 
+            Mouse(const Mouse& other)=delete;
+            Mouse(const Mouse&& other)=delete;
+            Mouse& operator=(Mouse other)=delete;
+            Mouse& operator=(Mouse&& other)=delete;
+
+            inline bool pressed(sf::Mouse::Button Button)
+            {
+                return m_catchPress[Button];
+            }
+
+            inline bool released(sf::Mouse::Button Button) const
+            {
+                return m_catchRelease[Button];
+            }
+
+            inline bool down(sf::Mouse::Button Button) const
+            {
+                return  sf::Mouse::isButtonPressed(Button);
+            }
+
+            inline bool up  (sf::Mouse::Button Button) const
+            {
+                return !sf::Mouse::isButtonPressed(Button);
+            }
+
+            inline void setPosition(const int X, const int Y) const
+            {
+                sf::Mouse::setPosition(sf::Vector2i(X, Y));
+            }
+
+            inline void setPosition(const int X, const int Y, const sf::Window& Target) const
+            {
+                sf::Mouse::setPosition(sf::Vector2i(X, Y), Target);
+            }
+
+            inline int x_rel_to(const sf::Window& Target) const
+            {
+                return sf::Mouse::getPosition(Target).x;
+            }
+
+            inline int y_rel_to(const sf::Window& Target) const
+            {
+                return sf::Mouse::getPosition(Target).y;
+            }
+
+            inline sf::Vector2i getPosition() const
+            {
+                return sf::Mouse::getPosition();
+            }
+
+            inline sf::Vector2f getPositionFloat() const
+            {
+                return sf::Vector2f(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y);
+            }
+
+            inline sf::Vector2i getPosition(const sf::Window& Target) const
+            {
+                return sf::Mouse::getPosition(Target);
+            }
+
+            inline sf::Vector2f getPositionFloat(const sf::Window& Target) const
+            {
+                return sf::Vector2f(sf::Mouse::getPosition(Target).x, sf::Mouse::getPosition(Target).y);
+            }
+
+            inline int x() const {return m_x;}
+            inline int y() const {return m_y;}
+            inline int xAbs() const {return m_xAbs;}
+            inline int yAbs() const {return m_yAbs;}
+
+            void tellPressed(sf::Mouse::Button Button);
+            void tellReleased(sf::Mouse::Button Button);
             void update();
+            void setReferenceWindow(sf::RenderWindow& window);
+            friend void clearIODevices(Mouse& mouse, Keyboard& keyboard);
 
-            int x;
-            int y;
-            int x_abs;
-            int y_abs;
+        private:
 
-            //friend void clearIODevices();
-            //friend void PhoxMainLoop();
 
-        //private:
-            #ifdef PHOX_ENABLE_INLINES
-                inline void tellPressed(sf::Mouse::Button Button)  {m_catchPress[Button] = 1; m_catchRelease[Button] = 0;}
-                inline void tellReleased(sf::Mouse::Button Button) {m_catchRelease[Button] = 1; m_catchPress[Button] = 0;}
-            #else
-                void tellPressed(sf::Mouse::Button Button)  {m_catchPress[Button] = 1; m_catchRelease[Button] = 0;}
-                void tellReleased(sf::Mouse::Button Button) {m_catchRelease[Button] = 1; m_catchPress[Button] = 0;}
-            #endif
+            int m_x;
+            int m_y;
+            int m_xAbs;
+            int m_yAbs;
+
             bool m_catchPress[3] = {0};
             bool m_catchRelease[3]= {0};
+
+            sf::RenderWindow* m_ReferenceWindow = nullptr;
     };
 
-    class cKeyboard
+    class Keyboard
     {
         public:
-            #ifdef PHOX_ENABLE_INLINES
-                explicit inline cKeyboard() {clearIODevices();}
-                inline bool down(sf::Keyboard::Key Key) const {return  sf::Keyboard::isKeyPressed(Key);}
-                inline bool up  (sf::Keyboard::Key Key) const {return !sf::Keyboard::isKeyPressed(Key);}
-                inline bool pressed (sf::Keyboard::Key Key) const {return m_catchPress[Key];}
-                inline bool released(sf::Keyboard::Key Key) const {return m_catchRelease[Key];}
-            #else
-                explicit cKeyboard() {clearIODevices();}
-                bool down(sf::Keyboard::Key Key) const {return  sf::Keyboard::isKeyPressed(Key);}
-                bool up  (sf::Keyboard::Key Key) const {return !sf::Keyboard::isKeyPressed(Key);}
-                bool pressed (sf::Keyboard::Key Key) const {return m_catchPress[Key];}
-                bool released(sf::Keyboard::Key Key) const {return m_catchRelease[Key];}
-            #endif
+            Keyboard()=default;
+           ~Keyboard()=default;
+            Keyboard(const Keyboard& other)=delete;
+            Keyboard(const Keyboard&& other)=delete;
+            Keyboard& operator=(Keyboard other)=delete;
+            Keyboard& operator=(Keyboard&& other)=delete;
+
+            inline bool down(sf::Keyboard::Key Key) const
+            {
+                return  sf::Keyboard::isKeyPressed(Key);
+            }
+
+            inline bool up(sf::Keyboard::Key Key) const
+            {
+                return !sf::Keyboard::isKeyPressed(Key);
+            }
+
+            inline bool pressed(sf::Keyboard::Key Key) const
+            {
+                return m_catchPress[Key];
+            }
+
+            inline bool released(sf::Keyboard::Key Key) const
+            {
+                return m_catchRelease[Key];
+            }
+
             bool anyKeyPressed();
             bool anyKeyReleased();
             bool anyKeyDown();
+            void tellPressed (sf::Keyboard::Key Key);
+            void tellReleased(sf::Keyboard::Key Key);
 
-            //friend void clearIODevices();
-            //friend void PhoxMainLoop();
+            friend void clearIODevices(Mouse& mouse, Keyboard& keyboard);
 
-        //private:
+        private:
             bool m_catchPress[100] = {0};
             bool m_catchRelease[100] = {0};
-            #ifdef PHOX_ENABLE_INLINES
-                inline void tellPressed (sf::Keyboard::Key Key) {m_catchPress[Key] = 1; m_catchRelease[Key] = 0;}
-                inline void tellReleased(sf::Keyboard::Key Key) {m_catchRelease[Key] = 1; m_catchPress[Key] = 0;}
-            #else
-                void tellPressed (sf::Keyboard::Key Key) {m_catchPress[Key] = 1; m_catchRelease[Key] = 0;}
-                void tellReleased(sf::Keyboard::Key Key) {m_catchRelease[Key] = 1; m_catchPress[Key] = 0;}
-            #endif
     };
 
-    extern cMouse Mouse;
-    extern cKeyboard Keyboard;
+    void clearIODevices(Mouse& mouse, Keyboard& keyboard);
+
 }
 #endif

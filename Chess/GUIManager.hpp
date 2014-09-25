@@ -8,27 +8,22 @@ class Board;
 class GUIManager
 {
     public:
-        bool init(sf::RenderWindow& Window);
-        void draw();
-        void update(sf::Event& event);
         void addText(const std::string& Text);
-        void linkBoard(Board& board);
         void doCallbacks();
+        void draw();
+        bool init(sf::RenderWindow& Window);
+        void linkBoard(Board& board);
         void reset();
+        void update(sf::Event& event);
 
-        inline std::size_t getNewGame()
-        {
-            if (m_NewGame)
-            {
-                std::size_t R = m_NewGame;
-                m_NewGame = 0;
-                return R;
-            }
-            return 0;
-        }
+        inline bool getTouchMove()      const {return m_EnforceTouchMove->isChecked();}
+        inline bool get960Board()       const {return m_960Board->isChecked();}
+        inline bool getVerboseLogging() const {return m_VerboseLogging->isChecked();}
+
+        std::size_t getNewGame();
 
     private:
-        tgui::Gui m_GUI;
+        tgui::Gui           m_GUI;
         tgui::TextBox::Ptr  m_OutputBox = tgui::TextBox::Ptr(m_GUI);
         tgui::TextBox::Ptr  m_InputBox = tgui::TextBox::Ptr(m_GUI);
         tgui::EditBox::Ptr  m_TimeBox = tgui::EditBox::Ptr(m_GUI);

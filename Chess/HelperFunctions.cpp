@@ -11,12 +11,18 @@ std::string stringUpper(const std::string& String)
 {
     std::string Return("");
 
-    for (unsigned int i = 0; i < String.size(); ++i)
+    for (std::size_t i = 0; i < String.size(); ++i)
     {
         char Char = String[i];
 
-        if (Char >= 97 && Char <= 122) Return += Char ^ 0x20;
-        else Return += Char;
+        if (Char >= 97 && Char <= 122)
+        {
+            Return += Char ^ 0x20;
+        }
+        else
+        {
+            Return += Char;
+        }
     }
     return Return;
 }
@@ -32,7 +38,7 @@ std::string getPieceName(pieceValue piece)
         case 'R': return "Rook";
         case 'Q': return "Queen";
         case 'K': return "King";
-        default: return "NULL";
+        default:  return "NULL";
     }
 }
 
@@ -40,14 +46,14 @@ char numberToLetterCoords(char number)
 {
     switch (number)
     {
-        case 0: return 'a';
-        case 1: return 'b';
-        case 2: return 'c';
-        case 3: return 'd';
-        case 4: return 'e';
-        case 5: return 'f';
-        case 6: return 'g';
-        case 7: return 'h';
+        case 0:  return 'a';
+        case 1:  return 'b';
+        case 2:  return 'c';
+        case 3:  return 'd';
+        case 4:  return 'e';
+        case 5:  return 'f';
+        case 6:  return 'g';
+        case 7:  return 'h';
         default: return 'a';
     }
 }
@@ -64,6 +70,6 @@ char letterToNumberCoords(char letter)
         case 'f': return 5;
         case 'g': return 6;
         case 'h': return 7;
-        default: return 0;
+        default:  return 0;
     }
 }

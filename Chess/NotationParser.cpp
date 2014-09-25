@@ -102,7 +102,9 @@ int NotationParser::parse()
     while (ss >> In)
     {
         if (isMove(In))
+        {
             m_RawQueue.push(In);
+        }
     }
 
     bool inValid = 0;
@@ -111,11 +113,18 @@ int NotationParser::parse()
     {
         std::string MoveStr = removeAllChars(m_RawQueue.front(), 'x');
         MoveStr = removeAllChars(MoveStr, ':');
-        bool Capture = MoveStr != m_RawQueue.front();
+        bool Capture = (MoveStr != m_RawQueue.front());
         //Removed "captured notation" leaving bare move
 
         std::string PieceKind = getPieceName(stringUpper(MoveStr)[0]);
-        if (PieceKind == "NULL") PieceKind = "Pawn"; else MoveStr.erase(0, 1);//Remove the front letter designating piece kind
+        if (PieceKind == "NULL")
+        {
+            PieceKind = "Pawn";
+        }
+        else
+        {
+            MoveStr.erase(0, 1);//Remove the front letter designating piece kind
+        }
 
         char Row = letterToNumberCoords(MoveStr[0]);
         char Column = MoveStr[1];
@@ -147,5 +156,7 @@ int NotationParser::parse()
 
 
         m_RawQueue.pop();
+
+        return 1;
     }
 }

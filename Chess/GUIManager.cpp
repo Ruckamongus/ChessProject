@@ -1,11 +1,16 @@
 #include <Chess/GUIManager.hpp>
 #include <Chess/Board.hpp>
+#include <Phox/Internal/Exception.hpp>
 
 bool GUIManager::init(sf::RenderWindow& Window)
 {
     m_GUI.setWindow(Window);
     bool Loaded = m_GUI.setGlobalFont("Resources\\DejaVuSans.ttf");
-    if (!Loaded) return -1;
+    if (!Loaded)
+    {
+        Phox::ThrowException("Could not locate \"Resources\\DejaVuSans.ttf\".");
+        return -1;
+    }
 
     m_OutputBox->load("Resources\\Black.conf");
     m_OutputBox->setPosition(544, 34);
@@ -74,7 +79,10 @@ void GUIManager::addText(const std::string& Text)
 void GUIManager::draw()
 {
     tgui::Callback callback;
-    while (m_GUI.pollCallback(callback)){}
+    while (m_GUI.pollCallback(callback))
+    {
+        //Just catch changes and tell child widgets
+    }
     m_GUI.draw();
 }
 
@@ -93,22 +101,6 @@ void GUIManager::doCallbacks()
     tgui::Callback callback;
     while (m_GUI.pollCallback(callback))
     {
-        if (callback.id == 1)//Touch-Move
-        {
-            if (m_Board != nullptr)
-            {
-                m_Board->m_EnforceTouchMove = m_EnforceTouchMove->isChecked();
-            }
-        }
-
-        if (callback.id == 2)//Verbose logging
-        {
-            if (m_Board != nullptr)
-            {
-                m_Board->m_VerboseLogging = m_VerboseLogging->isChecked();
-            }
-        }
-
         if (callback.id == 3)//New game
         {
             m_NewGame = 1 + m_960Board->isChecked();
@@ -121,16 +113,6 @@ void GUIManager::doCallbacks()
                 m_Board->runParser(m_InputBox->getText(), m_TimeBox->getText());
             }
         }
-
-        if (callback.id == 5)//960 Board
-        {
-            /*
-            if (m_Board != nullptr)
-            {
-                m_Board->runParser(m_InputBox->getText(), m_TimeBox->getText());
-            }
-            */
-        }
     }
 }
 
@@ -138,4 +120,15 @@ void GUIManager::reset()
 {
     m_OutputBox->setText("");
     m_InputBox->setText("");
+}
+
+std::size_t  GUIManager::getNewGame()
+{
+    if (m_NewGame)
+    {
+        std::size_t Return = m_NewGame;
+        m_NewGame = 0;
+        return Return;
+    }
+    return 0;
 }

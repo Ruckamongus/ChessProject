@@ -2,7 +2,7 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Project" />
+		<Option title="Chess" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
@@ -105,12 +105,9 @@
 		<Unit filename="Phox/Internal/Exception.hpp" />
 		<Unit filename="Phox/Internal/IODevices.cpp" />
 		<Unit filename="Phox/Internal/IODevices.hpp" />
-		<Unit filename="Phox/Internal/Internals.cpp" />
-		<Unit filename="Phox/Internal/Internals.hpp" />
 		<Unit filename="Phox/Utilities/Conversions.hpp" />
 		<Unit filename="Phox/Utilities/Date.cpp" />
 		<Unit filename="Phox/Utilities/Date.hpp" />
-		<Unit filename="Phox/Utilities/EfficiencyClock.cpp" />
 		<Unit filename="Phox/Utilities/EfficiencyClock.hpp" />
 		<Unit filename="main.cpp" />
 		<Extensions>

@@ -12,7 +12,7 @@ void clockStart()
 
 void clockStop()
 {
-    Clock.stop();
+    //Clock.stop();
 }
 double clockGet(timeBase t)
 {

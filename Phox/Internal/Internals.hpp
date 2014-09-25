@@ -4,21 +4,13 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 
-#ifdef PHOX_DEBUG_MODE_ENABLED
-    #include <Phox/Utilities/DebugLog.hpp>
-    #include <Phox/Utilities/DebuggerFunctions.hpp>
-#endif
-
 #include <Phox/Internal/IODevices.hpp>
 #include <Phox/Internal/Exception.hpp>
+
 #include <string>
 
 namespace Phox
 {
-    #ifdef PHOX_DEBUG_MODE_ENABLED
-        extern cDebugLog Debugger;
-    #endif
-
     namespace Internal
     {
         extern sf::Clock FPSClock;
