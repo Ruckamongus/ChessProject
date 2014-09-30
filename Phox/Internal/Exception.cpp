@@ -9,7 +9,7 @@ namespace Phox
 
         try
         {
-            throw Exception(String);
+            throw Exception(Error);
         }
         catch (std::exception& E)
         {
@@ -31,7 +31,7 @@ namespace Phox
 
         try
         {
-            throw Exception(String);
+            throw Exception(Error);
         }
 
         catch (std::exception& E)

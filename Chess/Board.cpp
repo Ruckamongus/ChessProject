@@ -158,9 +158,9 @@ void Board::clicked(const Game g, const sf::Vector2i& mousePosition)
 
     if (m_Selected)
     {
-        std::size_t X, Y;
         if (cell.x > -1)//Clicked within the board
         {
+			std::size_t X, Y;
             X = cell.x;
             Y = cell.y;
             sf::Vector2i selectFlipped = cellCoordFlip(m_SelectPosition);
