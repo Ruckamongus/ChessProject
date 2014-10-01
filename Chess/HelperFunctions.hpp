@@ -22,10 +22,11 @@ inline int otherMove(int Move)
     return COLOR_BLACK;
 }
 
-sf::Vector2i cellCoordFlip(const sf::Vector2i& cell);
-std::string  stringUpper(const std::string& String);
-std::string  getPieceName(pieceValue piece);
-char         numberToLetterCoords(char number);
-char         letterToNumberCoords(char letter);
+sf::Vector2i  cellCoordFlip(const sf::Vector2i& cell);
+std::string   stringUpper(const std::string& String);
+std::string   getPieceName(pieceValue piece);
+unsigned char numberToLetterCoords(char number);
+unsigned char letterToNumberCoords(char letter);
+unsigned char letterToReal(char letter);
 
 #endif

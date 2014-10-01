@@ -51,9 +51,9 @@ extern "C"
     unsigned char   getPieceChar(pieceValue piece);
     Game            newGame();
     void            deleteGame(Game g);
-    int             makeMove(const Game g, move m); //returns if the move was made
-    int             doMove(const Game g, move m);
-    int             isMoveLegal(const Game g, move m);
+    int             makeMove(const Game g, move m, bool noVerbose = 0); //returns if the move was made
+    int             doMove(const Game g, move m, bool noVebose = 0);
+    int             isMoveLegal(const Game g, move m, bool noVerbose = 0);
     double          evaluatePosition(game g); //do not pass by reference perhaps? Think later.
     move            getInput(); //function with a side effect
     int             isInCheck(const Game g, emptyBlackWhite colorChecking);

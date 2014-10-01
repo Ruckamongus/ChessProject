@@ -2,7 +2,7 @@
 #define __PhoxEngineException__ 1
 #include <exception>
 #include <string>
-#include <ostream>
+#include <iostream>
 #include <cstdlib>
 
 namespace Phox
@@ -63,20 +63,7 @@ namespace Phox
     /// \param String Message of the exception.
     /// \param Exit Whether or not to stop execution of the program.
     ////////////////////////////////////////////////////////////
-    void ThrowException(const std::string& String, bool Abort = 0);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Throw a Phox exception.
-    ///
-    /// This function will create an instance of a Phox exception
-    /// which is like a standard exception, but has the ability
-    /// to stop execution of the program. This function also
-    /// automatically adds the exception to the Debugger.
-    ///
-    /// \param String Message of the exception.
-    /// \param Exit Whether or not to stop execution of the program.
-    ////////////////////////////////////////////////////////////
-    void ThrowException(const std::string& String, std::ostream& Out, bool Exit = 0);
+    void ThrowException(const std::string& String, bool Exit = 0, std::ostream& Out = std::cerr);
 }
 #endif
 ////////////////////////////////////////////////////////////

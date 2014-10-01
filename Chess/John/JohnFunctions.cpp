@@ -178,11 +178,11 @@ extern "C"
     }
 
     //returns if a move was made
-    int makeMove(Game g, move m)
+    int makeMove(Game g, move m, bool noVerbose)
     {
         if (isMoveLegal(g, m))
         {
-            printf("Move was legal.\n");
+            if (!noVerbose) printf("Move was legal.\n");
 
             doMove(g, m);
 
@@ -194,12 +194,12 @@ extern "C"
             }
             return TRUE;
         } else {
-            printf("An illegal move attempt has been made.\n");
+            if (!noVerbose) printf("An illegal move attempt has been made.\n");
             return FALSE;
         }
     }
 
-    int doMove(Game g, move m) //does not alternate move turn
+    int doMove(Game g, move m, bool noVerbose) //does not alternate move turn
     {
         pieceValue piece = g->board[m.xFrom][m.yFrom];
         g->board[m.xTo][m.yTo] = piece;
@@ -214,7 +214,7 @@ extern "C"
             } else {
                 if (m.yFrom == 3 && ((m.xTo == m.xFrom - 1) || (m.xTo == m.xFrom + 1))) { //en passant
                     g->board[m.xTo][m.yFrom] = EMPTY;
-                    printf("En passant.\n");
+                    if (!noVerbose) printf("En passant.\n");
                 }
                 g->canEnPassant = NO_ENPASSANT;
 
@@ -225,7 +225,7 @@ extern "C"
             } else {
                 if (m.yFrom == 4 && ((m.xTo == m.xFrom - 1) || (m.xTo == m.xFrom + 1))) { //en passant
                     g->board[m.xTo][m.yFrom] = EMPTY;
-                    printf("En passant.\n");
+                    if (!noVerbose) printf("En passant.\n");
                 }
                 g->canEnPassant = NO_ENPASSANT;
             }
@@ -738,7 +738,7 @@ extern "C"
     }
 
     //unfinished
-    int isMoveLegal(const Game g, move m)
+    int isMoveLegal(const Game g, move m, bool noVerbose)
     {
         //printf("\n%d %d %d %d\n\n", m.xFrom, m.yFrom, m.xTo, m.yTo);
         //need to test for all that it doesn't put the king in check
@@ -751,7 +751,7 @@ extern "C"
         //are we trying to move a piece? Is it that correct color?
         emptyBlackWhite myPieceColor = getSquare(piece);
         if (myPieceColor != g->whoseMove) {
-            printf("Wrong color's turn.\n");
+            if (!noVerbose) printf("Wrong color's turn.\n");
             return FALSE;
         }
 
@@ -774,7 +774,7 @@ extern "C"
                         return TRUE;
                     }
                     if (m.xTo != priorEnPassant) {
-                        printf("Can't en passant here. canENPassanet = %d\n", g->canEnPassant);
+                        if (!noVerbose) printf("Can't en passant here. canENPassanet = %d\n", g->canEnPassant);
                         return FALSE; //this is checked later in the switch, but never will occur, we are quick terminating here. Delete the switch bit later
                     }
                 }
@@ -788,7 +788,7 @@ extern "C"
                         return TRUE;
                     }
                     if (m.xTo != priorEnPassant) {
-                        printf("Can't en passant here. canENPassanet = %d\n", g->canEnPassant);
+                        if (!noVerbose) printf("Can't en passant here. canENPassanet = %d\n", g->canEnPassant);
                         return FALSE; //this is checked later in the switch, but never will occur, we are quick terminating here. Delete the switch bit later
                     }
                 }
@@ -816,7 +816,7 @@ extern "C"
             }
         }
         if (inCheck) {
-            printf("Wrong by in check\n");
+            if (!noVerbose) printf("Wrong by in check\n");
             return FALSE;
         }
 
@@ -837,7 +837,7 @@ extern "C"
                         }
                         //en passant
                         if (m.yFrom == 3 && m.xTo == g->canEnPassant) {
-                            printf("this is redundant and should never occur.\n");
+                            if (!noVerbose) printf("this is redundant and should never occur.\n");
                             return TRUE;
                         } else {
                             return FALSE;
@@ -855,7 +855,7 @@ extern "C"
                 } else {
                     return FALSE;
                 }
-                printf("Shouldn't happen.\n"); assert(0);
+                if (!noVerbose) printf("Shouldn't happen.\n"); assert(0);
             }
             case W_PAWN: {
                 //first move
@@ -873,7 +873,7 @@ extern "C"
                         }
                         //en passant
                         if (m.yFrom == 4 && m.xTo == g->canEnPassant) {
-                            printf("this is redundant and should never occur.\n");
+                            if (!noVerbose) printf("this is redundant and should never occur.\n");
                             return TRUE;
                         } else {
                             return FALSE;
@@ -891,7 +891,7 @@ extern "C"
                 } else {
                     return FALSE;
                 }
-                printf("Shouldn't happen.\n"); assert(0);
+                if (!noVerbose) printf("Shouldn't happen.\n"); assert(0);
             }
             case B_KNIGHT: case W_KNIGHT: {
                 //printf("Knight movement\n");
@@ -922,10 +922,10 @@ extern "C"
                         return FALSE;
                     }
                 } else {
-                    printf("Knight movement: falsies\n");
+                    if (!noVerbose) printf("Knight movement: falsies\n");
                     return FALSE;
                 }
-                printf("Shouldn't happen.\n"); assert(0);
+                if (!noVerbose) printf("Shouldn't happen.\n"); assert(0);
             }
             case B_BISHOP: case W_BISHOP: {
                 //printf("Bishop movement\n");
@@ -950,7 +950,7 @@ extern "C"
                     }
                     return TRUE;
                 }
-                printf("Shouldn't happen.\n"); assert(0);
+                if (!noVerbose) printf("Shouldn't happen.\n"); assert(0);
             }
             case B_ROOK: case W_ROOK: {
                 char xDisplacement = (char) (m.xTo - m.xFrom);
@@ -1041,7 +1041,7 @@ extern "C"
                     }
                     return TRUE;
                 }
-                printf("Shouldn't happen.\n"); assert(0);
+                if (!noVerbose) printf("Shouldn't happen.\n"); assert(0);
             }
             case B_KING: case W_KING: {
                 char xDisplacement = (char) (m.xTo - m.xFrom);
@@ -1059,11 +1059,11 @@ extern "C"
                 }
             }
             default:
-                printf("This should never happen lmao.");
+                if (!noVerbose) printf("This should never happen lmao.");
                 assert(0);
         }
 
-        printf("No value returned for legality\n");
+        if (!noVerbose) printf("No value returned for legality\n");
         assert(0);
         return 0;
     }

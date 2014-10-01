@@ -74,6 +74,11 @@ int main(int argc, char* argv[])
         }
         GUI.draw();
 
+        if (GameBoard.getParsing())
+        {
+            sf::sleep(sf::milliseconds(GameBoard.getParsingWaitTime()));
+        }
+
         Window.display();//Draw everything on the window
     }
 

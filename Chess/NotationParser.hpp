@@ -12,7 +12,7 @@ class NotationParser
         int  parse();
 
         inline std::string getErrorString() const {return m_ErrorString;}
-        std::queue<move> getMoves()         const {return m_MoveQueue;}//Copy of parsed moves
+        std::queue<move>   getMoves()       const {return m_MoveQueue;}//Copy of parsed moves
 
     private:
         std::string             m_RawString;
