@@ -2,6 +2,14 @@
 #include <Chess/Board.hpp>
 #include <Phox/Internal/Exception.hpp>
 
+namespace
+{
+    void p(const std::string& T)
+    {
+        std::cout << T << '\n';
+    }
+}
+
 void GUIManager::init(sf::RenderWindow& Window)
 {
     m_GUI.setWindow(Window);

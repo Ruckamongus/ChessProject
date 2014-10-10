@@ -125,9 +125,10 @@ int NotationParser::parse()
 
     while (m_RawQueue.size())
     {
-        std::cout << "Size: " << m_RawQueue.size() << '\n';
         std::string MoveStr = removeAllChars(m_RawQueue.front(), 'x');
+        MoveStr = removeAllChars(MoveStr, '+');//Remove check notation
         MoveStr = removeAllChars(MoveStr, ':');
+
         bool Capture = (MoveStr != m_RawQueue.front());
         bool Invalid = 1;
         //Removed "captured notation" leaving bare move

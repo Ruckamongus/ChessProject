@@ -185,6 +185,15 @@ void Board::reportAndMove(const Game g, move m)
                     }
                 }
 
+                else
+
+                {
+                    if (isInCheck(g, g->whoseMove))
+                    {
+                        Str += "+";
+                    }
+                }
+
                 if (g->whoseMove == COLOR_BLACK)//Actually white, lol
                 {
                     m_GUIManager->addText(Phox::toString(m_CurrentMove) + ". " + Str + " " + Verbose);

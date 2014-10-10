@@ -665,7 +665,7 @@
 	<Chess/HelperFunctions.hpp>
 	<Phox/Utilities/Conversions.hpp>
 
-1412187961 source:c:\users\cody\desktop\chess\chess\chess\board.cpp
+1412955835 source:c:\users\cody\desktop\chess\chess\chess\board.cpp
 	<Chess/Board.hpp>
 	<Phox/Internal/Exception.hpp>
 	<Phox/Internal/IODevices.hpp>
@@ -1059,7 +1059,7 @@
 	<sstream>
 	<cstdlib>
 
-1411635873 c:\users\cody\desktop\chess\chess\chess\guimanager.hpp
+1412196237 c:\users\cody\desktop\chess\chess\chess\guimanager.hpp
 	<SFML/Graphics.hpp>
 	<TGUI/TGUI.hpp>
 
@@ -1249,7 +1249,7 @@
 	<string>
 	<queue>
 
-1411637393 source:c:\users\cody\desktop\chess\chess\chess\guimanager.cpp
+1412196238 source:c:\users\cody\desktop\chess\chess\chess\guimanager.cpp
 	<Chess/GUIManager.hpp>
 	<Chess/Board.hpp>
 	<Phox/Internal/Exception.hpp>
@@ -1273,7 +1273,7 @@
 	<Chess\John\JohnDefinitions.hpp>
 	<stdlib.h>
 
-1412187682 source:c:\users\cody\desktop\chess\chess\chess\notationparser.cpp
+1412188180 source:c:\users\cody\desktop\chess\chess\chess\notationparser.cpp
 	<Chess/NotationParser.hpp>
 	<Chess/HelperFunctions.hpp>
 	<Phox/Utilities/Conversions.hpp>

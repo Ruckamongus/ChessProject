@@ -1,105 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
-	<ActiveTarget name="Debug" />
-	<File name="Phox\Internal\IODevices.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<ActiveTarget name="Release" />
+	<File name="Chess\GUIManager.cpp" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4694" topLine="136" />
-		</Cursor>
-	</File>
-	<File name="Chess\HelperFunctions.hpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="706" topLine="8" />
-		</Cursor>
-	</File>
-	<File name="Phox\Utilities\EfficiencyClock.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="588" topLine="4" />
-		</Cursor>
-	</File>
-	<File name="Chess\John\JohnFunctions.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="29225" topLine="770" />
-		</Cursor>
-		<Folding>
-			<Collapse line="6" />
-		</Folding>
-	</File>
-	<File name="Chess\John\EfficiencyClockCBinding.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="220" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="Phox\Internal\Exception.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="232" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="main.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="506" topLine="41" />
-		</Cursor>
-	</File>
-	<File name="Phox\Internal\IODevices.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="140" topLine="0" />
+			<Cursor1 position="2879" topLine="69" />
 		</Cursor>
 	</File>
 	<File name="Chess\Board.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="10810" topLine="169" />
+			<Cursor1 position="10727" topLine="243" />
 		</Cursor>
 		<Folding>
 			<Collapse line="10" />
-			<Collapse line="12" />
 			<Collapse line="17" />
 			<Collapse line="22" />
-			<Collapse line="77" />
+			<Collapse line="71" />
 			<Collapse line="137" />
 		</Folding>
 	</File>
-	<File name="Chess\John\JohnDefinitions.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1855" topLine="9" />
-		</Cursor>
-	</File>
-	<File name="Phox\Internal\Exception.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3591" topLine="74" />
-		</Cursor>
-	</File>
-	<File name="Chess\Settings.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="200" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="Chess\GUIManager.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2871" topLine="61" />
-		</Cursor>
-	</File>
-	<File name="Phox\Utilities\Conversions.hpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="300" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="Chess\GUIManager.hpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="777" topLine="6" />
-		</Cursor>
-	</File>
 	<File name="Chess\Board.hpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2198" topLine="45" />
+			<Cursor1 position="2385" topLine="46" />
 		</Cursor>
 	</File>
-	<File name="Chess\NotationParser.hpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Chess\GUIManager.hpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="338" topLine="0" />
+			<Cursor1 position="1084" topLine="18" />
 		</Cursor>
 	</File>
-	<File name="Chess\Settings.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Chess\HelperFunctions.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="74" topLine="0" />
+			<Cursor1 position="1247" topLine="31" />
+		</Cursor>
+	</File>
+	<File name="Chess\HelperFunctions.hpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="715" topLine="9" />
 		</Cursor>
 	</File>
 	<File name="Chess\Includes.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -107,31 +43,90 @@
 			<Cursor1 position="224" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="Chess\HelperFunctions.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="0" />
-		</Cursor>
-	</File>
 	<File name="Chess\John\EfficiencyClockCBinding.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="604" topLine="12" />
 		</Cursor>
 	</File>
-	<File name="Chess\NotationParser.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Chess\John\EfficiencyClockCBinding.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3935" topLine="58" />
+			<Cursor1 position="220" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="Chess\John\JohnDefinitions.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1346" topLine="45" />
+		</Cursor>
+	</File>
+	<File name="Chess\NotationParser.cpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="187" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="Chess\John\JohnFunctions.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5890" topLine="177" />
 		</Cursor>
 		<Folding>
-			<Collapse line="7" />
-			<Collapse line="9" />
-			<Collapse line="20" />
-			<Collapse line="31" />
-			<Collapse line="43" />
+			<Collapse line="6" />
 		</Folding>
+	</File>
+	<File name="Chess\NotationParser.hpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="495" topLine="2" />
+		</Cursor>
+	</File>
+	<File name="Chess\Settings.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="74" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="Chess\Settings.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="200" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="Phox\Internal\Exception.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="124" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="Phox\Internal\Exception.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2519" topLine="45" />
+		</Cursor>
+	</File>
+	<File name="Phox\Internal\IODevices.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="140" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="Phox\Internal\IODevices.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4694" topLine="136" />
+		</Cursor>
+	</File>
+	<File name="Phox\Utilities\Conversions.hpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="300" topLine="0" />
+		</Cursor>
 	</File>
 	<File name="Phox\Utilities\Date.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="490" topLine="0" />
 		</Cursor>
+	</File>
+	<File name="Phox\Utilities\EfficiencyClock.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="588" topLine="4" />
+		</Cursor>
+	</File>
+	<File name="main.cpp" open="1" top="1" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1076" topLine="28" />
+		</Cursor>
+		<Folding>
+			<Collapse line="65" />
+		</Folding>
 	</File>
 </CodeBlocks_layout_file>
