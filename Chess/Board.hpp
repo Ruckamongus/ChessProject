@@ -34,6 +34,9 @@ class Board
         void reset();
         void update(const Game g, const sf::Vector2i& mousePosition, sf::RenderWindow& Window);
 
+        inline bool        getParsing()         const {return m_ParserMoves.size();}
+        inline std::size_t getParsingWaitTime() const {return m_ParserTime;}
+
         friend class GUIManager;
 
     private:
@@ -55,14 +58,18 @@ class Board
         std::size_t     m_CurrentMove = 1;//Increments each move pair
 
 
-        GUIManager*     m_GUIManager = nullptr;
-        NotationParser  m_Parser;
-        Game            m_ParserCache = nullptr;
+        GUIManager*      m_GUIManager = nullptr;
+        NotationParser   m_Parser;
+        Game             m_ParserCache = nullptr;
+        std::queue<move> m_ParserMoves;
+        std::size_t      m_ParserTime = 10;//ms
+
 
 
         void            refreshBoard(const Game g);
         void            runParser(const std::string& String, const std::string& Time);
+        void            reportAndMove(const Game g, move m);
         sf::Vector2i    getMouseCell(const sf::Vector2i& mousePosition) const;
-};
+        };
 
 #endif

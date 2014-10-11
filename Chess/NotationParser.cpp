@@ -79,6 +79,18 @@ namespace
         if (!containsLettersAndNumbers(Return)) return 0;
         return Return == String;
     }
+
+    std::string makeErrorHeader(std::size_t Number, std::string Move, emptyBlackWhite Who)
+    {
+        return std::string("Move pair ") + Phox::toString(Number)
+             + std::string(" \"") + Move + std::string("\"\n\t")
+             + std::string(Who==COLOR_WHITE?"White ":"Black ");
+    }
+
+    std::ostream& operator<< (std::ostream& o, const move& m)
+    {
+        o << "From (" << (int)m.xFrom << ", " << (int)m.yFrom << ") to (" << (int)m.xTo << ", " << (int)m.yTo << ")\n";
+    }
 }
 
 void NotationParser::setString(const std::string& String)
@@ -93,6 +105,8 @@ void NotationParser::setBoard(game g)//Yes, copy it in.
 
 int NotationParser::parse()
 {
+    while (m_RawQueue.size())  m_RawQueue.pop();
+    while (m_MoveQueue.size()) m_MoveQueue.pop();
     m_ErrorString = "";
 
     std::string In("");
@@ -107,13 +121,16 @@ int NotationParser::parse()
         }
     }
 
-    bool inValid = 0;
+    std::size_t MoveNumber = 1;
 
     while (m_RawQueue.size())
     {
         std::string MoveStr = removeAllChars(m_RawQueue.front(), 'x');
+        MoveStr = removeAllChars(MoveStr, '+');//Remove check notation
         MoveStr = removeAllChars(MoveStr, ':');
+
         bool Capture = (MoveStr != m_RawQueue.front());
+        bool Invalid = 1;
         //Removed "captured notation" leaving bare move
 
         std::string PieceKind = getPieceName(stringUpper(MoveStr)[0]);
@@ -126,10 +143,8 @@ int NotationParser::parse()
             MoveStr.erase(0, 1);//Remove the front letter designating piece kind
         }
 
-        char Row = letterToNumberCoords(MoveStr[0]);
-        char Column = MoveStr[1];
-
-        std::cout << MoveStr << '\n';
+        unsigned char Column = letterToNumberCoords(MoveStr[MoveStr.size()-2]);
+        unsigned char Row = letterToReal(MoveStr[MoveStr.size()-1]) - 1;
 
         if (PieceKind == "Pawn")
         {
@@ -137,11 +152,47 @@ int NotationParser::parse()
             {
                 for (std::size_t i = 0; i < 8; ++i)//Loop through column on board
                 {
-                    //if (m_Board.board[])
-
+                    if (m_Board.board[Column][i] == (m_Board.whoseMove==COLOR_WHITE?W_PAWN:B_PAWN))
+                    {
+                        //boardCoord xTo, xFrom, yTo, yFrom;
+                        move test{Column, Column, Row, static_cast<boardCoord> (i)};
+                        if (isMoveLegal(&m_Board, test, 1))
+                        {
+                            makeMove(&m_Board, test, 1);
+                            m_MoveQueue.push(test);
+                            Invalid = 0;
+                        }
+                    }
+                }
+                if (Invalid)
+                {
+                    m_ErrorString = makeErrorHeader((MoveNumber >> 1) + 1, m_RawQueue.front(), m_Board.whoseMove)
+                                  + std::string("Pawn does not have valid non-capture move as indicated.");
+                    return 0;
                 }
             }
-            //move One {}
+            else//Capture
+            {
+                for (std::size_t i = 0; i < 8; ++i)//Loop through column on board for pawn
+                {
+                    if (m_Board.board[letterToNumberCoords(MoveStr[0])][i] == (m_Board.whoseMove==COLOR_WHITE?W_PAWN:B_PAWN))
+                    {
+                        move test{Column, letterToNumberCoords(MoveStr[0]), Row, static_cast<boardCoord> (i)};
+                        if (isMoveLegal(&m_Board, test, 1))
+                        {
+                            makeMove(&m_Board, test, 1);
+                            m_MoveQueue.push(test);
+                            Invalid = 0;
+                        }
+                    }
+                }
+                if (Invalid)
+                {
+                    m_ErrorString = makeErrorHeader((MoveNumber >> 1) + 1, m_RawQueue.front(), m_Board.whoseMove)
+                                  + std::string("Pawn does not have valid capture move as indicated.");
+                    return 0;
+                }
+            }
         }
         //1. g4 f5
         //2. gxf5   ->    gf5     ->      f5
@@ -154,9 +205,8 @@ int NotationParser::parse()
 
 		//boardCoord xTo, xFrom, yTo, yFrom;
 
-
+        MoveNumber++;
         m_RawQueue.pop();
-
-        return 1;
     }
+    return 1;
 }

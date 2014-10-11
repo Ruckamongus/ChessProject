@@ -665,7 +665,7 @@
 	<Chess/HelperFunctions.hpp>
 	<Phox/Utilities/Conversions.hpp>
 
-1411638291 source:c:\users\cody\desktop\chess\chess\chess\board.cpp
+1412955835 source:c:\users\cody\desktop\chess\chess\chess\board.cpp
 	<Chess/Board.hpp>
 	<Phox/Internal/Exception.hpp>
 	<Phox/Internal/IODevices.hpp>
@@ -675,7 +675,7 @@
 	<Chess/NotationParser.hpp>
 	<iostream>
 
-1411632085 c:\users\cody\desktop\chess\chess\chess\board.hpp
+1412187837 c:\users\cody\desktop\chess\chess\chess\board.hpp
 	<Chess/John/JohnDefinitions.hpp>
 	<Chess/NotationParser.hpp>
 	<SFML/System/Vector2.hpp>
@@ -1038,15 +1038,15 @@
 	<string>
 	<vector>
 
-1411623460 c:\users\cody\desktop\chess\chess\chess\john\johndefinitions.hpp
+1412179262 c:\users\cody\desktop\chess\chess\chess\john\johndefinitions.hpp
 	<stdio.h>
 	<stdlib.h>
 	<assert.h>
 
-1411626136 c:\users\cody\desktop\chess\chess\phox\internal\exception.hpp
+1412181576 c:\users\cody\desktop\chess\chess\phox\internal\exception.hpp
 	<exception>
 	<string>
-	<ostream>
+	<iostream>
 	<cstdlib>
 
 1411629585 c:\users\cody\desktop\chess\chess\phox\internal\iodevices.hpp
@@ -1059,7 +1059,7 @@
 	<sstream>
 	<cstdlib>
 
-1411635873 c:\users\cody\desktop\chess\chess\chess\guimanager.hpp
+1412196237 c:\users\cody\desktop\chess\chess\chess\guimanager.hpp
 	<SFML/Graphics.hpp>
 	<TGUI/TGUI.hpp>
 
@@ -1239,22 +1239,22 @@
 	<TGUI/Container.hpp>
 	<TGUI/Gui.hpp>
 
-1411630802 c:\users\cody\desktop\chess\chess\chess\helperfunctions.hpp
+1412177460 c:\users\cody\desktop\chess\chess\chess\helperfunctions.hpp
 	<SFML/System/Vector2.hpp>
 	<Chess/John/JohnDefinitions.hpp>
 	<string>
 
-1411630929 c:\users\cody\desktop\chess\chess\chess\notationparser.hpp
+1412181134 c:\users\cody\desktop\chess\chess\chess\notationparser.hpp
 	<Chess/John/JohnDefinitions.hpp>
 	<string>
 	<queue>
 
-1411637393 source:c:\users\cody\desktop\chess\chess\chess\guimanager.cpp
+1412196238 source:c:\users\cody\desktop\chess\chess\chess\guimanager.cpp
 	<Chess/GUIManager.hpp>
 	<Chess/Board.hpp>
 	<Phox/Internal/Exception.hpp>
 
-1411630852 source:c:\users\cody\desktop\chess\chess\chess\helperfunctions.cpp
+1412177457 source:c:\users\cody\desktop\chess\chess\chess\helperfunctions.cpp
 	<Chess/HelperFunctions.hpp>
 	<Phox/Utilities/Conversions.hpp>
 
@@ -1269,11 +1269,11 @@
 	<ratio>
 	<chrono>
 
-1411623460 source:c:\users\cody\desktop\chess\chess\chess\john\johnfunctions.cpp
+1412179260 source:c:\users\cody\desktop\chess\chess\chess\john\johnfunctions.cpp
 	<Chess\John\JohnDefinitions.hpp>
 	<stdlib.h>
 
-1411630984 source:c:\users\cody\desktop\chess\chess\chess\notationparser.cpp
+1412188180 source:c:\users\cody\desktop\chess\chess\chess\notationparser.cpp
 	<Chess/NotationParser.hpp>
 	<Chess/HelperFunctions.hpp>
 	<Phox/Utilities/Conversions.hpp>
@@ -1298,7 +1298,7 @@
 	<ctime>
 	<string>
 
-1411637403 source:c:\users\cody\desktop\chess\chess\main.cpp
+1412180262 source:c:\users\cody\desktop\chess\chess\main.cpp
 	<Chess\Includes.hpp>
 	<Chess\GUIManager.hpp>
 	<Chess\John\JohnDefinitions.hpp>
@@ -1325,7 +1325,7 @@
 	<Phox/Internal/Exception.hpp>
 	<string>
 
-1411628404 source:c:\users\cody\desktop\chess\chess\phox\internal\exception.cpp
+1412181576 source:c:\users\cody\desktop\chess\chess\phox\internal\exception.cpp
 	<Phox/Internal/Exception.hpp>
 
 1411629438 source:c:\users\cody\desktop\chess\chess\phox\internal\iodevices.cpp

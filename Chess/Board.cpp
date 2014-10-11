@@ -144,6 +144,71 @@ sf::Vector2i Board::getMouseCell(const sf::Vector2i& mousePosition) const
     return sf::Vector2i(-1, -1);
 }
 
+void Board::reportAndMove(const Game g, move m)
+{
+    if (isMoveLegal(g, m))
+    {
+        bool TakesPiece = (g->board[m.xTo][m.yTo] != EMPTY);
+        pieceValue Took = getPieceChar(g->board[m.xTo][m.yTo]);
+        m_Selected = 0;
+        if (makeMove(g, m))//Make move if we can
+        {
+            m_RequiresRedraw = 1;//Tell the board it has to update since there was a move
+            if (m_GUIManager != nullptr)
+            {
+                std::string Str = getMoveData(g, m, TakesPiece);
+                std::string Verbose = "";
+
+                if (m_VerboseLogging)
+                {
+                    if (TakesPiece)
+                    {
+                        Verbose += " (" + turnAsString(otherMove(g->whoseMove)) + " takes " + turnAsString(g->whoseMove) + "'s ";
+                        Verbose += getPieceName(Took);
+                        if (isInCheck(g, g->whoseMove))
+                        {
+                            Verbose += "; puts " + turnAsString(g->whoseMove) + " in check.)";
+                        }
+                        else Verbose += ".) ";
+
+                        if (g->whoseMove == COLOR_BLACK)//White just went
+                        {
+                            Verbose += "\n" + Phox::toString(m_CurrentMove) + "... ";
+                        }
+                    }
+
+                    else
+
+                    if (isInCheck(g, g->whoseMove))
+                    {
+                        Verbose += " (" + turnAsString(otherMove(g->whoseMove)) + " puts " + turnAsString(g->whoseMove) + " in check.) ";
+                    }
+                }
+
+                else
+
+                {
+                    if (isInCheck(g, g->whoseMove))
+                    {
+                        Str += "+";
+                    }
+                }
+
+                if (g->whoseMove == COLOR_BLACK)//Actually white, lol
+                {
+                    m_GUIManager->addText(Phox::toString(m_CurrentMove) + ". " + Str + " " + Verbose);
+                }
+
+                else
+                {
+                    m_GUIManager->addText(Str + Verbose + '\n');
+                    m_CurrentMove++;
+                }
+            }
+        }
+    }
+}
+
 void Board::clicked(const Game g, const sf::Vector2i& mousePosition)
 {
     //Board was clicked, lets figure out what to do
@@ -158,9 +223,9 @@ void Board::clicked(const Game g, const sf::Vector2i& mousePosition)
 
     if (m_Selected)
     {
-        std::size_t X, Y;
         if (cell.x > -1)//Clicked within the board
         {
+			std::size_t X, Y;
             X = cell.x;
             Y = cell.y;
             sf::Vector2i selectFlipped = cellCoordFlip(m_SelectPosition);
@@ -192,58 +257,7 @@ void Board::clicked(const Game g, const sf::Vector2i& mousePosition)
                 static_cast<boardCoord> (selectFlipped.y)
             };
 
-            if (isMoveLegal(g, m))
-            {
-                bool TakesPiece = (g->board[m.xTo][m.yTo] != EMPTY);
-                pieceValue Took = getPieceChar(g->board[m.xTo][m.yTo]);
-                m_Selected = 0;
-                if (makeMove(g, m))//Make move if we can
-                {
-                    m_RequiresRedraw = 1;//Tell the board it has to update since there was a move
-                    if (hasGUI)
-                    {
-                        std::string Str = getMoveData(g, m, TakesPiece);
-                        std::string Verbose = "";
-
-                        if (m_VerboseLogging)
-                        {
-                            if (TakesPiece)
-                            {
-                                Verbose += " (" + turnAsString(otherMove(g->whoseMove)) + " takes " + turnAsString(g->whoseMove) + "'s ";
-                                Verbose += getPieceName(Took);
-                                if (isInCheck(g, g->whoseMove))
-                                {
-                                    Verbose += "; puts " + turnAsString(g->whoseMove) + " in check.)";
-                                }
-                                else Verbose += ".) ";
-
-                                if (g->whoseMove == COLOR_BLACK)//White just went
-                                {
-                                    Verbose += "\n" + Phox::toString(m_CurrentMove) + "... ";
-                                }
-                            }
-
-                            else
-
-                            if (isInCheck(g, g->whoseMove))
-                            {
-                                Verbose += " (" + turnAsString(otherMove(g->whoseMove)) + " puts " + turnAsString(g->whoseMove) + " in check.) ";
-                            }
-                        }
-
-                        if (g->whoseMove == COLOR_BLACK)//Actually white, lol
-                        {
-                            m_GUIManager->addText(Phox::toString(m_CurrentMove) + ". " + Str + " " + Verbose);
-                        }
-
-                        else
-                        {
-                            m_GUIManager->addText(Str + Verbose + '\n');
-                            m_CurrentMove++;
-                        }
-                    }
-                }
-            }
+            reportAndMove(g, m);
         }
         else
         {
@@ -310,6 +324,17 @@ void Board::clicked(const Game g, const sf::Vector2i& mousePosition)
 
 void Board::update(const Game g, const sf::Vector2i& mousePosition, sf::RenderWindow& Window)
 {
+    if (m_ParserMoves.size())
+    {
+        reportAndMove(g, m_ParserMoves.front());
+        m_ParserMoves.pop();
+        m_RequiresRedraw = 1;
+        if (!m_ParserMoves.size())
+        {
+            sf::sleep(sf::milliseconds(m_ParserTime));
+        }
+    }
+
     if (m_RequiresRedraw)//If we should redraw the pieces
     {
         refreshBoard(g);//Redraw them
@@ -402,10 +427,21 @@ void Board::runParser(const std::string& String, const std::string& Time)
         return;
     }
 
-    //sf::Time WaitTime = sf::milliseconds(static_cast<sf::Int32> (Phox::ToDouble(Time)));
     m_Parser.setString(String);
     m_Parser.setBoard(*m_ParserCache);
-    m_Parser.parse();
+    m_ParserTime = Phox::ToDouble(Time);
+
+
+    if (!m_Parser.parse())
+    {
+        Phox::ThrowException("Parser error: " + m_Parser.getErrorString());
+    }
+
+    else
+
+    {
+        m_ParserMoves = m_Parser.getMoves();
+    }
 }
 
 void Board::reset()

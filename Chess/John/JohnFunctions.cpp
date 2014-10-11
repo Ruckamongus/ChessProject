@@ -152,6 +152,10 @@ extern "C"
         g->canEnPassant = NO_ENPASSANT;
         g->wKingMoved = FALSE;
         g->bKingMoved = FALSE;
+        g->bLeftRookMoved = FALSE;
+        g->bRightRookMoved = FALSE;
+        g->wLeftRookMoved = FALSE;
+        g->wRightRookMoved = FALSE;
         return g;
     }
 
@@ -178,11 +182,11 @@ extern "C"
     }
 
     //returns if a move was made
-    int makeMove(Game g, move m)
+    int makeMove(Game g, move m, bool noVerbose)
     {
         if (isMoveLegal(g, m))
         {
-            printf("Move was legal.\n");
+            if (!noVerbose) printf("Move was legal.\n");
 
             doMove(g, m);
 
@@ -194,27 +198,62 @@ extern "C"
             }
             return TRUE;
         } else {
-            printf("An illegal move attempt has been made.\n");
+            if (!noVerbose) printf("An illegal move attempt has been made.\n");
             return FALSE;
         }
     }
 
-    int doMove(Game g, move m) //does not alternate move turn
+    int doMove(Game g, move m, bool noVerbose) //does not alternate move turn
     {
         pieceValue piece = g->board[m.xFrom][m.yFrom];
         g->board[m.xTo][m.yTo] = piece;
         g->board[m.xFrom][m.yFrom] = EMPTY;
+        if (m.xFrom == 0) {
+            if (m.yFrom == 0) {
+                if (piece == W_ROOK) {
+                    g->wLeftRookMoved = TRUE;
+                }
+            } else if (m.yFrom == 7) {
+                if (piece == B_ROOK) {
+                    g->bLeftRookMoved = TRUE;
+                }
+            }
+        } else if (m.xFrom == 7) {
+            if (m.yFrom == 0) {
+                if (piece == W_ROOK) {
+                    g->wRightRookMoved = TRUE;
+                }
+            } else if (m.yFrom == 7) {
+                if (piece == B_ROOK) {
+                    g->bRightRookMoved = TRUE;
+                }
+            }
+        }
         if (piece == B_KING) {
             g->bKingMoved = TRUE;
+            if (m.xTo - m.xFrom == 2) { //kingside castle
+                g->board[7][7] = EMPTY;
+                g->board[5][7] = B_ROOK;
+            } else if (m.xTo - m.xFrom == -2) { //queenside castling
+                g->board[0][7] = EMPTY;
+                g->board[3][7] = B_ROOK;
+            }
         } else if (piece == W_KING) {
             g->wKingMoved = TRUE;
+            if (m.xTo - m.xFrom == 2) { //kingside castle
+                g->board[7][0] = EMPTY;
+                g->board[5][0] = W_ROOK;
+            } else if (m.xTo - m.xFrom == -2) { //queenside castling
+                g->board[0][0] = EMPTY;
+                g->board[3][0] = W_ROOK;
+            }
         } else if (piece == B_PAWN) { //set up en passant
             if (m.yFrom == 6 && m.yTo == 4) {
                 g->canEnPassant = m.xTo;
             } else {
                 if (m.yFrom == 3 && ((m.xTo == m.xFrom - 1) || (m.xTo == m.xFrom + 1))) { //en passant
                     g->board[m.xTo][m.yFrom] = EMPTY;
-                    printf("En passant.\n");
+                    if (!noVerbose) printf("En passant.\n");
                 }
                 g->canEnPassant = NO_ENPASSANT;
 
@@ -225,7 +264,7 @@ extern "C"
             } else {
                 if (m.yFrom == 4 && ((m.xTo == m.xFrom - 1) || (m.xTo == m.xFrom + 1))) { //en passant
                     g->board[m.xTo][m.yFrom] = EMPTY;
-                    printf("En passant.\n");
+                    if (!noVerbose) printf("En passant.\n");
                 }
                 g->canEnPassant = NO_ENPASSANT;
             }
@@ -738,7 +777,7 @@ extern "C"
     }
 
     //unfinished
-    int isMoveLegal(const Game g, move m)
+    int isMoveLegal(const Game g, move m, bool noVerbose)
     {
         //printf("\n%d %d %d %d\n\n", m.xFrom, m.yFrom, m.xTo, m.yTo);
         //need to test for all that it doesn't put the king in check
@@ -751,7 +790,7 @@ extern "C"
         //are we trying to move a piece? Is it that correct color?
         emptyBlackWhite myPieceColor = getSquare(piece);
         if (myPieceColor != g->whoseMove) {
-            printf("Wrong color's turn.\n");
+            if (!noVerbose) printf("Wrong color's turn.\n");
             return FALSE;
         }
 
@@ -762,10 +801,49 @@ extern "C"
 
         //make the move (even if illegal), and see if it leaves you in check. If the move
         //was illegal, then it will be caught later anyway
+
+        if (piece == B_KING || piece == W_KING) { //test can't castle through checks. Doesn't immediately rigorously test stuff if if we've moved our king etc yet
+            if (m.xTo - m.xFrom == 2) {
+                if (isInCheck(g, g->whoseMove) == TRUE) { //can't castle out of check
+                    return FALSE;
+                }
+                //path of check
+                move testCheckMove;
+                testCheckMove.xFrom = m.xFrom;
+                testCheckMove.yFrom = m.yFrom;
+                testCheckMove.xTo = m.xFrom + 1;
+                testCheckMove.yTo = m.yFrom;
+                //!be super careful of recursion. Potential cause of bugs big time
+                if (isMoveLegal(g, testCheckMove, TRUE) == FALSE) {
+                    printf("Castling is false because we are moving through a check.\n");
+                    return FALSE;
+                }
+            } else if (m.xTo - m.xFrom == -2) {
+                if (isInCheck(g, g->whoseMove) == TRUE) { //can't castle out of check
+                    return FALSE;
+                }
+                move testCheckMove;
+                testCheckMove.xFrom = m.xFrom;
+                testCheckMove.yFrom = m.yFrom;
+                testCheckMove.xTo = m.xFrom - 1;
+                testCheckMove.yTo = m.yFrom;
+                //!be super careful of recursion. Potential cause of bugs big time
+                if (isMoveLegal(g, testCheckMove, TRUE) == FALSE) {
+                    printf("Castling is false because we are moving through a check.\n");
+                    return FALSE;
+                }
+            }
+        }
+
+
         emptyBlackWhite moveIsEnPassant = EMPTY;
         boardCoord priorEnPassant = g->canEnPassant;
         bool priorWKingMoved = g->wKingMoved;
         bool priorBKingMoved = g->bKingMoved;
+        bool priorWLeftRookMoved = g->wLeftRookMoved;
+        bool priorWRightRookMoved = g->wRightRookMoved;
+        bool priorBLeftRookMoved = g->bLeftRookMoved;
+        bool priorBRightRookMoved = g->bRightRookMoved;
         if (piece == B_PAWN) {
             if (m.yTo == (m.yFrom - 1) && (m.xTo == m.xFrom - 1) || (m.xTo == m.xFrom + 1)) {
                 if (m.yFrom == 3) {
@@ -774,7 +852,7 @@ extern "C"
                         return TRUE;
                     }
                     if (m.xTo != priorEnPassant) {
-                        printf("Can't en passant here. canENPassanet = %d\n", g->canEnPassant);
+                        if (!noVerbose) printf("Can't en passant here. canENPassanet = %d\n", g->canEnPassant);
                         return FALSE; //this is checked later in the switch, but never will occur, we are quick terminating here. Delete the switch bit later
                     }
                 }
@@ -788,13 +866,17 @@ extern "C"
                         return TRUE;
                     }
                     if (m.xTo != priorEnPassant) {
-                        printf("Can't en passant here. canENPassanet = %d\n", g->canEnPassant);
+                        if (!noVerbose) printf("Can't en passant here. canENPassanet = %d\n", g->canEnPassant);
                         return FALSE; //this is checked later in the switch, but never will occur, we are quick terminating here. Delete the switch bit later
                     }
                 }
             }
         }
         pieceValue destination = g->board[m.xTo][m.yTo];
+        pieceValue pieceAtD1 = g->board[3][0];
+        pieceValue pieceAtD8 = g->board[3][7];
+        pieceValue pieceAtF1 = g->board[5][0];
+        pieceValue pieceAtF8 = g->board[5][7];
         doMove(g, m); //does not change whose turn it is
         int inCheck = isInCheck(g, g->whoseMove);
         //undo move
@@ -804,6 +886,10 @@ extern "C"
         g->canEnPassant = priorEnPassant;
         g->wKingMoved = priorWKingMoved;
         g->bKingMoved = priorBKingMoved;
+        g->wLeftRookMoved = priorWLeftRookMoved;
+        g->wRightRookMoved = priorWRightRookMoved;
+        g->bLeftRookMoved = priorBLeftRookMoved;
+        g->bRightRookMoved = priorBRightRookMoved;
         if (moveIsEnPassant == COLOR_BLACK) {
             g->board[m.xTo][m.yFrom] = W_PAWN;
             if (!inCheck) {
@@ -815,8 +901,25 @@ extern "C"
                 return TRUE; //we've already done all the calculations for this move
             }
         }
+        if (piece == B_KING) {
+            if (m.xTo - m.xFrom == 2) { //kingside castling
+                g->board[7][7] = B_ROOK;
+                g->board[5][7] = pieceAtF8;
+            } else if (m.xTo - m.xFrom == -2) {//queenside castling
+                g->board[0][7] = B_ROOK;
+                g->board[3][7] = pieceAtD8;
+            }
+        } else if (piece == W_KING) {
+            if (m.xTo - m.xFrom == 2) { //kingside castling
+                g->board[7][0] = W_ROOK;
+                g->board[5][0] = pieceAtF1;
+            } else if (m.xTo - m.xFrom == -2) {//queenside castling
+                g->board[0][0] = W_ROOK;
+                g->board[3][0] = pieceAtD1;
+            }
+        }
         if (inCheck) {
-            printf("Wrong by in check\n");
+            if (!noVerbose) printf("Wrong by in check\n");
             return FALSE;
         }
 
@@ -837,7 +940,7 @@ extern "C"
                         }
                         //en passant
                         if (m.yFrom == 3 && m.xTo == g->canEnPassant) {
-                            printf("this is redundant and should never occur.\n");
+                            if (!noVerbose) printf("this is redundant and should never occur.\n");
                             return TRUE;
                         } else {
                             return FALSE;
@@ -855,7 +958,7 @@ extern "C"
                 } else {
                     return FALSE;
                 }
-                printf("Shouldn't happen.\n"); assert(0);
+                if (!noVerbose) printf("Shouldn't happen.\n"); assert(0);
             }
             case W_PAWN: {
                 //first move
@@ -873,7 +976,7 @@ extern "C"
                         }
                         //en passant
                         if (m.yFrom == 4 && m.xTo == g->canEnPassant) {
-                            printf("this is redundant and should never occur.\n");
+                            if (!noVerbose) printf("this is redundant and should never occur.\n");
                             return TRUE;
                         } else {
                             return FALSE;
@@ -891,7 +994,7 @@ extern "C"
                 } else {
                     return FALSE;
                 }
-                printf("Shouldn't happen.\n"); assert(0);
+                if (!noVerbose) printf("Shouldn't happen.\n"); assert(0);
             }
             case B_KNIGHT: case W_KNIGHT: {
                 //printf("Knight movement\n");
@@ -922,10 +1025,10 @@ extern "C"
                         return FALSE;
                     }
                 } else {
-                    printf("Knight movement: falsies\n");
+                    if (!noVerbose) printf("Knight movement: falsies\n");
                     return FALSE;
                 }
-                printf("Shouldn't happen.\n"); assert(0);
+                if (!noVerbose) printf("Shouldn't happen.\n"); assert(0);
             }
             case B_BISHOP: case W_BISHOP: {
                 //printf("Bishop movement\n");
@@ -950,7 +1053,7 @@ extern "C"
                     }
                     return TRUE;
                 }
-                printf("Shouldn't happen.\n"); assert(0);
+                if (!noVerbose) printf("Shouldn't happen.\n"); assert(0);
             }
             case B_ROOK: case W_ROOK: {
                 char xDisplacement = (char) (m.xTo - m.xFrom);
@@ -1041,9 +1144,9 @@ extern "C"
                     }
                     return TRUE;
                 }
-                printf("Shouldn't happen.\n"); assert(0);
+                if (!noVerbose) printf("Shouldn't happen.\n"); assert(0);
             }
-            case B_KING: case W_KING: {
+            case B_KING: {
                 char xDisplacement = (char) (m.xTo - m.xFrom);
                 char yDisplacement = (char) (m.yTo - m.yFrom);
                 int horizontalSign = ((xDisplacement > 0) * 2) - 1; //gets the sign
@@ -1051,7 +1154,76 @@ extern "C"
                 int absXDistance = horizontalSign*xDisplacement; //magnitude
                 int absYDistance = verticalSign*yDisplacement;
                 if (absXDistance == 2) { //castling, potentially split it up
-                    return FALSE; //temporary for now
+                    if (g->bKingMoved == TRUE) { //we can't castle if the king has already moved
+                        return FALSE;
+                    }
+                    if (absYDistance != 0) {
+                        return FALSE;
+                    }
+                    if (horizontalSign == 1) {//kingside castle
+                        if (g->bRightRookMoved == TRUE || g->board[7][7] != B_ROOK) {
+                            printf("Debug: The rook has already been moved or taken.\n");
+                            return FALSE;
+                        }
+                        //piece obstruction of the castling linear path
+                        if (g->board[m.xFrom + 1][m.yFrom] != EMPTY || g->board[m.xFrom + 2][m.yFrom] != EMPTY ) { //not hardcoded for chess960 possibly in future. Would need amendments
+                            return FALSE;
+                        }
+                        //we need to check if the king is moving through check and disallow this. Done elsewhere
+                        return TRUE;
+                    } else { //queenside castling
+                        if (g->bLeftRookMoved == TRUE || g->board[0][7] != B_ROOK) {
+                            printf("Debug: The rook has already been moved or taken.\n");
+                            return FALSE;
+                        }
+                        if (g->board[m.xFrom - 1][m.yFrom] != EMPTY || g->board[m.xFrom - 2][m.yFrom] != EMPTY || g->board[m.xFrom - 3][m.yFrom] != EMPTY ) {
+                            return FALSE;
+                        }
+                        //we need to check if the king is moving through check and disallow this. Done elsewhere
+                        return TRUE;
+                    }
+                } else if (absXDistance > 1 || absYDistance > 1) { //illegal move
+                    return FALSE;
+                } else {
+                    return TRUE;
+                }
+            }
+            case W_KING : { //insert here
+                char xDisplacement = (char) (m.xTo - m.xFrom);
+                char yDisplacement = (char) (m.yTo - m.yFrom);
+                int horizontalSign = ((xDisplacement > 0) * 2) - 1; //gets the sign
+                int verticalSign = ((yDisplacement > 0) * 2) - 1;
+                int absXDistance = horizontalSign*xDisplacement; //magnitude
+                int absYDistance = verticalSign*yDisplacement;
+                if (absXDistance == 2) { //castling, potentially split it up
+                    if (g->wKingMoved == TRUE) { //we can't castle if the king has already moved
+                        return FALSE;
+                    }
+                    if (absYDistance != 0) {
+                        return FALSE;
+                    }
+                    if (horizontalSign == 1) {//kingside castle
+                        if (g->wRightRookMoved == TRUE || g->board[7][0] != W_ROOK) {
+                            printf("Debug: The rook has already been moved or taken.\n");
+                            return FALSE;
+                        }
+                        //piece obstruction of the castling linear path
+                        if (g->board[m.xFrom + 1][m.yFrom] != EMPTY || g->board[m.xFrom + 2][m.yFrom] != EMPTY ) { //not hardcoded for chess960 possibly in future. Would need amendments
+                            return FALSE;
+                        }
+                        //we need to check if the king is moving through check and disallow this. Done elsewhere
+                        return TRUE;
+                    } else { //queenside castling
+                        if (g->wLeftRookMoved == TRUE || g->board[0][0] != W_ROOK) {
+                            printf("Debug: The rook has already been moved or taken.\n");
+                            return FALSE;
+                        }
+                        if (g->board[m.xFrom - 1][m.yFrom] != EMPTY || g->board[m.xFrom - 2][m.yFrom] != EMPTY || g->board[m.xFrom - 3][m.yFrom] != EMPTY ) {
+                            return FALSE;
+                        }
+                        //we need to check if the king is moving through check and disallow this. Done elsewhere
+                        return TRUE;
+                    }
                 } else if (absXDistance > 1 || absYDistance > 1) { //illegal move
                     return FALSE;
                 } else {
@@ -1059,11 +1231,11 @@ extern "C"
                 }
             }
             default:
-                printf("This should never happen lmao.");
+                if (!noVerbose) printf("This should never happen lmao.");
                 assert(0);
         }
 
-        printf("No value returned for legality\n");
+        if (!noVerbose) printf("No value returned for legality\n");
         assert(0);
         return 0;
     }
