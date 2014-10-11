@@ -146,7 +146,7 @@ int NotationParser::parse()
         //1. g4 f5
         //2. gxf5   ->    gf5     ->      f5
 
-        else//Non-pawn move
+        else//Non-pawn too.move
         {
 
         }

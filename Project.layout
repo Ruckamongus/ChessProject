@@ -1,62 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="Chess\GUIManager.hpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="559" topLine="7" />
-		</Cursor>
-	</File>
-	<File name="Phox\Internal\Internals.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1596" topLine="35" />
-		</Cursor>
-		<Folding>
-			<Collapse line="4" />
-			<Collapse line="21" />
-			<Collapse line="29" />
-			<Collapse line="36" />
-			<Collapse line="45" />
-			<Collapse line="90" />
-		</Folding>
-	</File>
 	<File name="Chess\HelperFunctions.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="312" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="Chess\GUIManager.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Chess\NotationParser.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3479" topLine="102" />
-		</Cursor>
-	</File>
-	<File name="Chess\NotationParser.hpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="Chess\Settings.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="74" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="Chess\John\EfficiencyClockCBinding.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="381" topLine="9" />
-		</Cursor>
-	</File>
-	<File name="Chess\HelperFunctions.hpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="519" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="Chess\John\EfficiencyClockCBinding.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="220" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="Chess\NotationParser.cpp" open="1" top="1" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3901" topLine="54" />
+			<Cursor1 position="2691" topLine="0" />
 		</Cursor>
 		<Folding>
 			<Collapse line="7" />
@@ -66,14 +18,34 @@
 			<Collapse line="43" />
 		</Folding>
 	</File>
-	<File name="Phox\Internal\Internals.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Phox\Utilities\Date.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="756" topLine="17" />
+			<Cursor1 position="490" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="Phox\Internal\IODevices.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Chess\John\EfficiencyClockCBinding.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="5170" topLine="79" />
+			<Cursor1 position="381" topLine="9" />
+		</Cursor>
+	</File>
+	<File name="Phox\Internal\IODevices.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="932" topLine="2" />
+		</Cursor>
+	</File>
+	<File name="Chess\NotationParser.hpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="Chess\John\JohnDefinitions.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1855" topLine="9" />
+		</Cursor>
+	</File>
+	<File name="Chess\Settings.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="200" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="Chess\Includes.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -81,14 +53,34 @@
 			<Cursor1 position="224" topLine="0" />
 		</Cursor>
 	</File>
+	<File name="Chess\John\EfficiencyClockCBinding.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="220" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="Phox\Utilities\EfficiencyClock.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="333" topLine="9" />
+		</Cursor>
+	</File>
+	<File name="Phox\Internal\IODevices.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5170" topLine="79" />
+		</Cursor>
+	</File>
 	<File name="Phox\Utilities\Conversions.hpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="366" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="Phox\Utilities\Date.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Chess\HelperFunctions.hpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="490" topLine="0" />
+			<Cursor1 position="519" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="Chess\GUIManager.hpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="559" topLine="7" />
 		</Cursor>
 	</File>
 	<File name="Chess\John\JohnFunctions.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -99,9 +91,9 @@
 			<Collapse line="6" />
 		</Folding>
 	</File>
-	<File name="Chess\John\JohnDefinitions.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Chess\Board.hpp" open="1" top="1" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1855" topLine="9" />
+			<Cursor1 position="1368" topLine="29" />
 		</Cursor>
 	</File>
 	<File name="Phox\Internal\Exception.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -109,29 +101,9 @@
 			<Cursor1 position="54" topLine="3" />
 		</Cursor>
 	</File>
-	<File name="Phox\Utilities\EfficiencyClock.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Chess\GUIManager.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="260" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="Phox\Internal\IODevices.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="932" topLine="2" />
-		</Cursor>
-	</File>
-	<File name="Chess\Board.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="13848" topLine="384" />
-		</Cursor>
-	</File>
-	<File name="Chess\Board.hpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1368" topLine="29" />
-		</Cursor>
-	</File>
-	<File name="Phox\Utilities\EfficiencyClock.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="333" topLine="9" />
+			<Cursor1 position="3479" topLine="102" />
 		</Cursor>
 	</File>
 	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -139,9 +111,14 @@
 			<Cursor1 position="2135" topLine="48" />
 		</Cursor>
 	</File>
-	<File name="Chess\Settings.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Chess\Settings.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="200" topLine="0" />
+			<Cursor1 position="74" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="Chess\Board.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="13848" topLine="384" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
