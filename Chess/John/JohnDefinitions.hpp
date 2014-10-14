@@ -6,6 +6,9 @@ extern "C"
 	#include <stdlib.h>
 	#include <assert.h>
 
+    #define MIN(a,b) (((a)<(b))?(a):(b))
+	#define MAX(a,b) (((a)>(b))?(a):(b))
+
 	#define COLOR_NONE  0
 	#define COLOR_BLACK 1
 	#define COLOR_WHITE 2

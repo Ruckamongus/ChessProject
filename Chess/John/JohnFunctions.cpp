@@ -191,15 +191,22 @@ extern "C"
             if (!noVerbose) printf("Move was legal.\n");
 
             doMove(g, m);
-            double score = evaluatePosition(g);
-            printf("Current board score: %f\n", score);
-
             //alternate turn
             if (g->whoseMove == COLOR_WHITE) {
                 g->whoseMove = COLOR_BLACK;
             } else {
                 g->whoseMove = COLOR_WHITE;
             }
+
+            double score = evaluatePosition(g);
+            printf("Current board score (static): %f\n", score);
+            bool isWhite;
+            if (g->whoseMove == COLOR_BLACK) {isWhite = FALSE;}
+            else if (g->whoseMove == COLOR_WHITE) {isWhite = TRUE;}
+            else {printf("The fuck.\n"); assert(0);}
+            score = minimax(g, MAX_SEARCH_DEPTH, isWhite);
+            printf("Current board score according to the minimax search: %f\n", score);
+
             return TRUE;
         } else {
             if (!noVerbose) printf("An illegal move attempt has been made.\n");
@@ -294,7 +301,7 @@ extern "C"
             case W_ROOK:    return COLOR_WHITE;
             case W_QUEEN:   return COLOR_WHITE;
             case W_KING:    return COLOR_WHITE;
-            default: printf("Wrong input.\n"); assert(0);
+            default: printf("Wrong input. piece: %d\n", piece); assert(0);
         }
         return 0;
     }
@@ -1276,7 +1283,7 @@ extern "C"
             case B_ROOK: returnVal = 'R'; break;
             case B_QUEEN: returnVal = 'Q'; break;
             case B_KING: returnVal = 'K'; break;
-            default: printf("lols\n"); assert(0);
+            default: printf("lols piece error, piece: %d\n", piece); assert(0);
         }
         return returnVal;
     }

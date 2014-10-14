@@ -1,4 +1,5 @@
 #include <Chess\John\JohnDefinitions.hpp>
+#include <Chess\John\Evaluate.hpp>
 
 extern "C"
 {
@@ -30,6 +31,7 @@ extern "C"
                 }
             }
         }
+        //need to take into account checkmate
 
         return score;
     }

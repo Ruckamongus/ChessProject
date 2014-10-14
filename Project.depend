@@ -1399,7 +1399,7 @@
 	<SFML/Graphics/Sprite.hpp>
 	<string>
 
-1413276336 c:\documents and settings\alan\my documents\downloads\repo\chess\john\johndefinitions.hpp
+1413290901 c:\documents and settings\alan\my documents\downloads\repo\chess\john\johndefinitions.hpp
 	<stdio.h>
 	<stdlib.h>
 	<assert.h>
@@ -2005,7 +2005,7 @@
 	<ratio>
 	<chrono>
 
-1413277259 source:c:\documents and settings\alan\my documents\downloads\repo\chess\john\johnfunctions.cpp
+1413293438 source:c:\documents and settings\alan\my documents\downloads\repo\chess\john\johnfunctions.cpp
 	<Chess\John\JohnDefinitions.hpp>
 	<Chess\John\Evaluate.hpp>
 	<Chess\John\Search.hpp>
@@ -2070,14 +2070,17 @@
 	<ctime>
 	<string>
 
-1413277226 source:c:\documents and settings\alan\my documents\downloads\repo\chess\john\evaluate.cpp
+1413290364 source:c:\documents and settings\alan\my documents\downloads\repo\chess\john\evaluate.cpp
+	<Chess\John\JohnDefinitions.hpp>
+	<Chess\John\Evaluate.hpp>
+
+1413293324 source:c:\documents and settings\alan\my documents\downloads\repo\chess\john\search.cpp
+	<Chess\John\JohnDefinitions.hpp>
+	<Chess\John\Search.hpp>
+	<Chess\John\Evaluate.hpp>
+
+1413290364 c:\documents and settings\alan\my documents\downloads\repo\chess\john\evaluate.hpp
 	<Chess\John\JohnDefinitions.hpp>
 
-1413274214 source:c:\documents and settings\alan\my documents\downloads\repo\chess\john\search.cpp
-	<Chess\John\JohnDefinitions.hpp>
-
-1413274410 c:\documents and settings\alan\my documents\downloads\repo\chess\john\evaluate.hpp
-	<Chess\John\JohnDefinitions.hpp>
-
-1413276399 c:\documents and settings\alan\my documents\downloads\repo\chess\john\search.hpp
+1413292153 c:\documents and settings\alan\my documents\downloads\repo\chess\john\search.hpp
 
