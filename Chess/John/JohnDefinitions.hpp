@@ -56,7 +56,7 @@ extern "C"
     Game            newGame();
     void            deleteGame(Game g);
     int             makeMove(const Game g, move m, bool noVerbose = 0); //returns if the move was made
-    int             doMove(const Game g, move m, bool noVebose = 0);
+    void            doMove(const Game g, move m, bool noVebose = 0);
     int             isMoveLegal(const Game g, move m, bool noVerbose = 0);
     move            getInput(); //function with a side effect
     int             isInCheck(const Game g, emptyBlackWhite colorChecking);

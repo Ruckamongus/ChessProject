@@ -192,7 +192,7 @@ extern "C"
 
             doMove(g, m);
             double score = evaluatePosition(g);
-            printf("Current board score: %lf", score);
+            printf("Current board score: %f\n", score);
 
             //alternate turn
             if (g->whoseMove == COLOR_WHITE) {
@@ -207,7 +207,7 @@ extern "C"
         }
     }
 
-    int doMove(Game g, move m, bool noVerbose) //does not alternate move turn
+    void doMove(Game g, move m, bool noVerbose) //does not alternate move turn
     {
         pieceValue piece = g->board[m.xFrom][m.yFrom];
         g->board[m.xTo][m.yTo] = piece;
@@ -301,7 +301,7 @@ extern "C"
 
     int isInCheck(const Game g, emptyBlackWhite colorChecking) {
         if (colorChecking == COLOR_BLACK) {
-            boardCoord i, j, kingX, kingY;
+            boardCoord i, j, kingX = 100, kingY = 100; //init to stop compiler grumbling
             for (i = 0; i < 8; i++) {
                 for (j = 0; j < 8; j++) {
                     if (g->board[i][j] == B_KING) {
@@ -311,6 +311,7 @@ extern "C"
                     }
                 }
             }
+            assert(kingX != 100 && kingY != 100); //there should always be a king on the board
             //check by pawns
             if (kingY != 0) { //we are never going to be in check by pawns if kingY == 0
                 if (kingX > 0) {
@@ -539,7 +540,7 @@ extern "C"
                 }
             }
         } else { //white to check for
-            boardCoord i, j, kingX, kingY;
+            boardCoord i, j, kingX = 100, kingY = 100; //init to stop compiler grumbling
             for (i = 0; i < 8; i++) {
                 for (j = 0; j < 8; j++) {
                     if (g->board[i][j] == W_KING) {
@@ -549,6 +550,7 @@ extern "C"
                     }
                 }
             }
+            assert(kingX != 100 && kingY != 100); //there should always be a king on the board
             //check by pawns
             if (kingY != 7) { //we are never going to be in check by pawns if kingY == 0
                 if (kingX > 0) {
@@ -849,7 +851,7 @@ extern "C"
         bool priorBLeftRookMoved = g->bLeftRookMoved;
         bool priorBRightRookMoved = g->bRightRookMoved;
         if (piece == B_PAWN) {
-            if (m.yTo == (m.yFrom - 1) && (m.xTo == m.xFrom - 1) || (m.xTo == m.xFrom + 1)) {
+            if (m.yTo == (m.yFrom - 1) && ((m.xTo == m.xFrom - 1) || (m.xTo == m.xFrom + 1))) {
                 if (m.yFrom == 3) {
                     moveIsEnPassant = COLOR_BLACK;
                     if (getSquare(g->board[m.xTo][m.yTo]) == COLOR_WHITE) { //taking a piece
@@ -863,7 +865,7 @@ extern "C"
             }
         }
         if (piece == W_PAWN) {
-            if (m.yTo == (m.yFrom + 1) && (m.xTo == m.xFrom - 1) || (m.xTo == m.xFrom + 1)) {
+            if (m.yTo == (m.yFrom + 1) && ((m.xTo == m.xFrom - 1) || (m.xTo == m.xFrom + 1))) {
                 if (m.yFrom == 4) {
                     moveIsEnPassant = COLOR_WHITE;
                     if (getSquare(g->board[m.xTo][m.yTo]) == COLOR_BLACK) { //taking a piece
