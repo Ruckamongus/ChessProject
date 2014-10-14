@@ -1,4 +1,6 @@
 #include <Chess\John\JohnDefinitions.hpp>
+#include <Chess\John\Evaluate.hpp>
+#include <Chess\John\Search.hpp>
 #include <stdlib.h>
 
 extern "C"
@@ -189,6 +191,8 @@ extern "C"
             if (!noVerbose) printf("Move was legal.\n");
 
             doMove(g, m);
+            double score = evaluatePosition(g);
+            printf("Current board score: %lf", score);
 
             //alternate turn
             if (g->whoseMove == COLOR_WHITE) {
