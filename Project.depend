@@ -1409,10 +1409,10 @@
 	<string>
 	<queue>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\vector2.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\vector2.hpp
 	<SFML/System/Vector2.inl>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\vector2.inl
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\vector2.inl
 
 1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\font.hpp
 	<SFML/Graphics/Export.hpp>
@@ -1425,55 +1425,55 @@
 	<string>
 	<vector>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\export.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\export.hpp
 	<SFML/Config.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\config.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\config.hpp
 	"TargetConditionals.h"
 
 1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\glyph.hpp
 	<SFML/Graphics/Export.hpp>
 	<SFML/Graphics/Rect.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\rect.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\rect.hpp
 	<SFML/System/Vector2.hpp>
 	<algorithm>
 	<SFML/Graphics/Rect.inl>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\rect.inl
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\rect.inl
 
 1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\texture.hpp
 	<SFML/Graphics/Export.hpp>
 	<SFML/Graphics/Image.hpp>
 	<SFML/Window/GlResource.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\image.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\image.hpp
 	<SFML/Graphics/Export.hpp>
 	<SFML/Graphics/Color.hpp>
 	<SFML/Graphics/Rect.hpp>
 	<string>
 	<vector>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\color.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\color.hpp
 	<SFML/Graphics/Export.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\glresource.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\glresource.hpp
 	<SFML/Window/Export.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\export.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\export.hpp
 	<SFML/Config.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\string.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\string.hpp
 	<SFML/System/Export.hpp>
 	<SFML/System/Utf.hpp>
 	<locale>
 	<string>
 	<SFML/System/String.inl>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\export.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\export.hpp
 	<SFML/Config.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\utf.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\utf.hpp
 	<SFML/Config.hpp>
 	<algorithm>
 	<locale>
@@ -1481,16 +1481,16 @@
 	<cstdlib>
 	<SFML/System/Utf.inl>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\utf.inl
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\utf.inl
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\string.inl
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\string.inl
 
 1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\rendertexture.hpp
 	<SFML/Graphics/Export.hpp>
 	<SFML/Graphics/Texture.hpp>
 	<SFML/Graphics/RenderTarget.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\rendertarget.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\rendertarget.hpp
 	<SFML/Graphics/Export.hpp>
 	<SFML/Graphics/Color.hpp>
 	<SFML/Graphics/Rect.hpp>
@@ -1502,33 +1502,33 @@
 	<SFML/Graphics/Vertex.hpp>
 	<SFML/System/NonCopyable.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\view.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\view.hpp
 	<SFML/Graphics/Export.hpp>
 	<SFML/Graphics/Rect.hpp>
 	<SFML/Graphics/Transform.hpp>
 	<SFML/System/Vector2.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\transform.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\transform.hpp
 	<SFML/Graphics/Export.hpp>
 	<SFML/Graphics/Rect.hpp>
 	<SFML/System/Vector2.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\blendmode.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\blendmode.hpp
 	<SFML/Graphics/Export.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\renderstates.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\renderstates.hpp
 	<SFML/Graphics/Export.hpp>
 	<SFML/Graphics/BlendMode.hpp>
 	<SFML/Graphics/Transform.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\primitivetype.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\primitivetype.hpp
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\vertex.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\vertex.hpp
 	<SFML/Graphics/Export.hpp>
 	<SFML/Graphics/Color.hpp>
 	<SFML/System/Vector2.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\noncopyable.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\noncopyable.hpp
 	<SFML/System/Export.hpp>
 
 1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\sprite.hpp
@@ -1552,20 +1552,20 @@
 	<ostream>
 	<cstdlib>
 
-1411812651 c:\documents and settings\alan\my documents\downloads\repo\phox\internal\iodevices.hpp
+1411816251 c:\documents and settings\alan\my documents\downloads\repo\phox\internal\iodevices.hpp
 	<SFML/System/Vector2.hpp>
 	<SFML/Window/Mouse.hpp>
 	<SFML/Window/Keyboard.hpp>
 	<memory>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\mouse.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\mouse.hpp
 	<SFML/Window/Export.hpp>
 	<SFML/System/Vector2.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\keyboard.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\keyboard.hpp
 	<SFML/Window/Export.hpp>
 
-1411812651 c:\documents and settings\alan\my documents\downloads\repo\phox\utilities\conversions.hpp
+1411816251 c:\documents and settings\alan\my documents\downloads\repo\phox\utilities\conversions.hpp
 	<sstream>
 	<cstdlib>
 
@@ -1626,11 +1626,11 @@
 	<SFML/System/Vector2.hpp>
 	<SFML/System/Vector3.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\clock.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\clock.hpp
 	<SFML/System/Export.hpp>
 	<SFML/System/Time.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\time.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\time.hpp
 	<SFML/System/Export.hpp>
 
 1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\system\err.hpp
@@ -1682,7 +1682,7 @@
 	<SFML/Window/ContextSettings.hpp>
 	<SFML/System/NonCopyable.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\contextsettings.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\contextsettings.hpp
 
 1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\event.hpp
 	<SFML/Config.hpp>
@@ -1704,11 +1704,11 @@
 	<SFML/Window/Export.hpp>
 	<SFML/System/Vector2.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\videomode.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\videomode.hpp
 	<SFML/Window/Export.hpp>
 	<vector>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\window.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\window.hpp
 	<SFML/Window/Export.hpp>
 	<SFML/Window/ContextSettings.hpp>
 	<SFML/Window/VideoMode.hpp>
@@ -1720,12 +1720,12 @@
 	<SFML/System/NonCopyable.hpp>
 	<SFML/System/String.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\windowhandle.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\windowhandle.hpp
 	<SFML/Config.hpp>
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\windowstyle.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\window\windowstyle.hpp
 
-1411812652 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\renderwindow.hpp
+1411816252 c:\documents and settings\alan\my documents\downloads\repo\sfml\include\sfml\graphics\renderwindow.hpp
 	<SFML/Graphics/Export.hpp>
 	<SFML/Graphics/RenderTarget.hpp>
 	<SFML/Graphics/Image.hpp>
@@ -1994,14 +1994,14 @@
 	<Chess/HelperFunctions.hpp>
 	<Phox/Utilities/Conversions.hpp>
 
-1411812651 source:c:\documents and settings\alan\my documents\downloads\repo\chess\john\efficiencyclockcbinding.cpp
+1411816251 source:c:\documents and settings\alan\my documents\downloads\repo\chess\john\efficiencyclockcbinding.cpp
 	<Chess\John\EfficiencyClockCBinding.hpp>
 	<Phox\Utilities\EfficiencyClock.hpp>
 
-1411812651 c:\documents and settings\alan\my documents\downloads\repo\chess\john\efficiencyclockcbinding.hpp
+1411816251 c:\documents and settings\alan\my documents\downloads\repo\chess\john\efficiencyclockcbinding.hpp
 	<Phox/Utilities/EfficiencyClock.hpp>
 
-1411812651 c:\documents and settings\alan\my documents\downloads\repo\phox\utilities\efficiencyclock.hpp
+1411816251 c:\documents and settings\alan\my documents\downloads\repo\phox\utilities\efficiencyclock.hpp
 	<ratio>
 	<chrono>
 
@@ -2016,11 +2016,11 @@
 	<sstream>
 	<iostream>
 
-1411812651 source:c:\documents and settings\alan\my documents\downloads\repo\chess\settings.cpp
+1411816251 source:c:\documents and settings\alan\my documents\downloads\repo\chess\settings.cpp
 	<Chess/Settings.hpp>
 	<Phox/Utilities/Conversions.hpp>
 
-1411812651 c:\documents and settings\alan\my documents\downloads\repo\chess\settings.hpp
+1411816251 c:\documents and settings\alan\my documents\downloads\repo\chess\settings.hpp
 	<fstream>
 	<iostream>
 	<string>
@@ -2057,14 +2057,14 @@
 1411812651 source:c:\documents and settings\alan\my documents\downloads\repo\phox\internal\exception.cpp
 	<Phox/Internal/Exception.hpp>
 
-1411812651 source:c:\documents and settings\alan\my documents\downloads\repo\phox\internal\iodevices.cpp
+1411816251 source:c:\documents and settings\alan\my documents\downloads\repo\phox\internal\iodevices.cpp
 	<Phox/Internal/IODevices.hpp>
 	<SFML/Graphics/RenderWindow.hpp>
 
-1411812651 source:c:\documents and settings\alan\my documents\downloads\repo\phox\utilities\date.cpp
+1411816251 source:c:\documents and settings\alan\my documents\downloads\repo\phox\utilities\date.cpp
 	<Phox/Utilities/Date.hpp>
 
-1411812651 c:\documents and settings\alan\my documents\downloads\repo\phox\utilities\date.hpp
+1411816251 c:\documents and settings\alan\my documents\downloads\repo\phox\utilities\date.hpp
 	<ctime>
 	<string>
 

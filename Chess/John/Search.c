@@ -1,0 +1,5 @@
+//search functions
+extern "C"
+{
+
+}
