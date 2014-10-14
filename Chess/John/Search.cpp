@@ -80,6 +80,8 @@ extern "C"
             Game boardCopy = (Game) malloc(sizeof(game)); //obvious problems with memory usage are obvious
             boardCopy = g;
                 printf("\n\n"); printGame(boardCopy); printf("\n\n");
+            printf("Move to make; '%d' '%d' '%d' '%d'\n", moveSet.moveArray[i].xFrom, moveSet.moveArray[i].yFrom, moveSet.moveArray[i].xTo, moveSet.moveArray[i].yTo);
+
             doMove(boardCopy, moveSet.moveArray[i], 0); //doMove doesn't alternate the turn
             //alternate turn
             if (boardCopy->whoseMove == COLOR_WHITE) {

@@ -2005,7 +2005,7 @@
 	<ratio>
 	<chrono>
 
-1413293438 source:c:\documents and settings\alan\my documents\downloads\repo\chess\john\johnfunctions.cpp
+1413294326 source:c:\documents and settings\alan\my documents\downloads\repo\chess\john\johnfunctions.cpp
 	<Chess\John\JohnDefinitions.hpp>
 	<Chess\John\Evaluate.hpp>
 	<Chess\John\Search.hpp>
@@ -2074,7 +2074,7 @@
 	<Chess\John\JohnDefinitions.hpp>
 	<Chess\John\Evaluate.hpp>
 
-1413293324 source:c:\documents and settings\alan\my documents\downloads\repo\chess\john\search.cpp
+1413294036 source:c:\documents and settings\alan\my documents\downloads\repo\chess\john\search.cpp
 	<Chess\John\JohnDefinitions.hpp>
 	<Chess\John\Search.hpp>
 	<Chess\John\Evaluate.hpp>
@@ -2082,5 +2082,5 @@
 1413290364 c:\documents and settings\alan\my documents\downloads\repo\chess\john\evaluate.hpp
 	<Chess\John\JohnDefinitions.hpp>
 
-1413292153 c:\documents and settings\alan\my documents\downloads\repo\chess\john\search.hpp
+1413294155 c:\documents and settings\alan\my documents\downloads\repo\chess\john\search.hpp
 

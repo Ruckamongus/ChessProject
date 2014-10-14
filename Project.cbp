@@ -113,8 +113,12 @@
 		<Unit filename="Chess/Includes.hpp" />
 		<Unit filename="Chess/John/EfficiencyClockCBinding.cpp" />
 		<Unit filename="Chess/John/EfficiencyClockCBinding.hpp" />
+		<Unit filename="Chess/John/Evaluate.cpp" />
+		<Unit filename="Chess/John/Evaluate.hpp" />
 		<Unit filename="Chess/John/JohnDefinitions.hpp" />
 		<Unit filename="Chess/John/JohnFunctions.cpp" />
+		<Unit filename="Chess/John/Search.cpp" />
+		<Unit filename="Chess/John/Search.hpp" />
 		<Unit filename="Chess/NotationParser.cpp" />
 		<Unit filename="Chess/NotationParser.hpp" />
 		<Unit filename="Chess/Settings.cpp" />

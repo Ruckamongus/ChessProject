@@ -3,7 +3,7 @@
 
 extern "C"
 {
-    #define MAX_SEARCH_DEPTH 4
+    #define MAX_SEARCH_DEPTH 2
     #define MAX_MOVES_FROM_ONE_POSITION 100
     //an array of possible moves in a given position
     typedef struct _moveList {
