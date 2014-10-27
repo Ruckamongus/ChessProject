@@ -8,6 +8,13 @@ class Board;
 class GUIManager
 {
     public:
+        GUIManager()=default;
+       ~GUIManager()=default;
+        GUIManager(const GUIManager& other)=delete;
+        GUIManager(const GUIManager&& other)=delete;
+        GUIManager& operator=(GUIManager other)=delete;
+        GUIManager& operator=(GUIManager&& other)=delete;
+
         void addText(const std::string& Text);
         void draw();
         void init(sf::RenderWindow& Window);
@@ -20,6 +27,7 @@ class GUIManager
         inline bool getVerboseLogging() const {return m_VerboseLogging->isChecked();}
 
         std::size_t getNewGame();
+        std::string getNetworkSignal();
 
     private:
         tgui::Gui           m_GUI;
@@ -32,7 +40,17 @@ class GUIManager
         tgui::Button::Ptr   m_RenewBoard;
         tgui::Button::Ptr   m_RunInput;
 
+        tgui::TextBox::Ptr  m_NetworkChatbox;
+        tgui::EditBox::Ptr  m_NetworkUser;
+        tgui::EditBox::Ptr  m_NetworkPort;
+        tgui::EditBox::Ptr  m_NetworkIP;
+        tgui::Button::Ptr   m_NetworkHost;
+        tgui::Button::Ptr   m_NetworkConnect;
+        tgui::Button::Ptr   m_NetworkForfeit;
+        tgui::Button::Ptr   m_NetworkRematch;
+
         std::size_t m_NewGame = 0;
+        std::string m_NetworkSignal = "";
 
         Board* m_Board = nullptr;
 };

@@ -405,18 +405,57 @@ void Board::draw(sf::RenderWindow& Window)
 
     t.setString("Output");
     t.setOrigin(0, 0);
-    t.setPosition(544, 14);
+    t.setPosition(544, 14 + 32);
     Window.draw(t);
 
     t.setString("Input");
-    t.setOrigin(0, 0);
-    t.setPosition(544, 230);
+    t.setPosition(544, 230 + 32);
+    Window.draw(t);
+
+    t.setString("Chat");
+    t.setPosition(816, 14 + 32);
+    Window.draw(t);
+
+    t.setString("Your Name");
+    t.setPosition(816, 230 + 32);
+    Window.draw(t);
+
+    t.setString("Host IP Address");
+    t.setPosition(816, 310);
+    Window.draw(t);
+
+    t.setString("Host Port (TCP)");
+    t.setPosition(816, 358);
     Window.draw(t);
 
     t.setString("Wait time between moves? (ms)");
     t.setOrigin(0, 0);
-    t.setPosition(544, 436);
+    t.setPosition(544, 436 + 32);
     Window.draw(t);
+
+    sf::RectangleShape Splitter;
+    Splitter.setFillColor(sf::Color::Black);
+    Splitter.setOutlineColor(sf::Color(128, 128, 128));
+    Splitter.setOutlineThickness(2.f);
+    Splitter.setSize({1.f, 568.f});
+    Splitter.setPosition({800.f, 16.f});
+    Window.draw(Splitter);
+
+    sf::Text t2;
+    t2.setFont(m_Font);
+    t2.setCharacterSize(16);
+    t2.setColor(sf::Color::Black);
+    t2.setStyle(sf::Text::Bold);
+
+    t2.setString("Local Game");
+    t2.setOrigin(t2.getLocalBounds().width / 2, 0);
+    t2.setPosition(658, 16);
+    Window.draw(t2);
+
+    t2.setString("Network Game");
+    t2.setOrigin(t2.getLocalBounds().width / 2, 0);
+    t2.setPosition(930, 16);
+    Window.draw(t2);
 }
 
 void Board::runParser(const std::string& String, const std::string& Time)

@@ -1,16 +1,14 @@
 #include <Chess\Includes.hpp>
-#include <Chess\GUIManager.hpp>
-#include <Chess\John\JohnDefinitions.hpp>
-#include <TGUI\TGUI.hpp>
 
 int main(int argc, char* argv[])
 {
-    sf::RenderWindow Window(sf::VideoMode(800, 600), "Chess");
+    sf::RenderWindow Window(sf::VideoMode(1072, 600), "Chess");
     Phox::Mouse mouse;
     Phox::Keyboard keyboard;
     Game daGame;//John's board
     GUIManager GUI;//GUI handling
     Board GameBoard;//Ruck's GUI board
+    NetworkManager Network;
 
     //Set stuff up
     {
@@ -60,6 +58,8 @@ int main(int argc, char* argv[])
         {
             GameBoard.clicked(daGame, mouse.getPosition(Window));
         }
+
+        // Network.handleSignal(GUI.getNetworkSignal());//Inform the network manager of GUI events
 
         std::size_t New = GUI.getNewGame();
         if (New)

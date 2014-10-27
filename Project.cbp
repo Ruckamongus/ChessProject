@@ -28,6 +28,7 @@
 					<Add option="-pg -lgmon" />
 					<Add option="-ltgui-s-d" />
 					<Add option="-lsfml-graphics-s-d" />
+					<Add option="-lsfml-network-s-d" />
 					<Add option="-lsfml-window-s-d" />
 					<Add option="-lsfml-system-s-d" />
 					<Add option="-lglew" />
@@ -66,6 +67,7 @@
 					<Add option="-s" />
 					<Add option="-ltgui-s" />
 					<Add option="-lsfml-graphics-s" />
+					<Add option="-lsfml-network-s" />
 					<Add option="-lsfml-window-s" />
 					<Add option="-lsfml-system-s" />
 					<Add option="-lglew" />
@@ -119,6 +121,8 @@
 		<Unit filename="Chess/John/JohnFunctions.cpp" />
 		<Unit filename="Chess/John/Search.cpp" />
 		<Unit filename="Chess/John/Search.hpp" />
+		<Unit filename="Chess/NetworkManager.cpp" />
+		<Unit filename="Chess/NetworkManager.hpp" />
 		<Unit filename="Chess/NotationParser.cpp" />
 		<Unit filename="Chess/NotationParser.hpp" />
 		<Unit filename="Chess/Settings.cpp" />
@@ -131,6 +135,10 @@
 		<Unit filename="Phox/Utilities/Date.cpp" />
 		<Unit filename="Phox/Utilities/Date.hpp" />
 		<Unit filename="Phox/Utilities/EfficiencyClock.hpp" />
+		<Unit filename="Phox/Utilities/GenericBuffer.cpp" />
+		<Unit filename="Phox/Utilities/GenericBuffer.hpp" />
+		<Unit filename="Phox/Utilities/StreamBuffer.cpp" />
+		<Unit filename="Phox/Utilities/StreamBuffer.hpp" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />
