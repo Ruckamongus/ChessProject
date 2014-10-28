@@ -2,6 +2,7 @@
 #define __ChessGUIManagerHPP__ 1
 #include <SFML/Graphics.hpp>
 #include <TGUI/TGUI.hpp>
+#include <Phox/Utilities/StreamBuffer.hpp>
 
 class Board;
 
@@ -21,13 +22,14 @@ class GUIManager
         void linkBoard(Board& board);
         void reset();
         void update(sf::Event& event);
+        void handleSignal(Phox::cStreamBuffer Signal);
 
         inline bool getTouchMove()      const {return m_EnforceTouchMove->isChecked();}
         inline bool get960Board()       const {return m_960Board->isChecked();}
         inline bool getVerboseLogging() const {return m_VerboseLogging->isChecked();}
 
         std::size_t getNewGame();
-        std::string getNetworkSignal();
+        Phox::cStreamBuffer getNetworkSignal();
 
     private:
         tgui::Gui           m_GUI;
@@ -48,9 +50,10 @@ class GUIManager
         tgui::Button::Ptr   m_NetworkConnect;
         tgui::Button::Ptr   m_NetworkForfeit;
         tgui::Button::Ptr   m_NetworkRematch;
+        tgui::EditBox::Ptr  m_NetworkChat;
 
         std::size_t m_NewGame = 0;
-        std::string m_NetworkSignal = "";
+        Phox::cStreamBuffer m_NetworkSignal;
 
         Board* m_Board = nullptr;
 };

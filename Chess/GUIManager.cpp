@@ -78,15 +78,6 @@ void GUIManager::init(sf::RenderWindow& Window)
     m_NetworkChatbox->setReadOnly(1);
     m_GUI.add(m_NetworkChatbox, "NetworkChatbox");
 
-
-/*
-        tgui::EditBox::Ptr  m_NetworkUser;
-        tgui::EditBox::Ptr  m_NetworkPort;
-        tgui::EditBox::Ptr  m_NetworkIP;
-        tgui::Button::Ptr   m_NetworkHost;
-        tgui::Button::Ptr   m_NetworkConnect;
-*/
-
     m_NetworkUser = tgui::EditBox::create("Resources\\Black.conf");
     m_NetworkUser->setSize(244, 24);
     m_NetworkUser->setPosition(816, 282);
@@ -108,15 +99,14 @@ void GUIManager::init(sf::RenderWindow& Window)
     m_NetworkConnect = tgui::Button::create("Resources\\Black.conf");
     m_NetworkConnect->setSize(114, 22);
     m_NetworkConnect->setText("Connect");
-    m_NetworkConnect->setPosition(816, 414);
+    m_NetworkConnect->setPosition(816, 414 - 10);
     m_NetworkConnect->connect("pressed", [&]
                         {
-                            m_NetworkSignal = "Connect,";
-                            m_NetworkSignal += m_NetworkUser->getText();
-                            m_NetworkSignal += ',';
-                            m_NetworkSignal += m_NetworkIP->getText();
-                            m_NetworkSignal += ',';
-                            m_NetworkPort->getText();
+                            m_NetworkSignal.clear();
+                            m_NetworkSignal << "Connect";
+                            m_NetworkSignal << m_NetworkUser->getText();
+                            m_NetworkSignal << m_NetworkIP->getText();
+                            m_NetworkSignal << m_NetworkPort->getText();
                         }
                        );
     m_GUI.add(m_NetworkConnect, "NetworkConnect");
@@ -124,10 +114,12 @@ void GUIManager::init(sf::RenderWindow& Window)
     m_NetworkHost = tgui::Button::create("Resources\\Black.conf");
     m_NetworkHost->setSize(114, 22);
     m_NetworkHost->setText("Host");
-    m_NetworkHost->setPosition(946, 414);
+    m_NetworkHost->setPosition(946, 414 - 10);
     m_NetworkHost->connect("pressed", [&]
                         {
-                            m_NetworkSignal = "Host";
+                            m_NetworkSignal.clear();
+                            m_NetworkSignal << "Host";
+                            m_NetworkSignal << m_NetworkPort->getText();
                         }
                        );
     m_GUI.add(m_NetworkHost, "NetworkHost");
@@ -135,10 +127,11 @@ void GUIManager::init(sf::RenderWindow& Window)
     m_NetworkForfeit = tgui::Button::create("Resources\\Black.conf");
     m_NetworkForfeit->setSize(114, 22);
     m_NetworkForfeit->setText("Forfeit");
-    m_NetworkForfeit->setPosition(816, 448);
+    m_NetworkForfeit->setPosition(816, 448 - 10);
     m_NetworkForfeit->connect("pressed", [&]
                         {
-                            m_NetworkSignal = "Forfeit";
+                            m_NetworkSignal.clear();
+                            m_NetworkSignal << "Forfeit";
                         }
                        );
     m_GUI.add(m_NetworkForfeit, "NetworkForfeit");
@@ -146,13 +139,28 @@ void GUIManager::init(sf::RenderWindow& Window)
     m_NetworkRematch = tgui::Button::create("Resources\\Black.conf");
     m_NetworkRematch->setSize(114, 22);
     m_NetworkRematch->setText("Rematch");
-    m_NetworkRematch->setPosition(946, 448);
+    m_NetworkRematch->setPosition(946, 448 - 10);
     m_NetworkRematch->connect("pressed", [&]
                         {
-                            m_NetworkSignal = "Rematch";
+                            m_NetworkSignal.clear();
+                            m_NetworkSignal << "Rematch";
                         }
                        );
     m_GUI.add(m_NetworkRematch, "NetworkRematch");
+
+    m_NetworkChat = tgui::EditBox::create("Resources\\Black.conf");
+    m_NetworkChat->setSize(244, 24);
+    m_NetworkChat->setPosition(816, 454 + 32);
+    m_NetworkChat->setText("");
+    m_NetworkChat->connect("ReturnKeyPressed", [&]
+                              {
+                                m_NetworkChat->setText("");
+                                m_NetworkSignal.clear();
+                                m_NetworkSignal << "Chat";
+                                m_NetworkSignal << (static_cast <std::string> (m_NetworkChat->getText()));
+                              }
+                            );
+    m_GUI.add(m_NetworkChat, "NetworkChat");
 }
 
 void GUIManager::addText(const std::string& Text)
@@ -192,9 +200,27 @@ std::size_t GUIManager::getNewGame()
     return 0;
 }
 
-std::string GUIManager::getNetworkSignal()
+Phox::cStreamBuffer GUIManager::getNetworkSignal()
 {
     auto Return = m_NetworkSignal;
-    m_NetworkSignal = "";
+    m_NetworkSignal.clear();
     return Return;
+}
+
+void GUIManager::handleSignal(Phox::cStreamBuffer Signal)
+{
+    if (!Signal.getWorkingBytes()) return;//Nothing to do here
+    std::string Sig;
+
+    Signal >> Sig;
+
+    if (Sig == "Error")
+    {
+        m_NetworkChatbox->addText(Signal.readString());
+    }
+
+    else
+    {
+        m_NetworkChatbox->addText(Sig);
+    }
 }

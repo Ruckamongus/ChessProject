@@ -1,4 +1,5 @@
-#include <Chess\Includes.hpp>
+#include <Chess/Includes.hpp>
+#include <Phox/Utilities/StreamBuffer.hpp>
 
 int main(int argc, char* argv[])
 {
@@ -59,7 +60,8 @@ int main(int argc, char* argv[])
             GameBoard.clicked(daGame, mouse.getPosition(Window));
         }
 
-        // Network.handleSignal(GUI.getNetworkSignal());//Inform the network manager of GUI events
+        Network.handleSignal(GUI.getNetworkSignal());//Inform the network manager of GUI events
+        GUI.handleSignal(Network.getGUISignal());
 
         std::size_t New = GUI.getNewGame();
         if (New)

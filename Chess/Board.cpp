@@ -433,6 +433,11 @@ void Board::draw(sf::RenderWindow& Window)
     t.setPosition(544, 436 + 32);
     Window.draw(t);
 
+    t.setString("Send message");
+    t.setOrigin(0, 0);
+    t.setPosition(816, 436 + 32);
+    Window.draw(t);
+
     sf::RectangleShape Splitter;
     Splitter.setFillColor(sf::Color::Black);
     Splitter.setOutlineColor(sf::Color(128, 128, 128));
