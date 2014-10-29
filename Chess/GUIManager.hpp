@@ -52,8 +52,10 @@ class GUIManager
         tgui::Button::Ptr   m_NetworkRematch;
         tgui::EditBox::Ptr  m_NetworkChat;
 
-        std::size_t m_NewGame = 0;
         Phox::cStreamBuffer m_NetworkSignal;
+
+        std::size_t         m_NewGame = 0;
+        bool                m_NetworkConnected = 0;
 
         Board* m_Board = nullptr;
 };

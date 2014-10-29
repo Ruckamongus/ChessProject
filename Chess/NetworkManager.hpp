@@ -25,6 +25,8 @@ class NetworkManager
         sf::TcpListener     m_Listener;
         sf::TcpSocket       m_Socket;
         Phox::cStreamBuffer m_Signal;
+        std::string         m_OpponentName;
+        std::string         m_MyName;
         bool                m_Connected = 0;
         bool                m_Hosting = 0;
 

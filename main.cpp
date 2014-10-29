@@ -66,12 +66,21 @@ int main(int argc, char* argv[])
         std::size_t New = GUI.getNewGame();
         if (New)
         {
-            deleteGame(daGame);
-            daGame = newGame();
-            GameBoard.reset();
-            if (New == 2)
+            if (Network.isConnected())
             {
-                randomize960(daGame);
+                Phox::cStreamBuffer Buff;
+                Buff.writeString("Cannot start a new game while in a network game.\n");
+                GUI.handleSignal(Buff);
+            }
+            else
+            {
+                deleteGame(daGame);
+                daGame = newGame();
+                GameBoard.reset();
+                if (New == 2)
+                {
+                    randomize960(daGame);
+                }
             }
         }
         GUI.draw();

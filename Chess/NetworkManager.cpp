@@ -1,6 +1,22 @@
 #include <Chess/NetworkManager.hpp>
+#include <Chess/John/JohnDefinitions.hpp>
 #include <Phox/Utilities/Conversions.hpp>
 #include <iostream>
+
+namespace
+{
+    Phox::cStreamBuffer& operator<<(Phox::cStreamBuffer& Stream, const move& Move)
+    {
+        Stream << Move.xTo << Move.xFrom << Move.yTo << Move.yFrom;
+        return Stream;
+    }
+
+    Phox::cStreamBuffer& operator>>(Phox::cStreamBuffer& Stream, move& Move)
+    {
+        Stream >> Move.xTo >> Move.xFrom >> Move.yTo >> Move.yFrom;
+        return Stream;
+    }
+}
 
 NetworkManager::NetworkManager()
 {
@@ -10,61 +26,72 @@ NetworkManager::NetworkManager()
 
 void NetworkManager::doNetworkStuff()
 {
-    if (m_Hosting)
+    if (!m_Connected)//Listen to new connection
     {
-        if (!m_Connected)//Listen to new connection
+        if (m_Hosting && m_Listener.accept(m_Socket) == sf::Socket::Done)
         {
-            if (m_Listener.accept(m_Socket) == sf::Socket::Done)
-            {
-                std::cout << "Nected!\n";
-                m_Connected = 1;
-            }
-        }
-
-        else
-
-        {
-            char Data[512];
-            std::size_t Size;
-            sf::Socket::Status status = m_Socket.receive(Data, 512, Size);
-
-            std::cout << "Size: " << Size << '\n';
-
-            if (Size)
-            {
-                if (status == sf::Socket::Done)
-                {
-                    std::cout << "Got data\n";
-                }
-
-                if (status == sf::Socket::Disconnected)
-                {
-                    std::cout << "Disconnect\n";
-                }
-
-                if (status == sf::Socket::Error)
-                {
-                    std::cout << "Error\n";
-                }
-
-                if (status == sf::Socket::NotReady)
-                {
-                    std::cout << "Not Ready\n";
-                }
-            }
+            m_Connected = 1;
+            Phox::cStreamBuffer buff;
+            buff.writeUnsignedByte(0);
+            buff.writeString(m_MyName);
+            m_Socket.send(buff.getConstPointer(), buff.getWorkingBytes());
         }
     }
 
     else
 
     {
-        if (m_Connected)
+        char Data[512];
+        std::size_t Size;
+        sf::Socket::Status status = m_Socket.receive(Data, 512, Size);
+
+        if (Size)
         {
-            Phox::cStreamBuffer buff;
-            buff.writeUnsignedByte(0);
-            buff.writeString("Hey");
-            m_Socket.send(buff.getConstPointer(), buff.getWorkingBytes());
-            std::cout << "Sent\n";
+            if (status == sf::Socket::Done)
+            {
+                Phox::cStreamBuffer Buffer;
+                Buffer.write(&Data, Size);
+
+                switch (Buffer.readUnsignedByte())
+                {
+                    case 0://Login name exchange
+                    {
+                        m_Signal.clear();
+                        m_OpponentName = Buffer.readString();
+                        if (m_Hosting)
+                        {
+                            m_Signal << (m_OpponentName + " has connected.\n");
+                        }
+
+                        else
+
+                        {
+                            m_Signal << (std::string("Connected to ") + m_OpponentName + ".\n");
+                        }
+                    }
+                    break;
+
+                    case 1://Chat
+                        m_Signal.clear();
+                        m_Signal.writeString(m_OpponentName + ": " + Buffer.readString() + '\n');
+                        break;
+
+                    default: break;
+                }
+            }
+        }
+
+        if (status == sf::Socket::Disconnected)
+        {
+            m_Signal.clear();
+            m_Signal << (m_OpponentName + " has disconnected.\n");
+            m_Connected = 0;
+            m_Socket.disconnect();
+        }
+
+        if (status == sf::Socket::Error)
+        {
+            std::cout << "[Socket] Error.\n";
         }
     }
 }
@@ -107,13 +134,17 @@ void NetworkManager::handleSignal(Phox::cStreamBuffer Signal)
 
         {
             m_Connected = 1;
-            std::cout << "Connected\n";
+            Phox::cStreamBuffer buff;
+            buff.writeUnsignedByte(0);
+            buff.writeString(User);
+            m_Socket.send(buff.getConstPointer(), buff.getWorkingBytes());
         }
     }
 
     else if (Sig == "Host")
     {
         unsigned short Port = static_cast<unsigned short> (Phox::ToDouble(Signal.readString()));
+        Signal >> m_MyName;
         if (m_Listener.listen(Port) != sf::Socket::Done)
         {
             std::string Err = "Cannot listen to port ";
@@ -153,6 +184,17 @@ void NetworkManager::handleSignal(Phox::cStreamBuffer Signal)
     else if (Sig == "Rematch")
     {
 
+    }
+
+    else if (Sig == "Chat")
+    {
+        if (m_Connected)
+        {
+            Phox::cStreamBuffer buff;
+            buff.writeUnsignedByte(1);
+            buff.writeString(Signal.readString());
+            m_Socket.send(buff.getConstPointer(), buff.getWorkingBytes());
+        }
     }
 }
 

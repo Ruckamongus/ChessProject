@@ -1059,7 +1059,7 @@
 	<sstream>
 	<cstdlib>
 
-1414518855 c:\users\cody\desktop\chess\chess\chess\guimanager.hpp
+1414597352 c:\users\cody\desktop\chess\chess\chess\guimanager.hpp
 	<SFML/Graphics.hpp>
 	<TGUI/TGUI.hpp>
 	<Phox/Utilities/StreamBuffer.hpp>
@@ -1250,7 +1250,7 @@
 	<string>
 	<queue>
 
-1414519248 source:c:\users\cody\desktop\chess\chess\chess\guimanager.cpp
+1414602243 source:c:\users\cody\desktop\chess\chess\chess\guimanager.cpp
 	<Chess/GUIManager.hpp>
 	<Chess/Board.hpp>
 	<Phox/Internal/Exception.hpp>
@@ -1301,7 +1301,7 @@
 	<ctime>
 	<string>
 
-1414426456 source:c:\users\cody\desktop\chess\chess\main.cpp
+1414597350 source:c:\users\cody\desktop\chess\chess\main.cpp
 	<Chess/Includes.hpp>
 	<Phox/Utilities/StreamBuffer.hpp>
 
@@ -2102,12 +2102,13 @@
 	<Chess\John\Search.hpp>
 	<Chess\John\Evaluate.hpp>
 
-1414519209 source:c:\users\cody\desktop\chess\chess\chess\networkmanager.cpp
+1414599595 source:c:\users\cody\desktop\chess\chess\chess\networkmanager.cpp
 	<Chess/NetworkManager.hpp>
+	<Chess/John/JohnDefinitions.hpp>
 	<Phox/Utilities/Conversions.hpp>
 	<iostream>
 
-1414519216 c:\users\cody\desktop\chess\chess\chess\networkmanager.hpp
+1414600523 c:\users\cody\desktop\chess\chess\chess\networkmanager.hpp
 	<SFML/Network.hpp>
 	<SFML/System/Clock.hpp>
 	<Phox/Utilities/StreamBuffer.hpp>

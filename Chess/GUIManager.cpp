@@ -120,6 +120,7 @@ void GUIManager::init(sf::RenderWindow& Window)
                             m_NetworkSignal.clear();
                             m_NetworkSignal << "Host";
                             m_NetworkSignal << m_NetworkPort->getText();
+                            m_NetworkSignal << m_NetworkUser->getText();
                         }
                        );
     m_GUI.add(m_NetworkHost, "NetworkHost");
@@ -154,10 +155,11 @@ void GUIManager::init(sf::RenderWindow& Window)
     m_NetworkChat->setText("");
     m_NetworkChat->connect("ReturnKeyPressed", [&]
                               {
-                                m_NetworkChat->setText("");
                                 m_NetworkSignal.clear();
-                                m_NetworkSignal << "Chat";
+                                m_NetworkSignal<< "Chat";
                                 m_NetworkSignal << (static_cast <std::string> (m_NetworkChat->getText()));
+                                m_NetworkChatbox->addText(m_NetworkUser->getText() + ": " + m_NetworkChat->getText() + '\n');
+                                m_NetworkChat->setText("");
                               }
                             );
     m_GUI.add(m_NetworkChat, "NetworkChat");
