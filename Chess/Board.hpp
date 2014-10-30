@@ -33,7 +33,9 @@ class Board
         bool loadResources();
         void reset();
         void update(const Game g, const sf::Vector2i& mousePosition, sf::RenderWindow& Window);
+        void getOpponentMove(const Game g, move Move);
 
+        inline move        getNetworkMove()           {auto Return = m_NetworkMove; m_NetworkMove.xFrom = 100; return Return;}
         inline bool        getParsing()         const {return m_ParserMoves.size();}
         inline std::size_t getParsingWaitTime() const {return m_ParserTime;}
 
@@ -50,19 +52,19 @@ class Board
         sf::RenderTexture m_TexPiecesSurface;
         sf::Font          m_Font;
 
-        bool            m_RequiresRedraw = 1;
-        bool            m_Selected = 0;
-        bool            m_EnforceTouchMove = 0;
-        bool            m_VerboseLogging = 0;
-        std::size_t     m_BoardSquareSize = 64;//Pixels of each piece and square
-        std::size_t     m_CurrentMove = 1;//Increments each move pair
+        bool              m_RequiresRedraw = 1;
+        bool              m_Selected = 0;
+        bool              m_EnforceTouchMove = 0;
+        bool              m_VerboseLogging = 0;
+        std::size_t       m_BoardSquareSize = 64;//Pixels of each piece and square
+        std::size_t       m_CurrentMove = 1;//Increments each move pair
+        move              m_NetworkMove = {100, 0, 0, 0};
 
-
-        GUIManager*      m_GUIManager = nullptr;
-        NotationParser   m_Parser;
-        Game             m_ParserCache = nullptr;
-        std::queue<move> m_ParserMoves;
-        std::size_t      m_ParserTime = 10;//ms
+        GUIManager*       m_GUIManager = nullptr;
+        NotationParser    m_Parser;
+        Game              m_ParserCache = nullptr;
+        std::queue<move>  m_ParserMoves;
+        std::size_t       m_ParserTime = 10;//ms
 
 
 

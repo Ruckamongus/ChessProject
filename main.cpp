@@ -53,11 +53,19 @@ int main(int argc, char* argv[])
 
         Window.clear(sf::Color(110, 110, 110));//Clear the window with a green color
 
-        GameBoard.update(daGame, mouse.getPosition(Window), Window);//Send John's board state to Ruck's board
+        bool myMove = !Network.isConnected();
+        if (!myMove)
+        {
+            myMove = (Network.isHosting() && Network.isWhitesMove()) || (!Network.isHosting() && !Network.isWhitesMove());
+        }
 
-        if (mouse.pressed(sf::Mouse::Button::Left))//Forward a mouse click to Ruck's board
+        GameBoard.update(daGame, mouse.getPosition(Window), Window);//Send John's board state to Ruck's board
+        GameBoard.getOpponentMove(daGame, Network.reportMove());
+
+        if (mouse.pressed(sf::Mouse::Button::Left) && myMove)//Forward a mouse click to Ruck's board
         {
             GameBoard.clicked(daGame, mouse.getPosition(Window));
+            Network.getMove(GameBoard.getNetworkMove());
         }
 
         Network.handleSignal(GUI.getNetworkSignal());//Inform the network manager of GUI events

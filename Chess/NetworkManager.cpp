@@ -24,6 +24,26 @@ NetworkManager::NetworkManager()
     m_Socket.setBlocking(0);
 }
 
+void NetworkManager::getMove(const move& Move)
+{
+    if (Move.xFrom == 100) return;//Nothing to report here
+    if (m_Connected)
+    {
+        m_WhitesMove = !m_WhitesMove;
+        Phox::cStreamBuffer buff;
+        buff.writeUnsignedByte(2);
+        buff << Move;
+        m_Socket.send(buff.getConstPointer(), buff.getWorkingBytes());
+    }
+}
+
+void NetworkManager::startGame()
+{
+    m_ClockBlack.restart();
+    m_ClockWhite.restart();
+    m_WhitesMove = 1;
+}
+
 void NetworkManager::doNetworkStuff()
 {
     if (!m_Connected)//Listen to new connection
@@ -68,6 +88,7 @@ void NetworkManager::doNetworkStuff()
                         {
                             m_Signal << (std::string("Connected to ") + m_OpponentName + ".\n");
                         }
+                        startGame();
                     }
                     break;
 
@@ -75,6 +96,12 @@ void NetworkManager::doNetworkStuff()
                         m_Signal.clear();
                         m_Signal.writeString(m_OpponentName + ": " + Buffer.readString() + '\n');
                         break;
+
+                    case 2://New move
+                    {
+                        Buffer >> m_ReportMove;
+                    }
+                    break;
 
                     default: break;
                 }

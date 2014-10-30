@@ -39,6 +39,7 @@
 					<Add option="-static-libstdc++" />
 					<Add option="-lgdi32" />
 					<Add option="-lwinmm" />
+					<Add option="-lws2_32" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -78,6 +79,7 @@
 					<Add option="-static-libstdc++" />
 					<Add option="-lgdi32" />
 					<Add option="-lwinmm" />
+					<Add option="-lws2_32" />
 				</Linker>
 			</Target>
 		</Build>

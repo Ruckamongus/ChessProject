@@ -3,6 +3,7 @@
 #include <SFML/Network.hpp>
 #include <SFML/System/Clock.hpp>
 #include <Phox/Utilities/StreamBuffer.hpp>
+#include <Chess/John/JohnDefinitions.hpp>
 #include <string>
 
 class NetworkManager
@@ -15,13 +16,18 @@ class NetworkManager
         NetworkManager& operator=(NetworkManager other)=delete;
         NetworkManager& operator=(NetworkManager&& other)=delete;
 
+        void getMove(const move& Move);
         void handleSignal(Phox::cStreamBuffer Signal);
         Phox::cStreamBuffer getGUISignal();
-        inline bool isHosting() const {return m_Hosting;}
-        inline bool isConnected() const {return m_Connected;}
+
+        inline bool isHosting()    const {return m_Hosting;}
+        inline bool isConnected()  const {return m_Connected;}
+        inline bool isWhitesMove() const {return m_WhitesMove;}
+        inline move reportMove()         {auto Return = m_ReportMove; m_ReportMove.xFrom = 100; return Return;}
 
     private:
-        sf::Clock           m_Clock;
+        sf::Clock           m_ClockWhite;
+        sf::Clock           m_ClockBlack;
         sf::TcpListener     m_Listener;
         sf::TcpSocket       m_Socket;
         Phox::cStreamBuffer m_Signal;
@@ -29,7 +35,10 @@ class NetworkManager
         std::string         m_MyName;
         bool                m_Connected = 0;
         bool                m_Hosting = 0;
+        bool                m_WhitesMove = 1;
+        move                m_ReportMove = {100, 0, 0, 0};
 
         void doNetworkStuff();
+        void startGame();
 };
 #endif

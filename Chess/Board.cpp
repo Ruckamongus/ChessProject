@@ -74,6 +74,12 @@ void Board::linkGUIManager(GUIManager& GUI)
     GUI.linkBoard(*this);
 }
 
+void Board::getOpponentMove(const Game g, move Move)
+{
+    if (Move.xFrom == 100) return;//No move
+    reportAndMove(g, Move);
+}
+
 bool Board::loadResources()
 {
     if (!m_TexBoard.loadFromFile("Resources\\BoardSquares.png"))
@@ -153,6 +159,7 @@ void Board::reportAndMove(const Game g, move m)
         m_Selected = 0;
         if (makeMove(g, m))//Make move if we can
         {
+            m_NetworkMove = m;
             m_RequiresRedraw = 1;//Tell the board it has to update since there was a move
             if (m_GUIManager != nullptr)
             {
