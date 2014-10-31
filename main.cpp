@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
         Window.clear(sf::Color(110, 110, 110));//Clear the window with a green color
 
         bool myMove = !Network.isConnected();
-        if (!myMove)
+        if (!myMove)//Connected
         {
             myMove = (Network.isHosting() && Network.isWhitesMove()) || (!Network.isHosting() && !Network.isWhitesMove());
         }

@@ -198,6 +198,7 @@ extern "C"
                 g->whoseMove = COLOR_WHITE;
             }
 
+            /*
             double score = evaluatePosition(g);
             printf("Current board score (static): %f\n", score);
             bool isWhite;
@@ -206,6 +207,7 @@ extern "C"
             else {printf("The fuck.\n"); assert(0);}
             score = minimax(g, MAX_SEARCH_DEPTH, isWhite);
             printf("Current board score according to the minimax search: %f\n", score);
+            */
 
             return TRUE;
         } else {

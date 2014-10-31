@@ -1270,7 +1270,7 @@
 	<ratio>
 	<chrono>
 
-1414691529 source:c:\users\cody\desktop\chess\chess\chess\john\johnfunctions.cpp
+1414712938 source:c:\users\cody\desktop\chess\chess\chess\john\johnfunctions.cpp
 	<Chess\John\JohnDefinitions.hpp>
 	<Chess\John\Evaluate.hpp>
 	<Chess\John\Search.hpp>
@@ -1301,7 +1301,7 @@
 	<ctime>
 	<string>
 
-1414692421 source:c:\users\cody\desktop\chess\chess\main.cpp
+1414713340 source:c:\users\cody\desktop\chess\chess\main.cpp
 	<Chess/Includes.hpp>
 	<Phox/Utilities/StreamBuffer.hpp>
 
@@ -2102,13 +2102,13 @@
 	<Chess\John\Search.hpp>
 	<Chess\John\Evaluate.hpp>
 
-1414691971 source:c:\users\cody\desktop\chess\chess\chess\networkmanager.cpp
+1414713846 source:c:\users\cody\desktop\chess\chess\chess\networkmanager.cpp
 	<Chess/NetworkManager.hpp>
 	<Chess/John/JohnDefinitions.hpp>
 	<Phox/Utilities/Conversions.hpp>
 	<iostream>
 
-1414692187 c:\users\cody\desktop\chess\chess\chess\networkmanager.hpp
+1414713789 c:\users\cody\desktop\chess\chess\chess\networkmanager.hpp
 	<SFML/Network.hpp>
 	<SFML/System/Clock.hpp>
 	<Phox/Utilities/StreamBuffer.hpp>

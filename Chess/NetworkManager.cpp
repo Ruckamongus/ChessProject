@@ -29,7 +29,7 @@ void NetworkManager::getMove(const move& Move)
     if (Move.xFrom == 100) return;//Nothing to report here
     if (m_Connected)
     {
-        m_WhitesMove = !m_WhitesMove;
+        //m_WhitesMove = !m_WhitesMove;
         Phox::cStreamBuffer buff;
         buff.writeUnsignedByte(2);
         buff << Move;
@@ -100,6 +100,7 @@ void NetworkManager::doNetworkStuff()
                     case 2://New move
                     {
                         Buffer >> m_ReportMove;
+                        m_WhitesMove = !m_WhitesMove;
                     }
                     break;
 
@@ -136,6 +137,7 @@ void NetworkManager::handleSignal(Phox::cStreamBuffer Signal)
     {
         m_Socket.disconnect();
         m_Hosting = 0;
+        m_WhitesMove = 0;
 
         std::string User, IP, Port;
         Signal >> User >> IP >> Port;
