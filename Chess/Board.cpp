@@ -157,7 +157,7 @@ void Board::reportAndMove(const Game g, move m)
         bool TakesPiece = (g->board[m.xTo][m.yTo] != EMPTY);
         pieceValue Took = getPieceChar(g->board[m.xTo][m.yTo]);
         m_Selected = 0;
-        if (makeMove(g, m))//Make move if we can
+        if (makeMove(g, m) != MOVE_NONE_MADE)//Make move if we can
         {
             m_NetworkMove = m;
             m_RequiresRedraw = 1;//Tell the board it has to update since there was a move

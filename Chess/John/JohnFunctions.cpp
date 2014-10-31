@@ -183,14 +183,15 @@ extern "C"
         return myMove;
     }
 
-    //returns if a move was made
+    //returns 0 if a move wasn't made, 1 for standard move, 2 for kingside castle, 3 for queenside castle
     int makeMove(Game g, move m, bool noVerbose)
     {
+        int returnVal;
         if (isMoveLegal(g, m))
         {
             if (!noVerbose) printf("Move was legal.\n");
 
-            doMove(g, m);
+            returnVal = doMove(g, m);
             //alternate turn
             if (g->whoseMove == COLOR_WHITE) {
                 g->whoseMove = COLOR_BLACK;
@@ -209,15 +210,17 @@ extern "C"
             printf("Current board score according to the minimax search: %f\n", score);
             */
 
-            return TRUE;
+            return returnVal;
         } else {
             if (!noVerbose) printf("An illegal move attempt has been made.\n");
-            return FALSE;
+            returnVal = MOVE_NONE_MADE;
         }
+        return returnVal;
     }
 
-    void doMove(Game g, move m, bool noVerbose) //does not alternate move turn
+    int doMove(Game g, move m, bool noVerbose) //does not alternate move turn
     {
+        int returnVal = 0;
         pieceValue piece = g->board[m.xFrom][m.yFrom];
         g->board[m.xTo][m.yTo] = piece;
         g->board[m.xFrom][m.yFrom] = EMPTY;
@@ -247,18 +250,22 @@ extern "C"
             if (m.xTo - m.xFrom == 2) { //kingside castle
                 g->board[7][7] = EMPTY;
                 g->board[5][7] = B_ROOK;
+                returnVal = MOVE_IS_KCASTLE;
             } else if (m.xTo - m.xFrom == -2) { //queenside castling
                 g->board[0][7] = EMPTY;
                 g->board[3][7] = B_ROOK;
+                returnVal = MOVE_IS_QCASTLE;
             }
         } else if (piece == W_KING) {
             g->wKingMoved = TRUE;
             if (m.xTo - m.xFrom == 2) { //kingside castle
                 g->board[7][0] = EMPTY;
                 g->board[5][0] = W_ROOK;
+                returnVal = MOVE_IS_KCASTLE;
             } else if (m.xTo - m.xFrom == -2) { //queenside castling
                 g->board[0][0] = EMPTY;
                 g->board[3][0] = W_ROOK;
+                returnVal = MOVE_IS_QCASTLE;
             }
         } else if (piece == B_PAWN) { //set up en passant
             if (m.yFrom == 6 && m.yTo == 4) {
@@ -284,6 +291,8 @@ extern "C"
         } else {
             g->canEnPassant = NO_ENPASSANT;
         }
+
+        return returnVal;
     }
 
     emptyBlackWhite getSquare(pieceValue piece)

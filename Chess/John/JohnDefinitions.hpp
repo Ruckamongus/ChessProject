@@ -30,6 +30,11 @@ extern "C"
 	#define TRUE        1
 	#define NO_ENPASSANT 10
 
+	#define MOVE_NONE_MADE 0
+	#define MOVE_STANDARD 1
+	#define MOVE_IS_KCASTLE 2
+	#define MOVE_IS_QCASTLE 3
+
 	typedef unsigned char pieceValue;
 	typedef unsigned char boardCoord;
 	typedef unsigned char emptyBlackWhite; //value of a board coordinate
@@ -59,7 +64,7 @@ extern "C"
     Game            newGame();
     void            deleteGame(Game g);
     int             makeMove(const Game g, move m, bool noVerbose = 0); //returns if the move was made
-    void            doMove(const Game g, move m, bool noVebose = 0);
+    int             doMove(const Game g, move m, bool noVebose = 0);
     int             isMoveLegal(const Game g, move m, bool noVerbose = 0);
     move            getInput(); //function with a side effect
     int             isInCheck(const Game g, emptyBlackWhite colorChecking);
