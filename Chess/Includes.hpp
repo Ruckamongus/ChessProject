@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <cstring>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -19,6 +20,5 @@
 #include <Chess/GUIManager.hpp>
 #include <Chess/John/JohnDefinitions.hpp>
 #include <Chess/NetworkManager.hpp>
-//#include <Chess/Settings.hpp>
 
 #endif

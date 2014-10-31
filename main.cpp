@@ -1,5 +1,4 @@
 #include <Chess/Includes.hpp>
-#include <Phox/Utilities/StreamBuffer.hpp>
 
 int main(int argc, char* argv[])
 {
@@ -56,11 +55,20 @@ int main(int argc, char* argv[])
         bool myMove = !Network.isConnected();
         if (!myMove)//Connected
         {
+            if (Network.isBoardFresh())
+            {
+                std::memcpy(daGame, Network.getRefreshedBoard(), sizeof(game));
+            }
             myMove = (Network.isHosting() && Network.isWhitesMove()) || (!Network.isHosting() && !Network.isWhitesMove());
         }
 
         GameBoard.update(daGame, mouse.getPosition(Window), Window);//Send John's board state to Ruck's board
         GameBoard.getOpponentMove(daGame, Network.reportMove());
+
+        if (Network.requestCurrentBoard())
+        {
+            Network.setCurrentBoard(daGame);
+        }
 
         if (mouse.pressed(sf::Mouse::Button::Left) && myMove)//Forward a mouse click to Ruck's board
         {
@@ -74,7 +82,7 @@ int main(int argc, char* argv[])
         std::size_t New = GUI.getNewGame();
         if (New)
         {
-            if (Network.isConnected())
+            if (Network.isConnected() && !Network.isHosting())
             {
                 Phox::cStreamBuffer Buff;
                 Buff.writeString("Cannot start a new game while in a network game.\n");
@@ -88,6 +96,10 @@ int main(int argc, char* argv[])
                 if (New == 2)
                 {
                     randomize960(daGame);
+                }
+                if (Network.isConnected() && Network.isHosting())
+                {
+                    Network.refreshBoard(daGame);
                 }
             }
         }

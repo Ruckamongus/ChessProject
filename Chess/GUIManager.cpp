@@ -121,6 +121,7 @@ void GUIManager::init(sf::RenderWindow& Window)
                             m_NetworkSignal << "Host";
                             m_NetworkSignal << m_NetworkPort->getText();
                             m_NetworkSignal << m_NetworkUser->getText();
+                            m_NetworkSignal.writeUnsignedByte(m_EnforceTouchMove->isChecked());
                         }
                        );
     m_GUI.add(m_NetworkHost, "NetworkHost");

@@ -665,7 +665,7 @@
 	<Chess/HelperFunctions.hpp>
 	<Phox/Utilities/Conversions.hpp>
 
-1414692363 source:c:\users\cody\desktop\chess\chess\chess\board.cpp
+1414721591 source:c:\users\cody\desktop\chess\chess\chess\board.cpp
 	<Chess/Board.hpp>
 	<Phox/Internal/Exception.hpp>
 	<Phox/Internal/IODevices.hpp>
@@ -1038,7 +1038,7 @@
 	<string>
 	<vector>
 
-1413389987 c:\users\cody\desktop\chess\chess\chess\john\johndefinitions.hpp
+1414721591 c:\users\cody\desktop\chess\chess\chess\john\johndefinitions.hpp
 	<stdio.h>
 	<stdlib.h>
 	<assert.h>
@@ -1250,7 +1250,7 @@
 	<string>
 	<queue>
 
-1414602243 source:c:\users\cody\desktop\chess\chess\chess\guimanager.cpp
+1414717965 source:c:\users\cody\desktop\chess\chess\chess\guimanager.cpp
 	<Chess/GUIManager.hpp>
 	<Chess/Board.hpp>
 	<Phox/Internal/Exception.hpp>
@@ -1270,7 +1270,7 @@
 	<ratio>
 	<chrono>
 
-1414712938 source:c:\users\cody\desktop\chess\chess\chess\john\johnfunctions.cpp
+1414721591 source:c:\users\cody\desktop\chess\chess\chess\john\johnfunctions.cpp
 	<Chess\John\JohnDefinitions.hpp>
 	<Chess\John\Evaluate.hpp>
 	<Chess\John\Search.hpp>
@@ -1301,14 +1301,14 @@
 	<ctime>
 	<string>
 
-1414713340 source:c:\users\cody\desktop\chess\chess\main.cpp
+1414720279 source:c:\users\cody\desktop\chess\chess\main.cpp
 	<Chess/Includes.hpp>
-	<Phox/Utilities/StreamBuffer.hpp>
 
-1413935560 c:\users\cody\desktop\chess\chess\chess\includes.hpp
+1414718965 c:\users\cody\desktop\chess\chess\chess\includes.hpp
 	<iostream>
 	<sstream>
 	<string>
+	<cstring>
 	<SFML/Graphics.hpp>
 	<SFML/Window.hpp>
 	<TGUI/TGUI.hpp>
@@ -2110,7 +2110,7 @@
 	<Phox/Utilities/Conversions.hpp>
 	<iostream>
 
-1414713789 c:\users\cody\desktop\chess\chess\chess\networkmanager.hpp
+1414719657 c:\users\cody\desktop\chess\chess\chess\networkmanager.hpp
 	<SFML/Network.hpp>
 	<SFML/System/Clock.hpp>
 	<Phox/Utilities/StreamBuffer.hpp>

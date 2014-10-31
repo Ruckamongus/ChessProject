@@ -2,6 +2,7 @@
 #include <Chess/John/JohnDefinitions.hpp>
 #include <Phox/Utilities/Conversions.hpp>
 #include <iostream>
+#include <cstring>
 
 namespace
 {
@@ -14,6 +15,18 @@ namespace
     Phox::cStreamBuffer& operator>>(Phox::cStreamBuffer& Stream, move& Move)
     {
         Stream >> Move.xTo >> Move.xFrom >> Move.yTo >> Move.yFrom;
+        return Stream;
+    }
+
+    Phox::cStreamBuffer& operator<<(Phox::cStreamBuffer& Stream, const _game g)
+    {
+        Stream.write(&g, sizeof(_game));
+        return Stream;
+    }
+
+    Phox::cStreamBuffer& operator>>(Phox::cStreamBuffer& Stream, _game& g)
+    {
+        std::memcpy(&g, Stream.getConstPointer() + Stream.getReadPosition(), sizeof(_game));
         return Stream;
     }
 }
@@ -37,6 +50,21 @@ void NetworkManager::getMove(const move& Move)
     }
 }
 
+void NetworkManager::setCurrentBoard(Game g)
+{
+    std::memcpy(&m_Board, g, sizeof(game));
+    refreshBoard(&m_Board);
+    m_RequestBoard = 0;
+}
+
+void NetworkManager::refreshBoard(Game g)
+{
+    Phox::cStreamBuffer buff;
+    buff.writeUnsignedByte(3);
+    buff << *g;
+    m_Socket.send(buff.getConstPointer(), buff.getWorkingBytes());
+}
+
 void NetworkManager::startGame()
 {
     m_ClockBlack.restart();
@@ -51,6 +79,7 @@ void NetworkManager::doNetworkStuff()
         if (m_Hosting && m_Listener.accept(m_Socket) == sf::Socket::Done)
         {
             m_Connected = 1;
+            m_RequestBoard = 1;
             Phox::cStreamBuffer buff;
             buff.writeUnsignedByte(0);
             buff.writeString(m_MyName);
@@ -98,11 +127,14 @@ void NetworkManager::doNetworkStuff()
                         break;
 
                     case 2://New move
-                    {
                         Buffer >> m_ReportMove;
                         m_WhitesMove = !m_WhitesMove;
-                    }
                     break;
+
+                    case 3://New board
+                        Buffer >> m_Board;
+                        m_RefreshBoard = 1;
+                        break;
 
                     default: break;
                 }
@@ -137,10 +169,11 @@ void NetworkManager::handleSignal(Phox::cStreamBuffer Signal)
     {
         m_Socket.disconnect();
         m_Hosting = 0;
-        m_WhitesMove = 0;
 
         std::string User, IP, Port;
         Signal >> User >> IP >> Port;
+
+        std::cout << sf::IpAddress(IP).toString();
 
         m_Socket.setBlocking(1);
         sf::Socket::Status status = m_Socket.connect(IP, static_cast <unsigned short> (Phox::ToDouble(Port)), sf::seconds(5.f));
@@ -174,6 +207,8 @@ void NetworkManager::handleSignal(Phox::cStreamBuffer Signal)
     {
         unsigned short Port = static_cast<unsigned short> (Phox::ToDouble(Signal.readString()));
         Signal >> m_MyName;
+        m_EnforceTouchMove = Signal.readUnsignedByte();
+
         if (m_Listener.listen(Port) != sf::Socket::Done)
         {
             std::string Err = "Cannot listen to port ";
