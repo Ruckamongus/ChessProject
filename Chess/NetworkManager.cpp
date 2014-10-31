@@ -42,8 +42,9 @@ void NetworkManager::getMove(const move& Move)
     if (Move.xFrom == 100) return;//Nothing to report here
     if (m_Connected)
     {
-        //m_WhitesMove = !m_WhitesMove;
-        std::cout << "Sent move\n";
+        m_WhitesMove = !m_WhitesMove;
+        m_MyTime += m_Clock.getElapsedTime().asMilliseconds();
+        m_Clock.restart();
         Phox::cStreamBuffer buff;
         buff.writeUnsignedByte(2);
         buff << Move;
@@ -69,8 +70,7 @@ void NetworkManager::refreshBoard(Game g)
 
 void NetworkManager::startGame()
 {
-    m_ClockBlack.restart();
-    m_ClockWhite.restart();
+    m_Clock.restart();
     m_WhitesMove = 1;
 }
 
@@ -130,13 +130,20 @@ void NetworkManager::doNetworkStuff()
 
                     case 2://New move
                         Buffer >> m_ReportMove;
+                        m_OpponentTime += m_Clock.getElapsedTime().asMilliseconds();
+                        m_Clock.restart();
                         m_WhitesMove = !m_WhitesMove;
                     break;
 
                     case 3://New board
                         Buffer >> m_Board;
-                        m_RefreshBoard = 1;
                         m_WhitesMove = Buffer.readUnsignedByte();
+                        m_RefreshBoard = 1;
+                        m_Clock.restart();
+                        m_MyTime = 0;
+                        m_OpponentTime = 0;
+                        m_Signal.clear();
+                        m_Signal << "_clear_\1";
                         break;
 
                     default: break;
@@ -175,6 +182,7 @@ void NetworkManager::handleSignal(Phox::cStreamBuffer Signal)
 
         std::string User, IP, Port;
         Signal >> User >> IP >> Port;
+        m_MyName = User;
 
         std::cout << sf::IpAddress(IP).toString();
 

@@ -82,6 +82,7 @@ void GUIManager::init(sf::RenderWindow& Window)
     m_NetworkUser->setSize(244, 24);
     m_NetworkUser->setPosition(816, 282);
     m_NetworkUser->setText("User");
+    m_NetworkUser->setMaximumCharacters(18);
     m_GUI.add(m_NetworkUser, "NetworkUser");
 
     m_NetworkIP = tgui::EditBox::create("Resources\\Black.conf");
@@ -94,6 +95,7 @@ void GUIManager::init(sf::RenderWindow& Window)
     m_NetworkPort->setSize(244, 24);
     m_NetworkPort->setPosition(816, 374);
     m_NetworkPort->setText("22222");
+    m_NetworkPort->setMaximumCharacters(5);
     m_GUI.add(m_NetworkPort, "NetworkPort");
 
     m_NetworkConnect = tgui::Button::create("Resources\\Black.conf");
@@ -154,6 +156,7 @@ void GUIManager::init(sf::RenderWindow& Window)
     m_NetworkChat->setSize(244, 24);
     m_NetworkChat->setPosition(816, 454 + 32);
     m_NetworkChat->setText("");
+    m_NetworkChat->setMaximumCharacters(225);
     m_NetworkChat->connect("ReturnKeyPressed", [&]
                               {
                                 m_NetworkSignal.clear();
@@ -220,6 +223,11 @@ void GUIManager::handleSignal(Phox::cStreamBuffer Signal)
     if (Sig == "Error")
     {
         m_NetworkChatbox->addText(Signal.readString());
+    }
+
+    if (Sig == "_clear_\1")
+    {
+        m_OutputBox->setText("");
     }
 
     else

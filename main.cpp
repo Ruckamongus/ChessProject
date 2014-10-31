@@ -62,6 +62,7 @@ int main(int argc, char* argv[])
             myMove = (Network.isHosting() && Network.isWhitesMove()) || (!Network.isHosting() && !Network.isWhitesMove());
         }
 
+        GameBoard.networkDraw(Network.isConnected(), myMove, Network.getMyName(), Network.getOpponentName(), Network.getTimeServer(), Network.getTimeOpponent());
         GameBoard.update(daGame, mouse.getPosition(Window), Window);//Send John's board state to Ruck's board
         GameBoard.getOpponentMove(daGame, Network.reportMove());
 

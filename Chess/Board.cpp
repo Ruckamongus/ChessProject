@@ -78,6 +78,7 @@ void Board::getOpponentMove(const Game g, move Move)
 {
     if (Move.xFrom == 100) return;//No move
     reportAndMove(g, Move);
+    m_NetworkMove.xFrom = 100;
 }
 
 bool Board::loadResources()
@@ -148,6 +149,16 @@ sf::Vector2i Board::getMouseCell(const sf::Vector2i& mousePosition) const
         return sf::Vector2i((mousePosition.x - m_Position.x) / m_BoardSquareSize, (mousePosition.y - m_Position.y) / m_BoardSquareSize);
     }
     return sf::Vector2i(-1, -1);
+}
+
+void Board::networkDraw(bool connected, bool serverMove, const std::string& myName, const std::string& opponentName, const sf::Time& myTime, const sf::Time& opponentTime)
+{
+    m_Connected = connected;
+    m_ServerMove = serverMove;
+    m_MyName = myName;
+    m_OpponentName = opponentName;
+    m_MyTime = myTime;
+    m_OpponentTime = opponentTime;
 }
 
 void Board::reportAndMove(const Game g, move m)
@@ -445,6 +456,37 @@ void Board::draw(sf::RenderWindow& Window)
     t.setOrigin(0, 0);
     t.setPosition(816, 436 + 32);
     Window.draw(t);
+
+    if (m_Connected)
+    {
+        std::size_t Longest = 0;
+        if (m_ServerMove) t.setStyle(sf::Text::Bold);
+        t.setString(m_MyName + ':');
+        t.setOrigin(0, 0);
+        t.setPosition(816, 486 + 32);
+        Longest = t.getLocalBounds().width;
+        Window.draw(t);
+        t.setStyle(sf::Text::Regular);
+
+        if (!m_ServerMove) t.setStyle(sf::Text::Bold);
+        t.setString(m_OpponentName + ':');
+        t.setOrigin(0, 0);
+        t.setPosition(816, 486 + 48);
+        if (t.getLocalBounds().width > Longest)
+        {
+            Longest = t.getLocalBounds().width;
+        }
+        Window.draw(t);
+        t.setStyle(sf::Text::Regular);
+
+        t.setString(Phox::toString(m_MyTime.asSeconds()) + " s");
+        t.setPosition(816 + Longest + 6, 486 + 32);
+        Window.draw(t);
+
+        t.setString(Phox::toString(m_OpponentTime.asSeconds()) + " s");
+        t.setPosition(816 + Longest + 6, 486 + 48);
+        Window.draw(t);
+    }
 
     sf::RectangleShape Splitter;
     Splitter.setFillColor(sf::Color::Black);

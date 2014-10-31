@@ -29,15 +29,20 @@ class NetworkManager
         inline bool requestCurrentBoard() const {return m_RequestBoard;}
         inline move reportMove()         {auto Return = m_ReportMove; m_ReportMove.xFrom = 100; return Return;}
         inline Game getRefreshedBoard()  {m_RefreshBoard = 0; return &m_Board;}
+        inline std::string getOpponentName() const {return m_OpponentName;}
+        inline std::string getMyName()       const {return m_MyName;}
+        inline sf::Time    getTimeServer()   const {return sf::milliseconds(m_MyTime);}
+        inline sf::Time    getTimeOpponent() const {return sf::milliseconds(m_OpponentTime);}
 
     private:
-        sf::Clock           m_ClockWhite;
-        sf::Clock           m_ClockBlack;
+        sf::Clock           m_Clock;
         sf::TcpListener     m_Listener;
         sf::TcpSocket       m_Socket;
         Phox::cStreamBuffer m_Signal;
         std::string         m_OpponentName;
         std::string         m_MyName;
+        std::size_t         m_MyTime = 0;
+        std::size_t         m_OpponentTime = 0;
         bool                m_Connected = 0;
         bool                m_Hosting = 0;
         bool                m_WhitesMove = 1;

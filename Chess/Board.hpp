@@ -2,6 +2,7 @@
 #define __ChessBoardHPP__ 1
 #include <Chess/John/JohnDefinitions.hpp>
 #include <Chess/NotationParser.hpp>
+#include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
@@ -34,6 +35,7 @@ class Board
         void reset();
         void update(const Game g, const sf::Vector2i& mousePosition, sf::RenderWindow& Window);
         void getOpponentMove(const Game g, move Move);
+        void networkDraw(bool connected, bool serverMove, const std::string& myName, const std::string& opponentName, const sf::Time& myTime, const sf::Time& opponentTime);
 
         inline move        getNetworkMove()           {auto Return = m_NetworkMove; m_NetworkMove.xFrom = 100; return Return;}
         inline bool        getParsing()         const {return m_ParserMoves.size();}
@@ -58,7 +60,7 @@ class Board
         bool              m_VerboseLogging = 0;
         std::size_t       m_BoardSquareSize = 64;//Pixels of each piece and square
         std::size_t       m_CurrentMove = 1;//Increments each move pair
-        move              m_NetworkMove = {100, 0, 0, 0};
+        move              m_NetworkMove = {100, 100, 0, 0};
 
         GUIManager*       m_GUIManager = nullptr;
         NotationParser    m_Parser;
@@ -66,6 +68,12 @@ class Board
         std::queue<move>  m_ParserMoves;
         std::size_t       m_ParserTime = 10;//ms
 
+        bool              m_ServerMove;
+        bool              m_Connected = 0;
+        std::string       m_OpponentName;
+        std::string       m_MyName;
+        sf::Time          m_MyTime;
+        sf::Time          m_OpponentTime;
 
 
         void            refreshBoard(const Game g);
