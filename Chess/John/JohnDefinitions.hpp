@@ -34,6 +34,7 @@ extern "C"
 	#define MOVE_STANDARD 1
 	#define MOVE_IS_KCASTLE 2
 	#define MOVE_IS_QCASTLE 3
+	#define MOVE_CHECKMATE 4
 
 	typedef unsigned char pieceValue;
 	typedef unsigned char boardCoord;

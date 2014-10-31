@@ -1383,7 +1383,7 @@
 1413389990 c:\users\cody\desktop\chess\chess\tgui\include\tgui\extra\animatedpicture.hpp
 	<TGUI/ClickableWidget.hpp>
 
-1414714303 source:c:\documents and settings\alan\my documents\downloads\repo\chess\board.cpp
+1414718470 source:c:\documents and settings\alan\my documents\downloads\repo\chess\board.cpp
 	<Chess/Board.hpp>
 	<Phox/Internal/Exception.hpp>
 	<Phox/Internal/IODevices.hpp>
@@ -2010,7 +2010,7 @@
 	<ratio>
 	<chrono>
 
-1414714303 source:c:\documents and settings\alan\my documents\downloads\repo\chess\john\johnfunctions.cpp
+1414718264 source:c:\documents and settings\alan\my documents\downloads\repo\chess\john\johnfunctions.cpp
 	<Chess\John\JohnDefinitions.hpp>
 	<Chess\John\Evaluate.hpp>
 	<Chess\John\Search.hpp>

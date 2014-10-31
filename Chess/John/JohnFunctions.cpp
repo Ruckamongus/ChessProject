@@ -199,6 +199,14 @@ extern "C"
                 g->whoseMove = COLOR_WHITE;
             }
 
+            moveList moves = getLegalMoves(g);
+            if (moves.totalMoves == 0) {
+                printf("We are in checkmate. \n");
+                returnVal = MOVE_CHECKMATE;
+            }
+            if (!noVerbose) {
+                printf("Total moves: %d\n", moves.totalMoves);
+            }
             /*
             double score = evaluatePosition(g);
             printf("Current board score (static): %f\n", score);
