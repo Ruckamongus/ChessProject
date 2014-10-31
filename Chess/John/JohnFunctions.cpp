@@ -228,7 +228,7 @@ extern "C"
 
     int doMove(Game g, move m, bool noVerbose) //does not alternate move turn
     {
-        int returnVal = 0;
+        int returnVal = MOVE_STANDARD;
         pieceValue piece = g->board[m.xFrom][m.yFrom];
         g->board[m.xTo][m.yTo] = piece;
         g->board[m.xFrom][m.yFrom] = EMPTY;

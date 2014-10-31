@@ -43,6 +43,7 @@ void NetworkManager::getMove(const move& Move)
     if (m_Connected)
     {
         //m_WhitesMove = !m_WhitesMove;
+        std::cout << "Sent move\n";
         Phox::cStreamBuffer buff;
         buff.writeUnsignedByte(2);
         buff << Move;
@@ -62,6 +63,7 @@ void NetworkManager::refreshBoard(Game g)
     Phox::cStreamBuffer buff;
     buff.writeUnsignedByte(3);
     buff << *g;
+    buff.writeUnsignedByte(m_WhitesMove);
     m_Socket.send(buff.getConstPointer(), buff.getWorkingBytes());
 }
 
@@ -134,6 +136,7 @@ void NetworkManager::doNetworkStuff()
                     case 3://New board
                         Buffer >> m_Board;
                         m_RefreshBoard = 1;
+                        m_WhitesMove = Buffer.readUnsignedByte();
                         break;
 
                     default: break;
