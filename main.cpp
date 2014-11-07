@@ -1,7 +1,23 @@
 #include <Chess/Includes.hpp>
 
+std::string stringReplaceAll(const std::string& str, const std::string& subStr, const std::string& rep)
+{
+    std::string Ret = str;
+    auto pos = Ret.find(subStr);
+
+    while (pos != std::string::npos)
+    {
+        Ret.erase(Ret.begin() + pos, Ret.begin() + pos + subStr.size());
+        Ret.insert(pos, rep);
+        pos = Ret.find(subStr);
+    }
+
+    return Ret;
+}
+
 int main(int argc, char* argv[])
 {
+    std::cout << stringReplaceAll("He55llo!", "5", "_lol_");
     sf::RenderWindow Window(sf::VideoMode(1072, 600), "Chess");
     Phox::Mouse mouse;
     Phox::Keyboard keyboard;
@@ -98,10 +114,16 @@ int main(int argc, char* argv[])
                 {
                     randomize960(daGame);
                 }
-                if (Network.isConnected() && Network.isHosting())
+                if (Network.isConnected())
                 {
-                    Network.refreshBoard(daGame);
+                    GUI.saveGame(Network.getOpponentName(), Network.getTimeServer(), Network.getTimeOpponent());
+                    if (Network.isHosting())
+                    {
+                        Network.refreshBoard(daGame);
+                    }
                 }
+                else
+                GUI.saveGame();
             }
         }
         GUI.draw();
@@ -114,6 +136,16 @@ int main(int argc, char* argv[])
         Window.display();//Draw everything on the window
     }
 
+    if (Network.isConnected())
+    {
+        GUI.saveGame(Network.getOpponentName(), Network.getTimeServer(), Network.getTimeOpponent());
+    }
+
+    else
+
+    {
+        GUI.saveGame();
+    }
     deleteGame(daGame);
 
     return 1;

@@ -1,6 +1,7 @@
 #ifndef __ChessGUIManagerHPP__
 #define __ChessGUIManagerHPP__ 1
 #include <SFML/Graphics.hpp>
+#include <SFML/System/Time.hpp>
 #include <TGUI/TGUI.hpp>
 #include <Phox/Utilities/StreamBuffer.hpp>
 
@@ -23,6 +24,7 @@ class GUIManager
         void reset();
         void update(sf::Event& event);
         void handleSignal(Phox::cStreamBuffer Signal);
+        void saveGame(const std::string& Name = "", const sf::Time& MyTime = sf::milliseconds(0), const sf::Time& OpponentTime = sf::milliseconds(0));
 
         inline bool getTouchMove()      const {return m_EnforceTouchMove->isChecked();}
         inline bool get960Board()       const {return m_960Board->isChecked();}

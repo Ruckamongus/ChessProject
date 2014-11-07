@@ -169,7 +169,8 @@ void Board::reportAndMove(const Game g, move m)
         pieceValue Took = getPieceChar(g->board[m.xTo][m.yTo]);
         m_Selected = 0;
 
-        if (makeMove(g, m) != MOVE_NONE_MADE)//Make move if we can
+        std::size_t MoveType = makeMove(g, m);
+        if (MoveType != MOVE_NONE_MADE)//Make move if we can
         {
             m_NetworkMove = m;
             m_RequiresRedraw = 1;//Tell the board it has to update since there was a move
@@ -188,6 +189,12 @@ void Board::reportAndMove(const Game g, move m)
                         {
                             Verbose += "; puts " + turnAsString(g->whoseMove) + " in check.)";
                         }
+
+                        else if (MoveType == MOVE_CHECKMATE)
+                        {
+                            Verbose += "; checkmate.";
+                        }
+
                         else Verbose += ".) ";
 
                         if (g->whoseMove == COLOR_BLACK)//White just went
@@ -196,11 +203,24 @@ void Board::reportAndMove(const Game g, move m)
                         }
                     }
 
-                    else
-
-                    if (isInCheck(g, g->whoseMove))
+                    else if (isInCheck(g, g->whoseMove))
                     {
                         Verbose += " (" + turnAsString(otherMove(g->whoseMove)) + " puts " + turnAsString(g->whoseMove) + " in check.) ";
+                    }
+
+                    else if (MoveType == MOVE_CHECKMATE)
+                    {
+                        Verbose += " (" + turnAsString(otherMove(g->whoseMove)) + " ends the game in checkmate.) ";
+                    }
+
+                    else if (MoveType == MOVE_IS_KCASTLE)
+                    {
+                        Verbose += " (" + turnAsString(otherMove(g->whoseMove)) + " performs kingside castle.) ";
+                    }
+
+                    else if (MoveType == MOVE_IS_QCASTLE)
+                    {
+                        Verbose += " (" + turnAsString(otherMove(g->whoseMove)) + " performs queenside castle.) ";
                     }
                 }
 
@@ -210,6 +230,21 @@ void Board::reportAndMove(const Game g, move m)
                     if (isInCheck(g, g->whoseMove))
                     {
                         Str += "+";
+                    }
+
+                    if (MoveType == MOVE_CHECKMATE)
+                    {
+                        Str += "#";
+                    }
+
+                    else if (MoveType == MOVE_IS_KCASTLE)
+                    {
+                        Str += "0-0";
+                    }
+
+                    else if (MoveType == MOVE_IS_QCASTLE)
+                    {
+                        Str += "0-0-0";
                     }
                 }
 
@@ -542,10 +577,6 @@ void Board::reset()
 {
     m_RequiresRedraw = 1;
     m_CurrentMove = 1;
-    if (m_GUIManager != nullptr)
-    {
-        m_GUIManager->reset();
-    }
 }
 
 void Board::refreshBoard(const Game g)

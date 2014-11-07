@@ -1,6 +1,8 @@
 #include <Chess/GUIManager.hpp>
 #include <Chess/Board.hpp>
 #include <Phox/Internal/Exception.hpp>
+#include <Phox/Utilities/Date.hpp>
+#include <fstream>
 
 void GUIManager::init(sf::RenderWindow& Window)
 {
@@ -213,6 +215,35 @@ Phox::cStreamBuffer GUIManager::getNetworkSignal()
     return Return;
 }
 
+void GUIManager::saveGame(const std::string& Name, const sf::Time& MyTime, const sf::Time& OpponentTime)
+{
+    if (m_OutputBox->getText() == "") return;
+    std::ofstream File;
+    std::string With;
+    if (Name != "") With = "Game with " + Name + ".";
+    else With = "";
+
+    std::string Path = With + Phox::Date::day() + '.' + Phox::Date::month() + '.' + Phox::Date::year() + '.' + Phox::Date::hour() + '.' + Phox::Date::minute() + ".txt";
+
+    File.open(Path, std::ios_base::out);
+    if (File.is_open())
+    {
+        File << "Game annotation:\n";
+        File << static_cast<std::string> (m_OutputBox->getText()) << std::endl << std::endl;
+
+        if (Name != "")
+        {
+            File << "Chat:\n";
+            File << static_cast<std::string> (m_NetworkChatbox->getText());
+            File << std::endl;
+            File << static_cast<std::string> (m_NetworkUser->getText()) + "'s time: " << MyTime.asSeconds() << " sec\n";
+            File << Name + "'s time: " << OpponentTime.asSeconds() << " sec\n";
+        }
+        File.close();
+    }
+    reset();
+}
+
 void GUIManager::handleSignal(Phox::cStreamBuffer Signal)
 {
     if (!Signal.getWorkingBytes()) return;//Nothing to do here
@@ -225,9 +256,23 @@ void GUIManager::handleSignal(Phox::cStreamBuffer Signal)
         m_NetworkChatbox->addText(Signal.readString());
     }
 
-    if (Sig == "_clear_\1")
+    else if (Sig == "_clear_\1")
     {
+        saveGame(Signal.readString(), sf::milliseconds(Signal.readUnsignedInt()), sf::milliseconds(Signal.readUnsignedInt()));
         m_OutputBox->setText("");
+    }
+
+    else if (Sig == "_clear_\2")
+    {
+        std::string a, b;
+        unsigned int c, d;
+        a = Signal.readString();
+        c = Signal.readUnsignedInt();
+        d = Signal.readUnsignedInt();
+        b = Signal.readString();
+
+        saveGame(a, sf::milliseconds(c), sf::milliseconds(d));
+        m_NetworkChatbox->addText(b);
     }
 
     else

@@ -144,6 +144,9 @@ void NetworkManager::doNetworkStuff()
                         m_OpponentTime = 0;
                         m_Signal.clear();
                         m_Signal << "_clear_\1";
+                        m_Signal.writeString(m_OpponentName);
+                        m_Signal.writeUnsignedInt(m_MyTime);
+                        m_Signal.writeUnsignedInt(m_OpponentTime);
                         break;
 
                     default: break;
@@ -154,7 +157,11 @@ void NetworkManager::doNetworkStuff()
         if (status == sf::Socket::Disconnected)
         {
             m_Signal.clear();
-            m_Signal << (m_OpponentName + " has disconnected.\n");
+            m_Signal << "_clear_\2";
+            m_Signal.writeString(m_OpponentName);
+            m_Signal.writeUnsignedInt(m_MyTime);
+            m_Signal.writeUnsignedInt(m_OpponentTime);
+            m_Signal.writeString(m_OpponentName + " has disconnected.\n");
             m_Connected = 0;
             m_Socket.disconnect();
         }
@@ -183,8 +190,6 @@ void NetworkManager::handleSignal(Phox::cStreamBuffer Signal)
         std::string User, IP, Port;
         Signal >> User >> IP >> Port;
         m_MyName = User;
-
-        std::cout << sf::IpAddress(IP).toString();
 
         m_Socket.setBlocking(1);
         sf::Socket::Status status = m_Socket.connect(IP, static_cast <unsigned short> (Phox::ToDouble(Port)), sf::seconds(5.f));

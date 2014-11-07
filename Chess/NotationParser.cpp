@@ -6,26 +6,19 @@
 
 namespace
 {
-    std::string replaceAllChars(const std::string& String, const char From, const char To)
+    std::string stringReplaceAll(const std::string& str, const std::string& subStr, const std::string& rep)
     {
-        std::string Return(String);
-        for (unsigned int i = 0; i < String.size(); i++)
-        {
-            if (Return[i] == From)
-                Return[i] = To;
-        }
-        return Return;
-    }
+        std::string Ret = str;
+        auto pos = Ret.find(subStr);
 
-    std::string removeAllChars(const std::string& String, const char Char)
-    {
-        std::string Return("");
-        for (unsigned int i = 0; i < String.size(); i++)
+        while (pos != std::string::npos)
         {
-            if (String[i] != Char)
-                Return += String[i];
+            Ret.erase(Ret.begin() + pos, Ret.begin() + pos + subStr.size());
+            Ret.insert(pos, rep);
+            pos = Ret.find(subStr);
         }
-        return Return;
+
+        return Ret;
     }
 
     std::string stringDigitsPeriodOnly(const std::string& String)
@@ -111,7 +104,7 @@ int NotationParser::parse()
 
     std::string In("");
     std::stringstream ss;
-    ss << replaceAllChars(m_RawString, '\n', ' ');
+    ss << stringReplaceAll(m_RawString, "\n", " ");
 
     while (ss >> In)
     {
@@ -125,9 +118,11 @@ int NotationParser::parse()
 
     while (m_RawQueue.size())
     {
-        std::string MoveStr = removeAllChars(m_RawQueue.front(), 'x');
-        MoveStr = removeAllChars(MoveStr, '+');//Remove check notation
-        MoveStr = removeAllChars(MoveStr, ':');
+        std::string MoveStr = stringReplaceAll(m_RawQueue.front(), "x", "");
+        MoveStr = stringReplaceAll(MoveStr, "+", "");//Remove check notation
+        MoveStr = stringReplaceAll(MoveStr, ":", "");
+        MoveStr = stringReplaceAll(MoveStr, "0-0", "");//Remove queenside castling
+        MoveStr = stringReplaceAll(MoveStr, "0-0-0", "");//Remove queenside castling
 
         bool Capture = (MoveStr != m_RawQueue.front());
         bool Invalid = 1;
