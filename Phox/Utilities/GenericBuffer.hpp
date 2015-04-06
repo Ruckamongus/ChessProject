@@ -12,7 +12,7 @@ namespace Phox
             virtual ~cGenericBuffer()=default;
             cGenericBuffer(const cGenericBuffer& other)=default;
             cGenericBuffer(cGenericBuffer&& other)=default;
-            cGenericBuffer& operator=(cGenericBuffer& other)=default;
+            cGenericBuffer& operator=(const cGenericBuffer& other)=default;
             cGenericBuffer& operator=(cGenericBuffer&& other)=default;
 
             inline std::size_t getWritePosition()  const {return m_WritePosition;}
@@ -25,8 +25,8 @@ namespace Phox
 
             virtual bool isValid() const {return m_BasePointer != nullptr;}
             virtual void clear() {m_ReadPosition = 0; m_WritePosition = 0;}
-            virtual bool write(const void* Source, unsigned int Count);
-            virtual bool read (void* Destination, unsigned int Count);
+            virtual bool write(const void* Source, std::size_t Count);
+            virtual bool read (void* Destination, std::size_t Count);
 
             bool writeByte          (signed char Data)    {return write(&Data, sizeof(Data));}
             bool writeUnsignedByte  (unsigned char Data)  {return write(&Data, sizeof(Data));}

@@ -8,7 +8,7 @@ namespace Phox
     {
         public:
             explicit cStreamBuffer();
-                     cStreamBuffer(unsigned int DefaultSize);
+                     cStreamBuffer(std::size_t DefaultSize);
                      cStreamBuffer(const cStreamBuffer& Original);
                      cStreamBuffer(cStreamBuffer&& Original);
             virtual ~cStreamBuffer();
@@ -19,17 +19,17 @@ namespace Phox
             unsigned int getAllocatedBytes()   const {return m_AllocatedSize;}
             unsigned int getWorkingBytes()     const {return m_WorkingSize;}
 
-            bool allocate(unsigned int Bytes);
+            bool allocate(std::size_t Bytes);
 
             virtual void clear();
-            virtual bool write(const void* Source, unsigned int Count);
-            virtual bool read (void* Destination, unsigned int Count);
+            virtual bool write(const void* Source, std::size_t Count);
+            virtual bool read (void* Destination, std::size_t Count);
 
             cStreamBuffer& operator=   (const cStreamBuffer& Original);
             cStreamBuffer& operator=   (cStreamBuffer&& other);
             cStreamBuffer& operator+=  (const cStreamBuffer& Other);
             bool           operator==  (const cStreamBuffer& Other) const;
-            char           operator[]  (unsigned int) const;
+            char           operator[]  (std::size_t) const;
             inline         operator char*() const {return m_BasePointer;}
 
         private:
